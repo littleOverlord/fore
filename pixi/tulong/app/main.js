@@ -3,11 +3,10 @@ import * as PIXI from '../libs/pixijs/pixi.min'
 /**
  * 游戏主函数
  */
-const {pixelRatio, windowWidth, windowHeight} = wx.getSystemInfoSync()
 export default class Main {
-    constructor() {
-        console.log(PIXI);
-        console.log(pixelRatio,windowWidth,windowHeight);
+    constructor(cfg) {
+        console.log(cfg);
+        // console.log(pixelRatio,windowWidth,windowHeight);
       //Aliases
         let Application = PIXI.Application,
         Container = PIXI.Container,
@@ -19,8 +18,8 @@ export default class Main {
 
         //Create a Pixi Application
         let app = new Application({
-            width: windowWidth * pixelRatio,
-            height: windowHeight * pixelRatio,                       
+            width: cfg.screen.width,
+            height: cfg.screen.height,                       
             antialias: true,
             transparent: false,
             resolution: 1,
@@ -29,8 +28,8 @@ export default class Main {
         );
         //映射pixi坐标
         app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
-            point.x = x * pixelRatio
-            point.y = y * pixelRatio
+            point.x = x * cfg.screen.scale
+            point.y = y * cfg.screen.scale
         }
         //Add the canvas that Pixi automatically created for you to the HTML document
         // document.body.appendChild(app.view);
@@ -46,8 +45,8 @@ export default class Main {
 
             //Create the `cat` sprite
             cat = new Sprite(resources["images/bg.jpg"].texture);
-            cat.y = 0;
-            cat.y = 0;
+            cat.width = cfg.screen.width;
+            cat.height = cfg.screen.height;
             app.stage.addChild(cat);
 
             //Start the game loop
