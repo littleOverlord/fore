@@ -1,25 +1,31 @@
-## quickstart
+# 项目
 
 ## 源码目录介绍
 ```
-./js
-├── base                                   // 定义游戏开发基础类
-│   ├── animatoin.js                       // 帧动画的简易实现
-│   ├── pool.js                            // 对象池的简易实现
-│   └── sprite.js                          // 游戏基本元素精灵类
-├── libs
-│   ├── symbol.js                          // ES6 Symbol简易兼容
-│   └── weapp-adapter.js                   // 小游戏适配器
-├── npc
-│   └── enemy.js                           // 敌机类
-├── player
-│   ├── bullet.js                          // 子弹类
-│   └── index.js                           // 玩家类
-├── runtime
-│   ├── background.js                      // 背景类
-│   ├── gameinfo.js                        // 用于展示分数和结算界面
-│   └── music.js                           // 全局音效管理器
-├── databus.js                             // 管控游戏状态
-└── main.js                                // 游戏入口主函数
+./libs
+├── pixijs                                   // pixijs 渲染引擎
+│   ├── pixi.js                       // 帧动画的简易实现
+│   └── pixi.min.js                          // 游戏基本元素精灵类
+└── wx                                     //微信小游戏兼容
+    └── weapp-adapter.js                   // 小游戏适配器
+./app
+├── xx                                   // 功能
+│   ├── xx.js                       // 功能js
+│   └── xx.js                          // 功能js
+└── main.js                                     //游戏启动
+```
+## 待做功能
+
+### sprite分组
+```
+方案1：PIXI.Container 里面的sprite含有所有sprite该有的属性
+方案2：PIXI.particles.ParticleContainer 里面的sprite只含有x, y, width, height, scale, pivot, alpha, visible属性,且sprite不能嵌套子sprite
+
+实现页面层级关系, 同时方便对一组sprite做批量操作, 且每个层级配置自己的显示属性。
+如：bg main secondary cover ... 
+```
+### 全屏适配
+```
+实现sprite Container ParticleContainer的left top right bottom 属性
 
 ```
