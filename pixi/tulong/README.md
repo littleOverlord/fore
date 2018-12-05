@@ -1,5 +1,9 @@
 # 项目
 
+## 工具
+
+    TexturePacker : 打包sprite图，生成sprite动画json
+
 ## 源码目录介绍
 ```
 ./libs
