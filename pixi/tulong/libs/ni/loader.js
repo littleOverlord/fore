@@ -7,8 +7,8 @@ export default class Loader {
 	 * @description 下载状态
 	 */
 	static LOADSTATUS = {
-		free = 0, // 空闲
-		loading = 1 // 加载中
+		free : 0, // 空闲
+		loading : 1 // 加载中
 	}
 	static status = this.LOADSTATUS.free;
 	/**
