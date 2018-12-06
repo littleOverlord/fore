@@ -33,3 +33,9 @@
 实现sprite Container ParticleContainer的left top right bottom 属性
 
 ```
+### 滚动
+```
+let gra = new PIXI.Graphics();
+container.mask = gra;
+...
+```

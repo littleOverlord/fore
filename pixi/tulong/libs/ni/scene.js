@@ -23,8 +23,12 @@ const creater = {
 	}
 }
 export default class Scene {
+	// render
 	static app;
+	// root node
 	static root = new Container();
+	// object cache
+	static cache = {}
 	/**
 	 * @description create scene
 	 */
@@ -36,23 +40,50 @@ export default class Scene {
 				point.y = y * cfg.screen.scale;
 		}
 
-		this.root.width = cfg.screen.width;
-		this.root.height = cfg.screen.height;
+		this.root.width = cfg.screen._width;
+		this.root.height = cfg.screen._height;
 		this.root.position.set(cfg.screen.left,cfg.screen.top);
 		
 		this.app.stage.append(this.root);
 	}
 	/**
 	 * 
-	 * @param {object} option {type:"sprite || container || particleContainer",data:{}} 
+	 * @param {object} option {type:"sprite || container || particleContainer",data:{}}
+	 * @return {} 渲染对象
+	 * @example {
+	 * 	type:"sprite || container || particleContainer",
+	 * 	data:{
+	 * 		url: "images/xx.png",
+	 * 		width: 10,
+	 * 		height: 10,
+	 * 		x: 0,
+	 * 		y: 0
+	 * 	},
+	 * 	children: [
+	 * 		{type:"",data:{},children:[]},
+	 * 		{}
+	 * 	]
+	 * } 
 	 */
 	static create(option,parent){
-		let o = creater[option.type](option.data);
+		let o = creater[option.type](option.data),i,leng;
 		if(parent){
 			parent.addChild(o);
 		}else{
-			this.root.addChild();
+			this.app.stage.addChild(o);
+		}
+		if(option.children && option.children.length){
+			for(i=0, leng = option.children.length; i < leng; i++){
+				this.create(option.children[i],o);
+			}
 		}
 		return o;
+	}
+	/**
+	 * @description 移除渲染对象
+	 * @param obj 渲染对象
+	 */
+	static remove(obj){
+		obj.distory();
 	}
 }
