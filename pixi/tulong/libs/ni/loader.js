@@ -10,7 +10,7 @@ export default class Loader {
 		free : 0, // 空闲
 		loading : 1 // 加载中
 	}
-	static status = this.LOADSTATUS.free;
+	static status = Loader.LOADSTATUS.free;
 	/**
 	 * @description 等待下载的任务，先进先下
 	 */
@@ -27,35 +27,35 @@ export default class Loader {
 	 * @param successCallback 下载完成的回调
 	 */
 	static add(arr,successCallback){
-		if(this.status === this.LOADSTATUS.loading){
-			return this.wait.push([arr,successCallback]);
+		if(Loader.status === Loader.LOADSTATUS.loading){
+			return Loader.wait.push([arr,successCallback]);
 		}
-		this.load(arr, successCallback);
+		Loader.load(arr, successCallback);
 	}
 	/**
 	 * @description 下载
 	 */
 	static load(arr,successCallback){
 		loader.add(arr)
-			.on("progress", this.process)
+			.on("progress", Loader.process)
 			.load(()=>{
-				this.status = this.LOADSTATUS.free;
+				Loader.status = Loader.LOADSTATUS.free;
 				loader.reset();
 				try{
 					successCallback && successCallback();
 				}catch(e){
 					console.error(e);
 				}
-				this.next();
+				Loader.next();
 			});
 	}
 	/**
 	 * @description 下载下一批资源
 	 */
 	static next(){
-		let next = this.wait.shift();
-		if(this.status === this.LOADSTATUS.loading && next){
-			this.load(next[0],next[1]);
+		let next = Loader.wait.shift();
+		if(Loader.status === Loader.LOADSTATUS.loading && next){
+			Loader.load(next[0],next[1]);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 import * as PIXI from '../pixijs/pixi.min';
+import Frame from './frame'
 
 let Application = PIXI.Application,
         Container = PIXI.Container,
@@ -8,7 +9,7 @@ let Application = PIXI.Application,
 				Rectangle = PIXI.Rectangle;
 const creater = {
 	container: (data) => {
-		let o = new PIXI.Container();
+		let o = new Container();
 		o.width = data.width;
 		o.height = data.height;
 		o.position.set(data.x || 0, data.y || 0);
@@ -44,7 +45,9 @@ export default class Scene {
 		this.root.height = cfg.screen._height;
 		this.root.position.set(cfg.screen.left,cfg.screen.top);
 		
-		this.app.stage.append(this.root);
+		this.app.stage.addChild(this.root);
+
+		Frame.add(this.app.rende);
 	}
 	/**
 	 * 
