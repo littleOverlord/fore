@@ -47,7 +47,7 @@ export default class Scene {
 		
 		this.app.stage.addChild(this.root);
 
-		Frame.add(this.app.rende);
+		Frame.add(this.app.render);
 	}
 	/**
 	 * 

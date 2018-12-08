@@ -38,7 +38,7 @@ export default class Frame {
 	 */
 	static loop(){
 		let i = Frame.list.length - 1,f,t = Date.now();
-		for( i; i > 0; i--){
+		for( i; i >= 0; i--){
 			f = Frame.list[i];
 			if(!f.interval || t - f.last >= f.interval){
 				f.frameCall();
