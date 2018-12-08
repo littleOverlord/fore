@@ -1,6 +1,6 @@
-/** 导入 **/
+/****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi.min';
-/** 导出 **/
+/****************** 导出 ******************/
 export default class Frame {
 	static list = [];
 	/**
@@ -52,9 +52,9 @@ export default class Frame {
 		}
 	}
 }
-/** 本地 **/
+/****************** 本地 ******************/
 const ticker = new PIXI.ticker.Ticker();
-/** 立即执行 **/
+/****************** 立即执行 ******************/
 ticker.stop();
 ticker.add((deltaTime) => {
 	Frame.loop();
