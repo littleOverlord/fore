@@ -42,7 +42,7 @@ export default class Main {
             //底部界面
             Scene.create({
                 type:"container",
-                name: "top",
+                name: "bottom",
                 data: {
                     x:0,
                     y:424,

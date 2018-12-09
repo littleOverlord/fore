@@ -59,6 +59,9 @@ export default class Scene {
 		}else{
 			app.stage.addChild(o);
 		}
+		if(option.name){
+			this.cache[option.name] = o;
+		}
 		if(option.children && option.children.length){
 			for(i=0, leng = option.children.length; i < leng; i++){
 				this.create(option.children[i],o);
