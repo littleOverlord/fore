@@ -39,3 +39,8 @@ let gra = new PIXI.Graphics();
 container.mask = gra;
 ...
 ```
+### 组件封装
+```
+把pixi的每个displayObject 封装一遍，用get set 来完成显示对象更新，同时满足自定义组件的逻辑
+...
+```

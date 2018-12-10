@@ -38,7 +38,7 @@ export default class Scene {
 	 * @param {object} option {type:"sprite || container || particleContainer",data:{}}
 	 * @return {} 渲染对象
 	 * @example {
-	 * 	type:"sprite || container || particleContainer",
+	 * 	type:"sprite || container || particleContainer || text",
 	 * 	data:{
 	 * 		url: "images/xx.png",
 	 * 		width: 10,
@@ -61,6 +61,12 @@ export default class Scene {
 		}
 		if(option.name){
 			this.cache[option.name] = o;
+			o.on("removed",(function(name){
+				return function(){
+					console.log(`Delete the node which name is ${name} from cache!!`);
+					delete Scene.cache[name];
+				};
+			})(option.name))
 		}
 		if(option.children && option.children.length){
 			for(i=0, leng = option.children.length; i < leng; i++){
@@ -76,6 +82,28 @@ export default class Scene {
 	static remove(obj){
 		obj.distory();
 	}
+	/**
+	 * @description 在某个节点上绑定事件
+	 */
+	static bindEvent(key,type,func){
+		if(!this.cache[key]){
+			return console.error(`The node is not created which key is ${key}`);
+		}
+		this.cache[key].interactive = true;
+		this.cache[key].on(type,func);
+	}
+	/**
+	 * @de
+	 */
+	static modifyTexture(param,name){
+		if(typeof param == "string"){
+			param = Scene.cache[param];
+		}
+		if(!param){
+			return console.error(`Don't find the node!`);
+		}
+		param.texture = resources[name].texture;
+	}
 }
 /****************** 本地 ******************/
 let Application = PIXI.Application,
@@ -84,6 +112,7 @@ let Application = PIXI.Application,
 		TextureCache = PIXI.utils.TextureCache,
 		Sprite = PIXI.Sprite,
 		Rectangle = PIXI.Rectangle,
+		Text = PIXI.Text,
 		//当前渲染实例 new PIXI.Application()
 		app;
 const creater = {
@@ -98,6 +127,24 @@ const creater = {
 		let o = new Sprite(resources[data.url].texture);
 		o.width = data.width;
 		o.height = data.height;
+		o.position.set(data.x || 0, data.y || 0);
+		return o;
+	},
+	/**
+	 * @param data {
+	 * 	text: "",
+	 * 	style: {
+		* 	fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center',
+		* 	wordWrapWidth:100, 换行宽度
+		* 	wordWrap:true 是否换行
+	 * 	}
+	 * }
+	 * PIXI.TextStyle http://pixijs.download/release/docs/PIXI.TextStyle.html
+	 */
+	text: (data) => {
+		let o = new Text(data.text,data.style);
+		data.width !== undefined && (o.width = data.width);
+		data.height !== undefined && (o.height = data.height);
 		o.position.set(data.x || 0, data.y || 0);
 		return o;
 	}
