@@ -36,6 +36,13 @@ export default class Main {
                             x: 0,
                             y: 0
                         }
+                    },
+                    {
+                        type: "container",
+                        name: "token_attact",
+                        data: {
+                            
+                        }
                     }
                 ]
             },Scene.root);
