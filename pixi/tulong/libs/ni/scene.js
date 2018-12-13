@@ -11,6 +11,8 @@ export default class Scene {
 	static root;
 	// object cache
 	static cache = {}
+	//SpriteSheets
+	static spriteSheets = {}
 	/**
 	 * @description create scene
 	 */
@@ -104,6 +106,16 @@ export default class Scene {
 		}
 		param.texture = resources[name].texture;
 	}
+	static createSpriteSheets(data){
+		for(let k in data){
+			let texture = resources[k.replace(".json",".png")].texture.baseTexture;
+			Scene.spriteSheets[k] = new Spritesheet(texture,data[k]);
+			Scene.spriteSheets[k].parse(function(sps){
+				console.log(sps);
+			})
+		}
+		console.log(Scene.spriteSheets);
+	}
 }
 /****************** 本地 ******************/
 let Application = PIXI.Application,
@@ -113,6 +125,7 @@ let Application = PIXI.Application,
 		Sprite = PIXI.Sprite,
 		Rectangle = PIXI.Rectangle,
 		Text = PIXI.Text,
+		Spritesheet = PIXI.Spritesheet,
 		//当前渲染实例 new PIXI.Application()
 		app;
 const creater = {

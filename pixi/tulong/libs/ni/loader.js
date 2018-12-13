@@ -1,6 +1,7 @@
 import * as PIXI from '../pixijs/pixi.min';
 
-let loader = PIXI.loader;
+const loader = PIXI.loader;
+const fs = wx.getFileSystemManager();
 
 export default class Loader {
 	/**
@@ -36,17 +37,19 @@ export default class Loader {
 	 * @description 下载
 	 */
 	static load(arr,successCallback){
+		Loader.status = Loader.LOADSTATUS.loading;
 		loader.add(arr)
 			.on("progress", Loader.process)
-			.load(()=>{
+			.load((ld,res)=>{
 				Loader.status = Loader.LOADSTATUS.free;
 				loader.reset();
 				try{
-					successCallback && successCallback();
+					successCallback && successCallback(ld,res);
 				}catch(e){
 					console.error(e);
 				}
 				Loader.next();
+				
 			});
 	}
 	/**
@@ -54,8 +57,21 @@ export default class Loader {
 	 */
 	static next(){
 		let next = Loader.wait.shift();
-		if(Loader.status === Loader.LOADSTATUS.loading && next){
+		if(Loader.status === Loader.LOADSTATUS.free && next){
 			Loader.load(next[0],next[1]);
 		}
+	}
+	/**
+	 * @description 加载json文件
+	 */
+	static loadJson(arr,successCallback){
+		const r = {};
+		for(let i = 0, len = arr.length; i < len; i++){
+			let data = fs.readFileSync(arr[i], "utf8");
+			r[arr[i]] = JSON.parse(data);
+		}
+		setTimeout(() => {
+			successCallback(r);
+		}, 0);
 	}
 }

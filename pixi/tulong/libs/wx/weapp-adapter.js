@@ -1383,6 +1383,11 @@
 	      myHeader[header] = value;
 	      _requestHeader.set(this, myHeader);
 	    }
+	  }, {
+	    key: 'addEventListener',
+	    value: function addEventListener(event, func, useCapture) {
+	      this[event] = func;
+	    }
 	  }]);
 
 	  return XMLHttpRequest;
