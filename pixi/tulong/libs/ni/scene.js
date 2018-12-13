@@ -13,6 +13,8 @@ export default class Scene {
 	static cache = {}
 	//SpriteSheets
 	static spriteSheets = {}
+	//animations
+	static animations = []
 	/**
 	 * @description create scene
 	 */
@@ -38,15 +40,17 @@ export default class Scene {
 	/**
 	 * 
 	 * @param {object} option {type:"sprite || container || particleContainer",data:{}}
-	 * @return {} 渲染对象
+	 * @return {} 创建渲染对象
 	 * @example {
-	 * 	type:"sprite || container || particleContainer || text",
+	 * 	type:"sprite || container || particleContainer || text || animatedSprite" ,
 	 * 	data:{
+	 * 		id:"",
 	 * 		url: "images/xx.png",
 	 * 		width: 10,
 	 * 		height: 10,
 	 * 		x: 0,
-	 * 		y: 0
+	 * 		y: 0,
+	 * 		z: 0
 	 * 	},
 	 * 	children: [
 	 * 		{type:"",data:{},children:[]},
@@ -56,26 +60,37 @@ export default class Scene {
 	 */
 	static create(option,parent){
 		let o = creater[option.type](option.data),i,leng;
-		if(parent){
-			parent.addChild(o);
-		}else{
-			app.stage.addChild(o);
-		}
-		if(option.name){
-			this.cache[option.name] = o;
-			o.on("removed",(function(name){
-				return function(){
-					console.log(`Delete the node which name is ${name} from cache!!`);
-					delete Scene.cache[name];
-				};
-			})(option.name))
-		}
+		parent = parent || app.stage;
+		parent.addChild(o);
+		Scene.addCache(o);
+		o.on("removed",function(r){
+			console.log(`Delete the node which id is ${r.ni.id} from cache!!`);
+			let ai = Scene.animations.indexOf(r);
+			if(ai >= 0){
+				Scene.animations.splice(ai,1);
+			}
+			if(r.ni.id){
+				delete Scene.cache[r.ni.id];
+			}
+		})
 		if(option.children && option.children.length){
 			for(i=0, leng = option.children.length; i < leng; i++){
-				this.create(option.children[i],o);
+				Scene.create(option.children[i],o);
 			}
 		}
+		parent.children.sort(function(a,b){
+			return a.ni.z - b.ni.z;
+		});
 		return o;
+	}
+	/**
+	 * 
+	 * @param {*} obj 
+	 */
+	static addCache(o){
+		if(o.ni.id){
+			this.cache[o.ni.id] = o;
+		}
 	}
 	/**
 	 * @description 移除渲染对象
@@ -104,7 +119,7 @@ export default class Scene {
 		if(!param){
 			return console.error(`Don't find the node!`);
 		}
-		param.texture = resources[name].texture;
+		param.texture = Scene.getTextureFromSpritesheet(name);
 	}
 	static createSpriteSheets(data){
 		for(let k in data){
@@ -116,6 +131,20 @@ export default class Scene {
 		}
 		console.log(Scene.spriteSheets);
 	}
+	static getTextureFromSpritesheet(path){
+		let m = path.match(/(\/[^\/\.]+)\.png/),
+			name,
+			t;
+		if(!m){
+			return console.log(`The path "${path}" isn't irregular.`);
+		}
+		name = path.replace(m[0],".json");
+		if(!Scene.spriteSheets[name]){
+			return console.log(`don't has the spriteSheet of ${name}`);
+		}
+		t = Scene.spriteSheets[name].textures[m[0].replace(/\//,"")]
+		return t;
+	}
 }
 /****************** 本地 ******************/
 let Application = PIXI.Application,
@@ -126,21 +155,41 @@ let Application = PIXI.Application,
 		Rectangle = PIXI.Rectangle,
 		Text = PIXI.Text,
 		Spritesheet = PIXI.Spritesheet,
+		AnimatedSprite = PIXI.extras.AnimatedSprite,
 		//当前渲染实例 new PIXI.Application()
 		app;
+/**
+ * @description 渲染对象创建器
+ */
 const creater = {
+	/**
+	 * @description 初始化默认属性
+	 * o.ni = {
+	 * 	z: number, //控制显示层级
+	 * 	id: number || string //用户设置的id ，作为索引值存在Scene.cache中
+	 * 	// AnimatedSprite 特有
+	 *  actions: ["anctionName":[0,10],...] //动作帧段，配置在spriteSheet json中
+	 * 	animate: {ani:"",default:"","speed": 1, "once": false} //default为创建时设置的ani, 在每一次一次性动画结束后，自动切换到default
+	 * }
+	 */
+	init: (o,data) => {
+		data.width !== undefined && (o.width = data.width);
+		data.height !== undefined && (o.height = data.height);
+		o.position.set(data.x || 0, data.y || 0);
+		o.ni = {z:data.z || 0, id: data.id || ""};
+	},
 	container: (data) => {
 		let o = new Container();
-		o.width = data.width;
-		o.height = data.height;
-		o.position.set(data.x || 0, data.y || 0);
+		creater.init(o,data);
 		return o;
 	},
 	sprite: (data) => {
-		let o = new Sprite(resources[data.url].texture);
-		o.width = data.width;
-		o.height = data.height;
-		o.position.set(data.x || 0, data.y || 0);
+		let t = Scene.getTextureFromSpritesheet(data.url),o;
+		if(!t){
+			throw `Can't create the sprite by "${data.url}"`;
+		}
+		o = new Sprite(t);
+		creater.init(o,data);
 		return o;
 	},
 	/**
@@ -156,9 +205,33 @@ const creater = {
 	 */
 	text: (data) => {
 		let o = new Text(data.text,data.style);
-		data.width !== undefined && (o.width = data.width);
-		data.height !== undefined && (o.height = data.height);
-		o.position.set(data.x || 0, data.y || 0);
+		creater.init(o,data);
+		return o;
+	},
+	/**
+	 * @description 创建动画
+	 * @param data {
+	 * 		...,
+	 * 		ani: "",
+	 * 		once: false,
+	 * 		speed: 1, 越高越快，越低越慢
+	 * 	}
+	 */
+	animatedSprite: (data) => {
+		if(!Scene.spriteSheets[data.url]){
+			return console.error(`Can't find the spriteSheet by "${data.url}".`);
+		}
+		let attr = ["ani","once","speed"],
+			m = path.match(/\/([^\/\.]+)\./),
+			o = new AnimatedSprite(Scene.spriteSheets[data.url].animations[m]);
+		creater.init(o,data);
+		o.ni.actions = Scene.spriteSheets[data.url].data.actions;
+		o.ni.animate = {};
+		for(let i = 0,len = attr.length; i < len; i++){
+			o.ni.animate[attr[i]] = data[attr[i]];
+		}
+		o.ni.animate.default = o.ni.animate.ani;
+		Scene.animations.push(o);
 		return o;
 	}
 }
