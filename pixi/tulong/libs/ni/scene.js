@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi.min';
-import Frame from './frame'
+import Frame from './frame';
+import Animate from './animate';
 /****************** 导出 ******************/
 export default class Scene {
 	// render
@@ -13,8 +14,6 @@ export default class Scene {
 	static cache = {}
 	//SpriteSheets
 	static spriteSheets = {}
-	//animations
-	static animations = []
 	/**
 	 * @description create scene
 	 */
@@ -65,10 +64,10 @@ export default class Scene {
 		Scene.addCache(o);
 		o.on("removed",function(r){
 			console.log(`Delete the node which id is ${r.ni.id} from cache!!`);
-			let ai = Scene.animations.indexOf(r);
-			if(ai >= 0){
-				Scene.animations.splice(ai,1);
-			}
+			// let ai = Scene.animations.indexOf(r);
+			// if(ai >= 0){
+				// Scene.animations.splice(ai,1);
+			// }
 			if(r.ni.id){
 				delete Scene.cache[r.ni.id];
 			}
@@ -110,7 +109,7 @@ export default class Scene {
 		this.cache[key].on(type,func);
 	}
 	/**
-	 * @de
+	 * @description 更新texture
 	 */
 	static modifyTexture(param,name){
 		if(typeof param == "string"){
@@ -120,6 +119,16 @@ export default class Scene {
 			return console.error(`Don't find the node!`);
 		}
 		param.texture = Scene.getTextureFromSpritesheet(name);
+	}
+	/**
+	 * @description 更新lookat
+	 * @param {Sprite} s
+	 * @param {object} lookAt {x,y}
+	 */
+	static modifyLookAt(s,lookAt){
+		let dif = lookAt.x - s.x,
+			m2 = dif/Math.abs(dif);
+		s.scale.x = Math.abs(s.scale.x)*m2;
 	}
 	static createSpriteSheets(data){
 		for(let k in data){
@@ -222,16 +231,38 @@ const creater = {
 			return console.error(`Can't find the spriteSheet by "${data.url}".`);
 		}
 		let attr = ["ani","once","speed"],
-			m = path.match(/\/([^\/\.]+)\./),
-			o = new AnimatedSprite(Scene.spriteSheets[data.url].animations[m]);
+			m = data.url.match(/\/([^\/\.]+)\./),
+			o = new AnimatedSprite(Scene.spriteSheets[data.url].animations[m[1]]);
 		creater.init(o,data);
+		o.animationSpeed = data.speed;
 		o.ni.actions = Scene.spriteSheets[data.url].data.actions;
 		o.ni.animate = {};
 		for(let i = 0,len = attr.length; i < len; i++){
 			o.ni.animate[attr[i]] = data[attr[i]];
 		}
 		o.ni.animate.default = o.ni.animate.ani;
-		Scene.animations.push(o);
+		if((!o.ni.actions || o.ni.actions.length == 0) && data.once){
+			o.loop = !data.once;
+		}
+		// Scene.animations.push(o);
+		//绑定动画回调
+		o.onComplete = ((obj) => {
+			return ()=>{
+				Animate.onComplete(obj);
+			}
+		})(o);
+		o.onFrameChange = ((obj) => {
+			return ()=>{
+				Animate.onFrameChange(obj);
+			}
+		})(o);
+		o.onLoop = ((obj) => {
+			return ()=>{
+				Animate.onLoop(obj);
+			}
+		})(o);
+		//默认立即播放
+		o.play();
 		return o;
 	}
 }

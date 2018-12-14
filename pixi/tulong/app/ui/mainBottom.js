@@ -1,7 +1,7 @@
 export const UiMainBottom = {
     type:"container",
-    name: "bottom",
     data: {
+        id: "bottom",
         x:0,
         y:424,
         width: 750,
@@ -29,8 +29,8 @@ export const UiMainBottom = {
             children: [
                 {
                     type: "sprite",
-                    name: "bag_tab_attack",
                     data: {
+                        id: "bag_tab_attack",
                         url: "images/ui/bag_tab_bg.png",
                         width: 114,
                         height: 114,
@@ -52,8 +52,8 @@ export const UiMainBottom = {
                 },
                 {
                     type: "sprite",
-                    name: "bag_tab_armors",
                     data: {
+                        id: "bag_tab_armors",
                         url: "images/ui/bag_tab_bg.png",
                         width: 114,
                         height: 114,
@@ -77,8 +77,8 @@ export const UiMainBottom = {
         },
         {
             type: "sprite",
-            name: "button_store",
             data: {
+                id: "button_store",
                 url: "images/ui/button_store.png",
                 width: 136,
                 height: 100,
@@ -99,8 +99,8 @@ export const UiMainBottom = {
         },
         {
             type: "sprite",
-            name: "fast_buy",
             data: {
+                id: "fast_buy",
                 url: "images/ui/button_buy.png",
                 width: 214,
                 height: 100,
@@ -110,8 +110,8 @@ export const UiMainBottom = {
             children: [
                 {
                     type: "text",
-                    name: "fast_buy_level",
                     data: {
+                        id: "fast_buy_level",
                         text: "LV.8",
                         style: {fontSize:26,fill:"#adbbd9",strokeThickness:2},
                         x: 54,
@@ -120,8 +120,8 @@ export const UiMainBottom = {
                 },
                 {
                     type: "sprite",
-                    name: "button_buy",
                     data: {
+                        id: "button_buy",
                         url: "images/ui/token_money.png",
                         width: 26,
                         height: 26,
@@ -131,8 +131,8 @@ export const UiMainBottom = {
                 },
                 {
                     type: "text",
-                    name: "fast_buy_money",
                     data: {
+                        id: "fast_buy_money",
                         text: "265555",
                         style: {fontSize:26,fill:"#e4b349",strokeThickness:2},
                         x: 60,
@@ -143,8 +143,8 @@ export const UiMainBottom = {
         },
         {
             type: "sprite",
-            name: "button_sale",
             data: {
+                id: "button_sale",
                 url: "images/ui/button_sale.png",
                 width: 136,
                 height: 100,

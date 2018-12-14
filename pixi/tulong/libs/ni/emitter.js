@@ -5,13 +5,13 @@ export default class Emitter {
 	/**
 	 * @description 注册函数列表{key:[func1,func2,...]}
 	 */
-	static list = {};
+	list = {};
 	/**
 	 * @description 注册全局广播函数
 	 * @param {string} key 函数注册的key,作为调用的唯一凭证
 	 * @param {Function} func 注册接收消息的函数
 	 */
-	static add(key, func){
+	add(key, func){
 		if(!this.list[key]){
 			this.list[key] = [];
 		}
@@ -25,7 +25,7 @@ export default class Emitter {
 	 * @param {string} key 注册函数的key
 	 * @param {any} param 注册函数接收的参数
 	 */
-	static emit(key,param){
+	emit(key,param){
 		let evs = this.list[key],r = [];
 		if(!evs){
 			console.error(`There is no handler match '${key}'`);

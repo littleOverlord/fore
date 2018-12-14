@@ -1,8 +1,9 @@
 /****************** 导入 ******************/
-import Emitter from '../libs/ni/emitter';
+
 import Scene from '../libs/ni/scene';
 
 import {UiMainBottom} from './ui/mainBottom';
+import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/
 /**
@@ -56,4 +57,4 @@ export default class Equip {
 /****************** 本地 ******************/
 
 /****************** 立即执行 ******************/
-Emitter.add("intoMain",Equip.init);
+AppEmitter.add("intoMain",Equip.init);

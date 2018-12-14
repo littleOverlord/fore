@@ -5,7 +5,7 @@ import './equip'
 //local use
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';
-import Emitter from '../libs/ni/emitter';
+import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/
 /**
@@ -18,7 +18,7 @@ export default class Main {
             loadOk = function(){
                 if(loadCount == 0){
                     Scene.createSpriteSheets(jsonData);
-                    Emitter.emit("intoMain");
+                    AppEmitter.emit("intoMain");
                 }
             };
         console.log(cfg);

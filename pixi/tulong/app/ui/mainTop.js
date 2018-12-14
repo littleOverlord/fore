@@ -1,7 +1,7 @@
 export const UiMainTop = {
     type:"container",
-    name: "top",
     data: {
+        id: "top",
         x:0,
         y:0,
         width: 750,
@@ -11,6 +11,7 @@ export const UiMainTop = {
         {
             type: "sprite",
             data: {
+                id: "fightScene",
                 url: "images/ui/scene.png",
                 width: 982,
                 height: 424,
@@ -30,8 +31,8 @@ export const UiMainTop = {
             children: [
                 {
                     type: "text",
-                    name: "stage_level",
                     data: {
+                        id: "stage_level",
                         text: "02-01",
                         x: 64,
                         y: 5,
@@ -64,8 +65,8 @@ export const UiMainTop = {
                 },
                 {
                     type: "text",
-                    name: "token_attack",
                     data: {
+                        id: "token_attack",
                         text: "0",
                         x: 34,
                         y: 5,
@@ -98,8 +99,8 @@ export const UiMainTop = {
                 },
                 {
                     type: "text",
-                    name: "token_hp",
                     data: {
+                        id: "token_hp",
                         text: "0",
                         x: 34,
                         y: 5,
@@ -132,8 +133,8 @@ export const UiMainTop = {
                 },
                 {
                     type: "text",
-                    name: "token_money",
                     data: {
+                        id: "token_money",
                         text: "0",
                         x: 34,
                         y: 5,
@@ -166,8 +167,8 @@ export const UiMainTop = {
                 },
                 {
                     type: "text",
-                    name: "token_diamond",
                     data: {
+                        id: "token_diamond",
                         text: "0",
                         x: 34,
                         y: 5,
