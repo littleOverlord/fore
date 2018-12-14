@@ -1,0 +1,140 @@
+{"frames": {
+
+"bag_bg.png":
+{
+	"frame": {"x":2,"y":430,"w":750,"h":920},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":750,"h":920},
+	"sourceSize": {"w":750,"h":920}
+},
+"bag_border.png":
+{
+	"frame": {"x":756,"y":862,"w":120,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":120,"h":120},
+	"sourceSize": {"w":120,"h":120}
+},
+"bag_tab_armors.png":
+{
+	"frame": {"x":880,"y":950,"w":70,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":70},
+	"sourceSize": {"w":70,"h":70}
+},
+"bag_tab_attack.png":
+{
+	"frame": {"x":874,"y":1024,"w":70,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":70},
+	"sourceSize": {"w":70,"h":70}
+},
+"bag_tab_bg.png":
+{
+	"frame": {"x":756,"y":986,"w":114,"h":114},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":114,"h":114},
+	"sourceSize": {"w":114,"h":114}
+},
+"bag_tab_curr.png":
+{
+	"frame": {"x":756,"y":1104,"w":114,"h":114},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":114,"h":114},
+	"sourceSize": {"w":114,"h":114}
+},
+"button_buy.png":
+{
+	"frame": {"x":756,"y":430,"w":214,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":214,"h":100},
+	"sourceSize": {"w":214,"h":100}
+},
+"button_sale.png":
+{
+	"frame": {"x":756,"y":614,"w":136,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":136,"h":100},
+	"sourceSize": {"w":136,"h":100}
+},
+"button_store.png":
+{
+	"frame": {"x":756,"y":718,"w":136,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":136,"h":100},
+	"sourceSize": {"w":136,"h":100}
+},
+"scene.png":
+{
+	"frame": {"x":2,"y":2,"w":982,"h":424},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":982,"h":424},
+	"sourceSize": {"w":982,"h":424}
+},
+"stage_level_bg.png":
+{
+	"frame": {"x":756,"y":534,"w":208,"h":76},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":208,"h":76},
+	"sourceSize": {"w":208,"h":76}
+},
+"token_attack.png":
+{
+	"frame": {"x":896,"y":614,"w":80,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
+},
+"token_bg.png":
+{
+	"frame": {"x":756,"y":822,"w":134,"h":36},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":134,"h":36},
+	"sourceSize": {"w":134,"h":36}
+},
+"token_diamond.png":
+{
+	"frame": {"x":896,"y":698,"w":80,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
+},
+"token_hp.png":
+{
+	"frame": {"x":896,"y":782,"w":80,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
+},
+"token_money.png":
+{
+	"frame": {"x":880,"y":866,"w":80,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "ui.png",
+	"format": "RGBA8888",
+	"size": {"w":986,"h":1352},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:dfd4cffe7192b9b51823c3ea131c7635:dd54d7b9f224bd6977f2d4565e1be223:5b04aa198265472a3c5f56958d78e97b$"
+}
+}
