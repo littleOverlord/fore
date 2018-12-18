@@ -1,0 +1,17 @@
+[
+    {
+        "name": "wx",
+        "dist": "./dist/wx",
+        "plugins":{
+            "ts":{
+                "mod":"ts2es6"
+            },
+            "xls":{
+                "mod":"xls2json"
+            },
+            "xlsx":{
+                "mod":"xls2json"
+            }
+        }
+    }
+]
