@@ -19,6 +19,15 @@ export default class Animate {
 	}
 	static onFrameChange(o){
 		// console.log("onFrameChange",o);
+		let cf = o.currentFrame,
+			ani = o.ni.animate.ani,
+			rang = o.ni.actions[ani];
+		if(!rang){
+			return;
+		}
+		if(cf == rang[1]){
+			o.gotoAndPlay(rang[0]);
+		}
 	}
 }
 /****************** 本地 ******************/

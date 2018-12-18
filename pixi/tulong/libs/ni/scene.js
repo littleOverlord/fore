@@ -240,7 +240,6 @@ const creater = {
 		for(let i = 0,len = attr.length; i < len; i++){
 			o.ni.animate[attr[i]] = data[attr[i]];
 		}
-		o.ni.animate.default = o.ni.animate.ani;
 		if((!o.ni.actions || o.ni.actions.length == 0) && data.once){
 			o.loop = !data.once;
 		}
