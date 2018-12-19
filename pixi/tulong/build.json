@@ -1,7 +1,7 @@
 [
     {
         "name": "wx",
-        "dist": "./dist/wx",
+        "dist": "./.dist/wx",
         "plugins":{
             "ts":{
                 "mod":"ts2es6"
