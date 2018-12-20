@@ -12,7 +12,6 @@ export default class Config{
         }else if(sh < s){
             t = Math.floor((h - this.screen._height)/2);
         }
-
         this.screen.width = w;
         this.screen.height = h;
         this.screen.left = l;
