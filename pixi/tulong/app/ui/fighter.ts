@@ -7,7 +7,7 @@ export const Fighter = {
         y:0,
         width: 356,
         height: 356,
-        speed: 0.15,
+        speed: 0.08,
         once: true,
         ani: "standby"
     }
