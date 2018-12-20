@@ -43,3 +43,5 @@ export default class Main {
         console.log(app);
     }
 }
+/****************** 本地 ******************/
+declare const canvas;

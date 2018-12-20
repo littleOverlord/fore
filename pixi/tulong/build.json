@@ -11,6 +11,10 @@
             },
             "xlsx":{
                 "mod":"xls2json"
+            },
+            "png":{
+                "mod":"pngmin",
+                "quality":60
             }
         }
     }

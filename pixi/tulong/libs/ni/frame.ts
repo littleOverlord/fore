@@ -10,7 +10,7 @@ export default class Frame {
 	 * @param isOnce 是否一次性，是则执行一次后删除
 	 * @returns {} 帧对象，存储于帧列表，如果自身需要手动删除，则用户应该抓住它
 	 */
-	static add(frameCall,interval,isOnce){
+	static add(frameCall,interval?,isOnce?){
 		let f = {
 			frameCall: frameCall,
 			interval: interval,

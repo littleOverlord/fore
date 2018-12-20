@@ -34,17 +34,12 @@ export class Fighter{
 
 //战斗场景
 export class FScene{
-    constructor(listener){
-        this.listener = listener;
-    }
     //战斗者初始id,递增
     fid = 1
     //战斗者列表
     fighters = new Map()
     // 场景时间轴
     now = 0
-    //场景事件监听器
-    listener
     //事件列表
     events = [];
     

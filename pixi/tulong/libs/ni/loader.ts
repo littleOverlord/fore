@@ -1,8 +1,7 @@
+/****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi.min';
 
-const loader = PIXI.loader;
-const fs = wx.getFileSystemManager();
-
+/****************** 导出 ******************/
 export default class Loader {
 	/**
 	 * @description 下载状态
@@ -75,3 +74,7 @@ export default class Loader {
 		}, 0);
 	}
 }
+/****************** 本地 ******************/
+declare const wx;
+const loader = PIXI.loader;
+const fs = wx.getFileSystemManager();
