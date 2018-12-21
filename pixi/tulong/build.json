@@ -1,7 +1,8 @@
 [
     {
         "name": "wx",
-        "dist": "./.dist/wx",
+        "dist": "../.dist/wx/tulong",
+        "ignore":["/README.md","/images/ui","/build.json"],
         "plugins":{
             "ts":{
                 "mod":"ts2es6"

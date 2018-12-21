@@ -1,6 +1,6 @@
 export default class Config{
     constructor(option){
-        const {pixelRatio, windowWidth, windowHeight} = option;
+        const {windowWidth, windowHeight} = option;
         let w,h,l = 0,t = 0,
             sw = this.screen._width/windowWidth,
             sh = this.screen._height/windowHeight,
