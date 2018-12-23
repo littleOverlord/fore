@@ -9,15 +9,48 @@ export const UiMainTop = {
     },
     children: [
         {
-            type: "sprite",
+            type: "container",
             data: {
-                id: "fightScene",
-                url: "images/ui/scene.png",
-                width: 982,
+                width: 750,
                 height: 424,
                 x: 0,
                 y: 0
-            }
+            },
+            children:[
+                {
+                    type: "sprite",
+                    data: {
+                        id: "fightSceneBg",
+                        url: "images/ui/scene.png",
+                        width: 982,
+                        height: 424,
+                        x: 0,
+                        y: 0
+                    },
+                    children: [
+                        {
+                            type: "sprite",
+                            data: {
+                                url: "images/ui/scene.png",
+                                width: 982,
+                                height: 424,
+                                x: 982,
+                                y: 0
+                            }
+                        }
+                    ]
+                },
+                {
+                    type: "container",
+                    data: {
+                        id: "fightScene",
+                        width: 750,
+                        height: 424,
+                        x: 0,
+                        y: 0
+                    }
+                }
+            ]
         },
         {
             type: "sprite",

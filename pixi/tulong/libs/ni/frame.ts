@@ -42,11 +42,10 @@ export default class Frame {
 			f = Frame.list[i];
 			if(!f.interval || t - f.last >= f.interval){
 				f.frameCall();
-			}
-			if(f.once){
-				Frame.delete(f);
-			}else{
 				f.last = t;
+				if(f.once){
+					Frame.delete(f);
+				}
 			}
 			t = Date.now();
 		}

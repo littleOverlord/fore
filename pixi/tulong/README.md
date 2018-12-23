@@ -44,3 +44,8 @@ container.mask = gra;
 把pixi的每个displayObject 封装一遍，用get set 来完成显示对象更新，同时满足自定义组件的逻辑
 ...
 ```
+
+## 坑
+```
+微信小游戏图片尺寸长宽都必须小于2048
+```

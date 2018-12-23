@@ -18,7 +18,7 @@ export default class Equip {
         //创建顶部界面
         Scene.create(UiMainBottom,Scene.root);
         Scene.modifyTexture("bag_tab_attack","images/ui/bag_tab_curr.png");
-        
+        Equip.matchBg();
         //给按钮绑定事件
         Scene.bindEvent("fast_buy","tap",Equip.fastBuy);
         Scene.bindEvent("button_store","tap",Equip.openStore);
@@ -28,6 +28,17 @@ export default class Equip {
         Scene.bindEvent("bag_tab_armors","tap",function(){
             Equip.bagTab(1);
         });
+    }
+    //适配背包背景
+    static matchBg(){
+        let bg = Scene.cache["bagBG"];
+        if(Scene.screen.left){
+            bg.width += Scene.screen.left * 2;
+            bg.x -= Scene.screen.left;
+        }
+        if(Scene.screen.top){
+            bg.height += Scene.screen.top * 2;
+        }
     }
     /**
      * @description 响应快速购买

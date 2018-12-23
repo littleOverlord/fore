@@ -13,9 +13,9 @@ export default class Player {
     static init(){
         //创建顶部界面
         Scene.create(UiMainTop,Scene.root);
-        // Scene.create(FighterCfg,Scene.cache["fightScene"]);
         Stage.init();
     }
+    
 }
 /****************** 立即执行 ******************/
 AppEmitter.add("intoMain",Player.init);

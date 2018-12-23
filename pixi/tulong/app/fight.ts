@@ -5,7 +5,8 @@
 const EType = {
     insert : "insert",
     move   : "move",
-    damage : "damage"
+    damage : "damage",
+    remove : "remove"
 }
 //战斗者
 export class Fighter{
@@ -15,21 +16,24 @@ export class Fighter{
 		}
 	}
     name        = "" // 名字
+    sid         = "" // fighter外围id
     camp        = 0 // 阵营 1为己方，0为对方
-    speed       = 3 // 移动速度
+    speed       = 20 // 移动速度
     passive     = 0 // 是否被动
     // fight attributes
     hp          = 0
     maxHp       = 0
     attack      = 0
-    attackSpeed = 1500 // 攻击速度,每次出手的时间间隔(ms)
-    attackDistance = 7 // 攻击距离 
+    attackSpeed = 2500 // 攻击速度,每次出手的时间间隔(ms)
+    attackDistance = 150 // 攻击距离 
 	// runtime attributes
 	x           = 0 
     y           = 0 
 	id          = 0 // 场景内的fighter id, 出场顺序递增
     prevAttack  = 0 // 上次出手时间
     target      = 0 // 攻击目标的id
+    // render object
+    _show: any
 }
 
 //战斗场景
@@ -58,7 +62,12 @@ export class FScene{
         let now = Date.now(),evs;
         this.now = now;
         this.fighters.forEach((f,k)=>{
-            if(f.hp <= 0 || f.passive || f.attackSpeed > (now - f.prevAttack)){
+            if(f.hp <= 0){
+                this.addEvents([EType.remove,f.id]);
+                this.fighters.delete(f.id);
+                return;
+            }
+            if(f.passive || f.attackSpeed > (now - f.prevAttack)){
                 return;
             }
             let t = this.fighters.get(f.target);
@@ -67,7 +76,7 @@ export class FScene{
                 if(t){
                     f.target = t.id;
 				}
-				return f.prevAttack = now;
+				return;
             }
             if(t && !Policy.move(f,t,this)){
 				Policy.calc(f,t,this);

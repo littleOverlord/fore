@@ -11,11 +11,12 @@ export const UiMainBottom = {
         {
             type: "sprite",
             data: {
+                id: "bagBG",
                 url: "images/ui/bag_bg.png",
                 width: 750,
                 height: 920,
                 x: 0,
-                y: 0
+                y: -8
             }
         },
         {

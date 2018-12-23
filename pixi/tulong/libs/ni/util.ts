@@ -108,6 +108,16 @@ export default class Util {
         }
     }
     /**
+     * @description 把一个对象的属性复制到另一个对象
+     * @param obj1 被复制的对象
+     * @param obj2 目标对象
+     */
+    static setValueO2O(obj1,obj2){
+        for(let k in obj1){
+            obj2[k] = obj1[k];
+        }
+    }
+    /**
      * @description 检查一个字符串中是否含有某些字符串
      * @param arr 可能含有的字符串数组
      * @param s 待检查字符串

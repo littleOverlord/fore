@@ -8,6 +8,8 @@ export default class Scene {
 	static app = function(){
 		return app;
 	};
+	//屏幕尺寸
+	static screen
 	// root node
 	static root;
 	// object cache
@@ -28,6 +30,8 @@ export default class Scene {
 		this.root.width = cfg.screen._width;
 		this.root.height = cfg.screen._height;
 		this.root.position.set(cfg.screen.left,cfg.screen.top);
+
+		this.screen = cfg.screen;
 		
 		app.stage.addChild(this.root);
 
@@ -62,14 +66,14 @@ export default class Scene {
 		parent = parent || app.stage;
 		parent.addChild(o);
 		Scene.addCache(o);
-		o.on("removed",function(r){
-			console.log(`Delete the node which id is ${r.ni.id} from cache!!`);
+		o.on("removed",function(pr){
 			// let ai = Scene.animations.indexOf(r);
 			// if(ai >= 0){
 				// Scene.animations.splice(ai,1);
 			// }
-			if(r.ni.id){
-				delete Scene.cache[r.ni.id];
+			if(this.ni.id){
+				console.log(`Delete the node which id is ${this.ni.id} from cache!!`);
+				delete Scene.cache[this.ni.id];
 			}
 		})
 		if(option.children && option.children.length){
@@ -96,7 +100,11 @@ export default class Scene {
 	 * @param obj 渲染对象
 	 */
 	static remove(obj){
-		obj.distory();
+		if(obj.parent){
+			obj.parent.removeChild(obj);
+		}else{
+			throw "removeChild fail";
+		}
 	}
 	/**
 	 * @description 在某个节点上绑定事件
@@ -186,6 +194,7 @@ const creater = {
 		data.height !== undefined && (o.height = data.height);
 		o.position.set(data.x || 0, data.y || 0);
 		o.ni = {z:data.z || 0, id: data.id || ""};
+		o.alpha = data.alpha || 1;
 	},
 	container: (data) => {
 		let o = new Container();
@@ -223,7 +232,9 @@ const creater = {
 	 * 		...,
 	 * 		ani: "",
 	 * 		once: false,
-	 * 		speed: 1, 越高越快，越低越慢
+	 * 		speed: 1, 越高越快，越低越慢,
+	 * 		actions: {"standby":[0,5],...}//每个动作配置帧数区间，左右都是闭区间
+	 * 		anicallback: function(e){} //e string "complete" 
 	 * 	}
 	 */
 	animatedSprite: (data) => {
@@ -236,6 +247,7 @@ const creater = {
 		creater.init(o,data);
 		o.animationSpeed = data.speed;
 		o.ni.actions = Scene.spriteSheets[data.url].data.actions;
+		o.ni.anicallback = data.anicallback;
 		o.ni.animate = {};
 		for(let i = 0,len = attr.length; i < len; i++){
 			o.ni.animate[attr[i]] = data[attr[i]];

@@ -1,8 +1,6 @@
 /****************** 导入 ******************/
-import Emitter from "./emitter"
 /****************** 导出 ******************/
 export default class Animate {
-	static emitter = new Emitter()
 	/**
 	 * @description 动画处理
 	 */
@@ -16,6 +14,9 @@ export default class Animate {
 	}
 	static onComplete(o){
 		// console.log("onComplete",o);
+		if(o.ni.anicallback){
+			o.ni.anicallback("complete");
+		}
 	}
 	static onFrameChange(o){
 		// console.log("onFrameChange",o);
@@ -25,8 +26,16 @@ export default class Animate {
 		if(!rang){
 			return;
 		}
-		if(cf == rang[1]){
+		if(cf < rang[0] || cf > rang[1]){
 			o.gotoAndPlay(rang[0]);
+			return ;
+		}
+		if(cf == rang[1]){
+			if(!o.ni.animate.once){
+				o.gotoAndPlay(rang[0]);
+			}else if(o.ni.anicallback){
+				o.ni.anicallback("complete");
+			}
 		}
 	}
 }

@@ -30,11 +30,11 @@ export default class Main {
             view: canvas,
             resolution: 1
         },cfg);
-        Loader.add(["images/ui.png","images/ani/B_S_005.png"],function(){
+        Loader.add(["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_002.png"],function(){
             loadCount -= 1;
             loadOk();
         });
-        Loader.loadJson(["images/ani/B_S_005.json","images/ui.json"],function(res){
+        Loader.loadJson(["images/ani/M_S_043.json","images/ani/M_S_002.json","images/ui.json"],function(res){
             console.log(res);
             jsonData = res;
             loadCount -= 1;
