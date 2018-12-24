@@ -5,6 +5,7 @@ import './equip'
 //local use
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';
+import CfgMgr from '../libs/ni/cfgmrg';
 import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/
@@ -13,11 +14,13 @@ import {AppEmitter} from './appEmitter';
  */
 export default class Main {
     constructor(cfg) {
-        let loadCount = 2,
-            jsonData,
+        let loadCount = 3,
+            spriteSheetsData,
+            cfgData,
             loadOk = function(){
                 if(loadCount == 0){
-                    Scene.createSpriteSheets(jsonData);
+                    Scene.createSpriteSheets(spriteSheetsData);
+                    CfgMgr.add(cfgData);
                     AppEmitter.emit("intoMain");
                 }
             };
@@ -36,7 +39,13 @@ export default class Main {
         });
         Loader.loadJson(["images/ani/M_S_043.json","images/ani/M_S_002.json","images/ui.json"],function(res){
             console.log(res);
-            jsonData = res;
+            spriteSheetsData = res;
+            loadCount -= 1;
+            loadOk();
+        });
+        Loader.loadJson(["app/cfg/pve.json"],function(res){
+            console.log(res);
+            cfgData = res;
             loadCount -= 1;
             loadOk();
         });
