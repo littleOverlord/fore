@@ -133,6 +133,7 @@ export default class Stage {
     static removeFighter(id){
         let f = fighterMap[id];
         Scene.remove(f._show);
+        delete fighterMap[id];
         if(f.sid !== roleId){
             Stage.addDelay(
                 Stage.addMonster,
