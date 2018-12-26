@@ -71,6 +71,9 @@ export default class Scene {
 			// if(ai >= 0){
 				// Scene.animations.splice(ai,1);
 			// }
+			if(this.ni.animate){
+				this.stop();
+			}
 			if(this.ni.id){
 				console.log(`Delete the node which id is ${this.ni.id} from cache!!`);
 				delete Scene.cache[this.ni.id];

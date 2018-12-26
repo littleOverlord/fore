@@ -17,11 +17,13 @@ export default class Stage {
     static delayCall = [];
     static init(){
         fightScene = new FScene();
-        textMgr = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0xff0000});
+        textMgrRed = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0xff0000});
+        textMgrGreen = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0x00ff00});
         Frame.add(Stage.loop,50);
         Frame.add(() => {
             Stage.showLoop();
-            textMgr.loop();
+            textMgrRed.loop();
+            textMgrGreen.loop();
         });
         //测试fighter
         Stage.addOwer();
@@ -66,7 +68,7 @@ export default class Stage {
             f = new Fighter({
                 x: x,
                 y: 430,
-                sid : "60000",
+                sid: "60000",
                 module: "M_S_043",
                 attack: 20,
                 maxHp: 200,
@@ -115,7 +117,7 @@ export default class Stage {
         if(t.sid == roleId){
             Stage.modifyHp(t.hp);
         }
-        textMgr.create({
+        textMgrRed.create({
             x: t._show.x - 20,
             y: t._show.y - 250,
             text: damage+"",
@@ -154,7 +156,8 @@ let roleSelf;
 //怪物位置
 const monsterX = 800;
 //战斗飘字管理
-let textMgr: TextAnimate;
+let textMgrRed: TextAnimate, // 红色
+    textMgrGreen: TextAnimate; // 绿色
 //飘字动画控制
 const textAni = (o): boolean => {
     if(o.alpha <= 0){
@@ -167,7 +170,7 @@ const textAni = (o): boolean => {
 const eventHandler = {
     insert: (e) => {
         let f = Util.copy(e[1]),x;
-        f._show = Scene.create(new FighterCfg(f.module,f.x,f.y,"standby",((id)=>{
+        f._show = Scene.create(new FighterCfg(`fighter${f.id}`,f.module,f.x,f.y,"standby",((id)=>{
             return (e) => {
                 eventHandler.anicallback(e,id);
             }

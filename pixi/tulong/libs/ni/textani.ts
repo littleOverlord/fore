@@ -26,7 +26,7 @@ export default class TextAnimate {
 			Util.setValueO2O(option,o);
 		}else{
 			Util.setValueO2O(option,d);
-			d.style = this.style;
+			d.style = d.style || this.style;
 			o = Scene.create({
 				type: "text",
 				data: d
