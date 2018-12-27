@@ -2,6 +2,8 @@
 import * as PIXI from '../pixijs/pixi.min';
 import Frame from './frame';
 import Animate from './animate';
+import Events from './events';
+import Widget from './widget';
 /****************** 导出 ******************/
 export default class Scene {
 	// render
@@ -41,52 +43,66 @@ export default class Scene {
 		return app;
 	}
 	/**
+	 * @description 打开组件
+	 * @param option 渲染数据，同create
+	 * @param w 组件
+	 * @param parent 
+	 */
+	static open(name: string,parent: any): any{
+		let w = Widget.factory(name);
+		return Scene.create(null,w,parent);
+	}
+	/**
 	 * 
 	 * @param {object} option {type:"sprite || container || particleContainer",data:{}}
 	 * @return {} 创建渲染对象
 	 * @example {
-	 * 	type:"sprite || container || particleContainer || text || animatedSprite" ,
-	 * 	data:{
-	 * 		id:"",
-	 * 		url: "images/xx.png",
-	 * 		width: 10,
-	 * 		height: 10,
-	 * 		x: 0,
-	 * 		y: 0,
-	 * 		z: 0
-	 * 	},
-	 * 	children: [
-	 * 		{type:"",data:{},children:[]},
-	 * 		{}
-	 * 	]
-	 * } 
-	 */
-	static create(option,parent){
-		let o = creater[option.type](option.data),i,leng;
+		* 	type:"sprite || container || particleContainer || text || animatedSprite" ,
+		* 	data:{
+		* 		id:"",
+		* 		url: "images/xx.png",
+		* 		width: 10,
+		* 		height: 10,
+		* 		x: 0,
+		* 		y: 0,
+		* 		z: 0
+		* 	},
+		* 	children: [
+		* 		{type:"",data:{},children:[]},
+		* 		{}
+		* 	]
+		* } 
+		*/
+	static create(option: any,w: Widget,parent: any){
+		let o,i,leng;
+		option = option || w.cfg;
 		parent = parent || app.stage;
-		parent.addChild(o);
-		Scene.addCache(o);
-		o.on("removed",function(pr){
-			// let ai = Scene.animations.indexOf(r);
-			// if(ai >= 0){
-				// Scene.animations.splice(ai,1);
-			// }
-			if(this.ni.animate){
-				this.stop();
+		if(!creater[option.type]){
+			w = Widget.factory(option.type);
+			Scene.create(null,w,parent);
+		}else{
+			o = creater[option.type](option.data);
+			o.widget = w;
+			parent.addChild(o);
+			Scene.addCache(o);
+			o.on("removed",function(pr){
+				if(this.ni.animate){
+					this.stop();
+				}
+				if(this.ni.id){
+					console.log(`Delete the node which id is ${this.ni.id} from cache!!`);
+					o.widget.elements.delete(o.ni.id);
+				}
+			})
+			if(option.children && option.children.length){
+				for(i=0, leng = option.children.length; i < leng; i++){
+					Scene.create(option.children[i],w,o);
+				}
 			}
-			if(this.ni.id){
-				console.log(`Delete the node which id is ${this.ni.id} from cache!!`);
-				delete Scene.cache[this.ni.id];
-			}
-		})
-		if(option.children && option.children.length){
-			for(i=0, leng = option.children.length; i < leng; i++){
-				Scene.create(option.children[i],o);
-			}
+			parent.children.sort(function(a,b){
+				return a.ni.z - b.ni.z;
+			});
 		}
-		parent.children.sort(function(a,b){
-			return a.ni.z - b.ni.z;
-		});
 		return o;
 	}
 	/**
@@ -95,7 +111,7 @@ export default class Scene {
 	 */
 	static addCache(o){
 		if(o.ni.id){
-			this.cache[o.ni.id] = o;
+			o.widget.elements.set(o.ni.id,o);
 		}
 	}
 	/**
@@ -112,12 +128,13 @@ export default class Scene {
 	/**
 	 * @description 在某个节点上绑定事件
 	 */
-	static bindEvent(key,type,func){
-		if(!this.cache[key]){
-			return console.error(`The node is not created which key is ${key}`);
+	static bindEvent(param: any,type,func){
+		let o = typeof param == "string"?this.cache[param]:param;
+		if(!o){
+			return console.error(`The node is not find by ${param}`);
 		}
-		this.cache[key].interactive = true;
-		this.cache[key].on(type,func);
+		o.interactive = true;
+		o.on(type,func);
 	}
 	/**
 	 * @description 更新texture

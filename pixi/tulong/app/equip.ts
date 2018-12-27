@@ -22,7 +22,8 @@ export default class Equip {
         //给按钮绑定事件
         Scene.bindEvent("fast_buy","tap",Equip.fastBuy);
         Scene.bindEvent("button_store","tap",Equip.openStore);
-        Scene.bindEvent("bag_tab_attack","tap",function(){
+        Scene.bindEvent("bag_tab_attack","tap",function(e){
+            console.log(e);
             Equip.bagTab(0);
         });
         Scene.bindEvent("bag_tab_armors","tap",function(){

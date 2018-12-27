@@ -30,6 +30,7 @@ export const UiMainBottom = {
             children: [
                 {
                     type: "sprite",
+                    on:{tap:"tap(0)"},
                     data: {
                         id: "bag_tab_attack",
                         url: "images/ui/bag_tab_bg.png",
@@ -53,6 +54,7 @@ export const UiMainBottom = {
                 },
                 {
                     type: "sprite",
+                    on:{tap:"tap(1)"},
                     data: {
                         id: "bag_tab_armors",
                         url: "images/ui/bag_tab_bg.png",
