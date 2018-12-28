@@ -46,16 +46,16 @@ export default class Equip {
 class UiMainBottom extends Widget{
     added(){
         console.log("UiMainBottom added!!");
-        Scene.modifyTexture(this.elements["bag_tab_attack"],"images/ui/bag_tab_curr.png");
-        matchBg(this.elements["bagBG"]);
+        Scene.modifyTexture(this.elements.get("bag_tab_attack"),"images/ui/bag_tab_curr.png");
+        matchBg(this.elements.get("bagBG"));
     }
     tab(index){
         if(Equip.currTab === index){
             return;
         }
         const els = ["bag_tab_attack","bag_tab_armors"];
-        Scene.modifyTexture(this.elements[els[index]],"images/ui/bag_tab_curr.png");
-        Scene.modifyTexture(this.elements[els[Math.abs(index-1)]],"images/ui/bag_tab_bg.png");
+        Scene.modifyTexture(this.elements.get(els[index]),"images/ui/bag_tab_curr.png");
+        Scene.modifyTexture(this.elements.get(els[Math.abs(index-1)]),"images/ui/bag_tab_bg.png");
         Equip.currTab = index;
     }
 }

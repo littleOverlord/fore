@@ -24,7 +24,8 @@ export default class Events {
         event: null, // 事件对象 PIXI.interaction.InteractionEvent
         startPos: null, // 起始位置 {x:0,y:0}
         moving: null, // 
-        eventType: null // 触发的事件类型
+        eventType: null, // 触发的事件类型
+        time: 0 // 触发时间点
     }
     //是否移动端
     static mobile: boolean
@@ -74,6 +75,7 @@ export default class Events {
     static start(e){
         Events.status.currTarget = this;
         Events.status.startPos = {x:e.data.global.x,y:e.data.global.y};
+        Events.status.time = Date.now();
         console.log("start ",e,this);
     }
     /**
@@ -84,17 +86,14 @@ export default class Events {
         if(!Events.status.currTarget){
             return;
         }
-        let _this: any = this,
-            on = _this.ni.on[Events.eventsType.drag],
-            func = on?Events.findEventCall(on.func,_this):null,
-            arg = on?Util.copy(on.arg):null;
+        let {o,on,func,arg} = Events.findEvent(Events.eventsType.drag);
         
         if(!on || !func || (Events.status.eventType != Events.eventsType.drag && !Events.ismove(e.data.global))){
             return;
         }
         Events.status.eventType = Events.eventsType.drag;
         arg.push(e);
-        arg.push(_this);
+        arg.push(o);
         Util.call(func,arg);
     }
     /**
@@ -102,6 +101,9 @@ export default class Events {
      */
     static end(e){
         Events.clear();
+    }
+    static longTap(){
+        
     }
     /**
      * @description 清除事件缓存
@@ -120,6 +122,13 @@ export default class Events {
             dy = pos.y - Events.status.startPos.y,
             rang = 3;
         return dx * dx + dy * dy >= rang * rang;
+    }
+    static findEvent(type){
+        let o = Events.status.currTarget,
+            on = o.ni.on[type],
+            func = on?Events.findEventCall(on.func,o):null,
+            arg = on?Util.copy(on.arg):null;
+        return {o,on,func,arg};
     }
     /**
      * @description 寻找事件响应方法

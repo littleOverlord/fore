@@ -52,9 +52,10 @@ export default class Scene {
 	 * @param logic 应用层对象，主要用来响应业务逻辑事件
 	 */
 	static open(name: string,parent: any,logic?:any): any{
-		let w = Widget.factory(name);
+		let w = Widget.factory(name),
+			o = Scene.create(null,w,parent,logic);
 		w.added();
-		return Scene.create(null,w,parent,logic);
+		return o;
 	}
 	/**
 	 * 
