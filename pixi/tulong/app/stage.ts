@@ -19,7 +19,7 @@ export default class Stage {
         fightScene = new FScene();
         textMgrRed = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0xff0000});
         textMgrGreen = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0x00ff00});
-        Frame.add(Stage.loop,50);
+        // Frame.add(Stage.loop,50);
         Frame.add(() => {
             Stage.showLoop();
             textMgrRed.loop();
@@ -170,11 +170,11 @@ const textAni = (o): boolean => {
 const eventHandler = {
     insert: (e) => {
         let f = Util.copy(e[1]),x;
-        f._show = Scene.create(new FighterCfg(`fighter${f.id}`,f.module,f.x,f.y,"standby",((id)=>{
-            return (e) => {
-                eventHandler.anicallback(e,id);
-            }
-        })(f.id)),Scene.cache["fightScene"]);
+        // f._show = Scene.create(new FighterCfg(`fighter${f.id}`,f.module,f.x,f.y,"standby",((id)=>{
+        //     return (e) => {
+        //         eventHandler.anicallback(e,id);
+        //     }
+        // })(f.id)),Scene.cache["fightScene"]);
         f._show.anchor.set(0.5,1);
         if(f.camp == 0){
             f._show.scale.x=-1;

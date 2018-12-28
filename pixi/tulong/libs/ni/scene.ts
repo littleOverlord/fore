@@ -32,6 +32,7 @@ export default class Scene {
 		this.root.width = cfg.screen._width;
 		this.root.height = cfg.screen._height;
 		this.root.position.set(cfg.screen.left,cfg.screen.top);
+		Events.bindGlobal(this.root);
 
 		this.screen = cfg.screen;
 		
@@ -39,18 +40,21 @@ export default class Scene {
 
 		Frame.add(function(){
 			app.render();
+			Events.loop();
 		});
 		return app;
 	}
 	/**
-	 * @description 打开组件
+	 * @description 打开组件,w 与 logic配合使用，用来分离显示逻辑和业务逻辑
 	 * @param option 渲染数据，同create
-	 * @param w 组件
-	 * @param parent 
+	 * @param w 组件，主要响应组件逻辑事件
+	 * @param parent 父显示对象
+	 * @param logic 应用层对象，主要用来响应业务逻辑事件
 	 */
-	static open(name: string,parent: any): any{
+	static open(name: string,parent: any,logic?:any): any{
 		let w = Widget.factory(name);
-		return Scene.create(null,w,parent);
+		w.added();
+		return Scene.create(null,w,parent,logic);
 	}
 	/**
 	 * 
@@ -73,18 +77,21 @@ export default class Scene {
 		* 	]
 		* } 
 		*/
-	static create(option: any,w: Widget,parent: any){
+	static create(option: any,w: Widget,parent: any,logic:any){
 		let o,i,leng;
 		option = option || w.cfg;
 		parent = parent || app.stage;
 		if(!creater[option.type]){
 			w = Widget.factory(option.type);
-			Scene.create(null,w,parent);
+			o = Scene.create(null,w,parent,logic);
+			w.added();
 		}else{
 			o = creater[option.type](option.data);
 			o.widget = w;
+			o.logic = logic;
 			parent.addChild(o);
 			Scene.addCache(o);
+			Events.bindEvent(o,option);
 			o.on("removed",function(pr){
 				if(this.ni.animate){
 					this.stop();
@@ -96,7 +103,7 @@ export default class Scene {
 			})
 			if(option.children && option.children.length){
 				for(i=0, leng = option.children.length; i < leng; i++){
-					Scene.create(option.children[i],w,o);
+					Scene.create(option.children[i],w,o,logic);
 				}
 			}
 			parent.children.sort(function(a,b){
@@ -121,6 +128,9 @@ export default class Scene {
 	static remove(obj){
 		if(obj.parent){
 			obj.parent.removeChild(obj);
+			if(obj.widget != obj.parent.widget){
+				obj.widget.destory();
+			}
 		}else{
 			throw "removeChild fail";
 		}

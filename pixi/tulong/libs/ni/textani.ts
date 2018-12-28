@@ -27,10 +27,10 @@ export default class TextAnimate {
 		}else{
 			Util.setValueO2O(option,d);
 			d.style = d.style || this.style;
-			o = Scene.create({
-				type: "text",
-				data: d
-			},parent);
+			// o = Scene.create({
+			// 	type: "text",
+			// 	data: d
+			// },parent);
 		}
 		this.playing.push(o);
 		return o;

@@ -6,6 +6,7 @@ import './equip'
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';
 import CfgMgr from '../libs/ni/cfgmrg';
+import Widget from '../libs/ni/widget';
 import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/
@@ -14,13 +15,15 @@ import {AppEmitter} from './appEmitter';
  */
 export default class Main {
     constructor(cfg) {
-        let loadCount = 3,
+        let loadCount = 4,
             spriteSheetsData,
             cfgData,
+            uiData,
             loadOk = function(){
                 if(loadCount == 0){
                     Scene.createSpriteSheets(spriteSheetsData);
                     CfgMgr.add(cfgData);
+                    Widget.registC(uiData);
                     AppEmitter.emit("intoMain");
                 }
             };
@@ -46,6 +49,12 @@ export default class Main {
         Loader.loadJson(["app/cfg/pve.json"],function(res){
             console.log(res);
             cfgData = res;
+            loadCount -= 1;
+            loadOk();
+        });
+        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json"],function(res){
+            console.log(res);
+            uiData = res;
             loadCount -= 1;
             loadOk();
         });
