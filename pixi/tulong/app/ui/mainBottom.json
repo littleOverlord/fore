@@ -30,7 +30,7 @@
             "children": [
                 {
                     "type": "sprite",
-                    "on":{"tap":{"func":"tab","arg":[0]}},
+                    "on":{"tap":{"func":"tab","arg":[0]},"longtap":{"func":"longTap","arg":[]},"end":{"func":"longTapEnd","arg":[]}},
                     "data": {
                         "id": "bag_tab_attack",
                         "url": "images/ui/bag_tab_bg.png",

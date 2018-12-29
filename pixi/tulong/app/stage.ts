@@ -14,12 +14,14 @@ import {Fighter, FScene} from './fight';
  */
 export default class Stage {
     static fightScene
+    static sceneNode
     static delayCall = [];
-    static init(){
+    static init(sceneNode){
+        Stage.sceneNode = sceneNode;
         fightScene = new FScene();
         textMgrRed = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0xff0000});
         textMgrGreen = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0x00ff00});
-        // Frame.add(Stage.loop,50);
+        Frame.add(Stage.loop,50);
         Frame.add(() => {
             Stage.showLoop();
             textMgrRed.loop();
@@ -88,7 +90,7 @@ export default class Stage {
     }
     //移动战斗背景
     static moveBg(distance){
-        let bg = Scene.cache["fightSceneBg"],
+        let bg = Stage.sceneNode.widget.elements.get("fightSceneBg"),
             _x = bg.x-distance,
             d = -982-_x;
         if(d > 0){
@@ -109,7 +111,7 @@ export default class Stage {
     }
     //更新自己的血量
     static modifyHp(hp){
-        Scene.cache["token_hp"].text = hp+"";
+        Stage.sceneNode.widget.elements.get("token_hp").text = hp+"";
     }
     //伤害延迟
     static damgeDelay(t: Fighter,damage: number){
@@ -122,7 +124,7 @@ export default class Stage {
             y: t._show.y - 250,
             text: damage+"",
             alpha: 1
-        },Scene.cache["fightScene"])
+        },Stage.sceneNode)
     }
     //被击延迟
     static behitDelay(t){
@@ -170,11 +172,11 @@ const textAni = (o): boolean => {
 const eventHandler = {
     insert: (e) => {
         let f = Util.copy(e[1]),x;
-        // f._show = Scene.create(new FighterCfg(`fighter${f.id}`,f.module,f.x,f.y,"standby",((id)=>{
-        //     return (e) => {
-        //         eventHandler.anicallback(e,id);
-        //     }
-        // })(f.id)),Scene.cache["fightScene"]);
+        f._show = Scene.create(new FighterCfg(`fighter${f.id}`,f.module,f.x,f.y,"standby",((id)=>{
+            return (e) => {
+                eventHandler.anicallback(e,id);
+            }
+        })(f.id)),null,Stage.sceneNode,null);
         f._show.anchor.set(0.5,1);
         if(f.camp == 0){
             f._show.scale.x=-1;

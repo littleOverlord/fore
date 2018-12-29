@@ -78,9 +78,10 @@ export default class Scene {
 		* 	]
 		* } 
 		*/
-	static create(option: any,w: Widget,parent: any,logic:any){
+	static create(option: any,w: Widget,parent: any,logic?:any){
 		let o,i,leng;
 		option = option || w.cfg;
+		w = w || parent.widget;
 		parent = parent || app.stage;
 		if(!creater[option.type]){
 			w = Widget.factory(option.type);
@@ -127,9 +128,11 @@ export default class Scene {
 	 * @param obj 渲染对象
 	 */
 	static remove(obj){
+		let isTop;
 		if(obj.parent){
+			isTop = obj.widget != obj.parent.widget;
 			obj.parent.removeChild(obj);
-			if(obj.widget != obj.parent.widget){
+			if(isTop){
 				obj.widget.destory();
 			}
 		}else{

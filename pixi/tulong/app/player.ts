@@ -13,7 +13,7 @@ export default class Player {
     static init(){
         //创建顶部界面
         Scene.open("app-ui-mainTop",Scene.root);
-        Stage.init();
+        
     }
     
 }
@@ -22,6 +22,7 @@ class UiMainTop extends Widget{
 
     added(){
         console.log("UiMainTop add to the stage!");
+        Stage.init(this.elements.get("fightScene"));
     }
     destory(){
         console.log("UiMainTop remove from the stage!");

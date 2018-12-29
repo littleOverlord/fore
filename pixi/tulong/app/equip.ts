@@ -58,6 +58,12 @@ class UiMainBottom extends Widget{
         Scene.modifyTexture(this.elements.get(els[Math.abs(index-1)]),"images/ui/bag_tab_bg.png");
         Equip.currTab = index;
     }
+    longTap(){
+        console.log("longtap");
+    }
+    longTapEnd(){
+        console.log("longtap end");
+    }
 }
 //适配背包背景
 const matchBg = (bg) => {

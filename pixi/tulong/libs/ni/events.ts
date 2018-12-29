@@ -43,7 +43,10 @@ export default class Events {
      * @description 事件监听循环,主要处理长按
      */
     static loop(){
-
+        if(!Events.status.currTarget){
+            return;
+        }
+        Events.longTap(Events.status.event);
     }
     /**
      * @description 在渲染节点上绑定事件
@@ -76,6 +79,8 @@ export default class Events {
         Events.status.currTarget = this;
         Events.status.startPos = {x:e.data.global.x,y:e.data.global.y};
         Events.status.time = Date.now();
+        Events.status.event = e;
+        e.stopPropagation();
         console.log("start ",e,this);
     }
     /**
@@ -88,22 +93,55 @@ export default class Events {
         }
         let {o,on,func,arg} = Events.findEvent(Events.eventsType.drag);
         
-        if(!on || !func || (Events.status.eventType != Events.eventsType.drag && !Events.ismove(e.data.global))){
+        if(!on || !Events.findEventCall(func,o) || (Events.status.eventType != Events.eventsType.drag && !Events.ismove(e.data.global))){
             return;
         }
-        Events.status.eventType = Events.eventsType.drag;
-        arg.push(e);
-        arg.push(o);
-        Util.call(func,arg);
+        Events.responseEvent(o,e,arg,func,Events.eventsType.drag);
     }
     /**
      * @description 结束事件
      */
     static end(e){
+        if(!Events.status.currTarget){
+            return Events.clear();
+        }
+        let {o,on,func,arg} = Events.tap(e);
+        if(!on || !Events.findEventCall(func,o)){
+            return Events.clear();
+        }
+        Events.responseEvent(o,e,arg,func,Events.eventsType.end);
         Events.clear();
     }
-    static longTap(){
+    /**
+     * @description 触发点击事件
+     * @param e 
+     */
+    static tap(e){
+        let {o,on,func,arg} = Events.findEvent(Events.eventsType.tap);
+        if(Events.status.eventType){
+            return Events.findEvent(Events.eventsType.end);
+        }
+        if(!on || !Events.findEventCall(func,o)){
+            return {o:null,on:null,func:null,arg:null};
+        }
+        Events.responseEvent(o,e,arg,func,Events.eventsType.tap);
         
+        return {o:null,on:null,func:null,arg:null};
+    }
+    /**
+     * @description 检查是否执行长按事件
+     * @param e 
+     */
+    static longTap(e){
+        let t = Date.now();
+        if(Events.status.eventType || t - Events.status.time < 300 ){
+            return;
+        }
+        let {o,on,func,arg} = Events.findEvent(Events.eventsType.longtap);
+        if(!on || !Events.findEventCall(func,o)){
+            return;
+        }
+        Events.responseEvent(o,e,arg,func,Events.eventsType.longtap);
     }
     /**
      * @description 清除事件缓存
@@ -123,10 +161,14 @@ export default class Events {
             rang = 3;
         return dx * dx + dy * dy >= rang * rang;
     }
+    /**
+     * @description 按事件类型获取某个节点上的事件
+     * @param type 事件类型
+     */
     static findEvent(type){
         let o = Events.status.currTarget,
             on = o.ni.on[type],
-            func = on?Events.findEventCall(on.func,o):null,
+            func = on?on.func:null,
             arg = on?Util.copy(on.arg):null;
         return {o,on,func,arg};
     }
@@ -136,8 +178,33 @@ export default class Events {
      * @param o 事件响应显示对象
      */
     static findEventCall(name,o){
-        let func = o.widget[name] || o.logic?o.logic[name]:null;
+        let func = o.widget[name] || (o.logic?o.logic[name]:null);
         return func;
+    }
+    /**
+     * @description 找到事件，执行
+     */
+    static eventCall(name,o,arg){
+        let obj;
+        if(o.widget[name]){
+            obj = o.widget;
+        }else if(o.logic && o.logic[name]){
+            obj = o.logic;
+        }
+        Util.objCall(obj,name,arg);
+    }
+    /**
+     * @description 响应事件
+     */
+    static responseEvent(o,e,arg,func,type){
+        Events.status.eventType = type;
+        arg.push(e);
+        arg.push(o);
+        try{
+           Events.eventCall(func,o,arg);
+        }catch(e){
+            console.error(e);
+        }
     }
 };
 /****************** 本地 ******************/
