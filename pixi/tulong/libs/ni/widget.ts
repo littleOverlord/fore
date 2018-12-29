@@ -2,16 +2,19 @@
  * @description 组件管理
  */
 export default class Widget {
-    constructor(url?){
+    constructor(url,props?){
         if(!this.url){
             this.url = url;
         }
         this.cfg = Widget.cfgCache.get(this.url);
+        this.props = props;
     }
     //widget路径
     url: string
     //组件配置
     cfg: any
+    //组件数据
+    props: any
     //组件设置了id的元素
     elements: Map<string,any> = new Map()
     //组件被添加到场景,渲染周期内调用，谨慎使用
@@ -44,9 +47,9 @@ export default class Widget {
      * @description 创建组件
      * @param name 组件名
      */
-    static factory(name: string): Widget{
-        let w: any = Widget.wCache.get(name) || Widget;
+    static factory(name: string, wName: string, prop?: any): Widget{
+        let w: any = Widget.wCache.get(wName) || Widget;
 
-        return new w(name);
+        return new w(name, prop);
     }
 };

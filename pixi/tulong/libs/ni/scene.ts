@@ -52,7 +52,7 @@ export default class Scene {
 	 * @param logic 应用层对象，主要用来响应业务逻辑事件
 	 */
 	static open(name: string,parent: any,logic?:any): any{
-		let w = Widget.factory(name),
+		let w = Widget.factory(name,name),
 			o = Scene.create(null,w,parent,logic);
 		w.added();
 		return o;
@@ -62,7 +62,9 @@ export default class Scene {
 	 * @param {object} option {type:"sprite || container || particleContainer",data:{}}
 	 * @return {} 创建渲染对象
 	 * @example {
-		* 	type:"sprite || container || particleContainer || text || animatedSprite" ,
+		* 	type:"sprite || container || particleContainer || text || animatedSprite || widget name" ,
+		*	script: "app-ui-name", // wiget 类
+		*	prop: {}, // widget 专用
 		* 	data:{
 		* 		id:"",
 		* 		url: "images/xx.png",
@@ -84,7 +86,7 @@ export default class Scene {
 		w = w || parent.widget;
 		parent = parent || app.stage;
 		if(!creater[option.type]){
-			w = Widget.factory(option.type);
+			w = Widget.factory(option.type,option.script||option.type,option.prop);
 			o = Scene.create(null,w,parent,logic);
 			w.added();
 		}else{
