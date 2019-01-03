@@ -46,23 +46,26 @@ export default class Equip {
 class UiMainBottom extends Widget{
     added(){
         console.log("UiMainBottom added!!");
-        Scene.modifyTexture(this.elements.get("bag_tab_attack"),"images/ui/bag_tab_curr.png");
         matchBg(this.elements.get("bagBG"));
     }
-    tab(index){
-        if(Equip.currTab === index){
-            return;
-        }
-        const els = ["bag_tab_attack","bag_tab_armors"];
-        Scene.modifyTexture(this.elements.get(els[index]),"images/ui/bag_tab_curr.png");
-        Scene.modifyTexture(this.elements.get(els[Math.abs(index-1)]),"images/ui/bag_tab_bg.png");
-        Equip.currTab = index;
+}
+class WEquipBg extends Widget{
+    setProps(props){
+        super.setProps(props);
+        this.cfg.data.url = props.url;
     }
-    longTap(){
-        console.log("longtap");
+}
+class WEquip extends Widget{
+    setProps(props){
+        super.setProps(props);
+
     }
-    longTapEnd(){
-        console.log("longtap end");
+    drag(){
+        console.log("drag");
+        matchBg(this.elements.get("bagBG"));
+    }
+    dragEnd(){
+        console.log("dragend");
     }
 }
 //适配背包背景
@@ -75,9 +78,16 @@ const matchBg = (bg) => {
         bg.height += Scene.screen.top * 2;
     }
 }
-
+//创建装备背景
+const createEquipBg = (node) => {
+    for(let i = 0;i<16;i++){
+        Scene.open("app-ui-equipBg",node,null,{url:"app/images/ui/bag_border.png"});
+    }
+}
 /****************** 立即执行 ******************/
 //注册组件
 Widget.registW("app-ui-mainBottom",UiMainBottom);
+Widget.registW("app-ui-equip",WEquip);
+Widget.registW("app-ui-equipBg",WEquipBg);
 //注册全局广播监听
 AppEmitter.add("intoMain",Equip.init);

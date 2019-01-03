@@ -22,61 +22,18 @@
         {
             "type": "container",
             "data": {
-                "width": 250,
-                "height": 114,
-                "x": 250,
-                "y": 50
-            },
-            "children": [
-                {
-                    "type": "sprite",
-                    "on":{"tap":{"func":"tab","arg":[0]},"longtap":{"func":"longTap","arg":[]},"end":{"func":"longTapEnd","arg":[]}},
-                    "data": {
-                        "id": "bag_tab_attack",
-                        "url": "images/ui/bag_tab_bg.png",
-                        "width": 114,
-                        "height": 114,
-                        "x": 0,
-                        "y": 0
-                    },
-                    "children": [
-                        {
-                            "type": "sprite",
-                            "data": {
-                                "url": "images/ui/bag_tab_attack.png",
-                                "width": 70,
-                                "height": 70,
-                                "x": 22,
-                                "y": 22
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "sprite",
-                    "on":{"tap":{"func":"tab","arg":[1]}},
-                    "data": {
-                        "id": "bag_tab_armors",
-                        "url": "images/ui/bag_tab_bg.png",
-                        "width": 114,
-                        "height": 114,
-                        "x": 136,
-                        "y": 0
-                    },
-                    "children": [
-                        {
-                            "type": "sprite",
-                            "data": {
-                                "url": "images/ui/bag_tab_armors.png",
-                                "width": 70,
-                                "height": 70,
-                                "x": 22,
-                                "y": 22
-                            }
-                        }
-                    ]
-                }
-            ]
+                "id": "equipBG",
+                "width": 750,
+                "height": 920,
+                "x": 0,
+                "y": -8
+            }
+        },
+        {
+            "type": "app-ui-tab",
+            "props": {"curr":0,"bg_n":"bag_tab_bg","bg_c":"bag_tab_curr","items":[
+                {"icon":"bag_tab_attack","con":"app-ui-equipCon"},{"icon":"bag_tab_armors","con":"app-ui-equipCon"}
+            ]}
         },
         {
             "type": "sprite",

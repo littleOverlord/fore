@@ -1,0 +1,22 @@
+{   
+    "type": "sprite",
+    "on":{"drag":{"func":"drag","arg":[]},"end":{"func":"dragEnd","arg":[]}},
+    "data": {
+        "url": "",
+        "width": 120,
+        "height": 120,
+        "x": 10,
+        "y": 10
+    },
+    "children": [
+        {
+            "type": "text",
+            "data": {
+                "text": "LV.1",
+                "style": {"fontSize":30,"fill":"#ffffff","strokeThickness":2},
+                "x": 34,
+                "y": 90
+            }
+        }
+    ]
+}

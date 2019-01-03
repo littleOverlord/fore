@@ -1,0 +1,10 @@
+{   
+    "type": "sprite",
+    "data": {
+        "url": "",
+        "width": 120,
+        "height": 120,
+        "x": 10,
+        "y": 10
+    }
+}

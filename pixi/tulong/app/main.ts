@@ -2,6 +2,8 @@
 //mod
 import './player'
 import './equip'
+//ui
+import './ui/tab'
 //local use
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';
@@ -52,7 +54,7 @@ export default class Main {
             loadCount -= 1;
             loadOk();
         });
-        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json"],function(res){
+        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json","app/ui/tab.json","app/ui/equip.json","app/ui/equipCon.json"],function(res){
             console.log(res);
             uiData = res;
             loadCount -= 1;

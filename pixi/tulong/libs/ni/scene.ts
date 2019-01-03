@@ -51,8 +51,8 @@ export default class Scene {
 	 * @param parent 父显示对象
 	 * @param logic 应用层对象，主要用来响应业务逻辑事件
 	 */
-	static open(name: string,parent: any,logic?:any): any{
-		let w = Widget.factory(name,name),
+	static open(name: string,parent: any,logic?:any,props?:any): any{
+		let w = Widget.factory(name,name,props),
 			o = Scene.create(null,w,parent,logic);
 		w.added();
 		return o;
@@ -86,7 +86,7 @@ export default class Scene {
 		w = w || parent.widget;
 		parent = parent || app.stage;
 		if(!creater[option.type]){
-			w = Widget.factory(option.type,option.script||option.type,option.prop);
+			w = Widget.factory(option.type,option.script||option.type,option.props);
 			o = Scene.create(null,w,parent,logic);
 			w.added();
 		}else{
@@ -219,7 +219,7 @@ const creater = {
 	 * @description 初始化默认属性
 	 * o.ni = {
 	 * 	z: number, //控制显示层级
-	 * 	id: number || string //用户设置的id ，作为索引值存在Scene.cache中
+	 * 	id: number || string //用户设置的id ，作为索引值存在Widget.elements中
 	 * 	// AnimatedSprite 特有
 	 *  actions: ["anctionName":[0,10],...] //动作帧段，配置在spriteSheet json中
 	 * 	animate: {ani:"",default:"","speed": 1, "once": false} //default为创建时设置的ani, 在每一次一次性动画结束后，自动切换到default

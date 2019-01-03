@@ -7,7 +7,7 @@ export default class Widget {
             this.url = url;
         }
         this.cfg = Widget.cfgCache.get(this.url);
-        this.props = props;
+        this.setProps(props);
     }
     //widget路径
     url: string
@@ -17,6 +17,10 @@ export default class Widget {
     props: any
     //组件设置了id的元素
     elements: Map<string,any> = new Map()
+    //设置props
+    setProps(props){
+        this.props = props;
+    }
     //组件被添加到场景,渲染周期内调用，谨慎使用
     added(){}
     //组件被销毁
