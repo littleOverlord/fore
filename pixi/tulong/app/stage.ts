@@ -3,6 +3,8 @@ import Scene from '../libs/ni/scene';
 import Frame from '../libs/ni/frame';
 import Util from '../libs/ni/util';
 import TextAnimate from "../libs/ni/textani";
+import Connect from "../libs/ni/connect";
+import CfgMgr from "../libs/ni/cfgmrg";
 
 import {Fighter as FighterCfg} from './ui/fighter';
 import {AppEmitter} from './appEmitter';
@@ -247,3 +249,43 @@ const eventHandler = {
 }
 
 /****************** 立即执行 ******************/
+
+/**
+ * @description 模拟后台测试
+ */
+const dataTest = {level:1,fightCount:0,lastFightTime:0};
+
+const findMonster = (type) => {
+    let t = ["mAttr","bAttr"],
+        cfg = CfgMgr.getOne("app/cfg/pve.json@stage")[dataTest.level],
+        attr = cfg[t[type]];
+    
+}
+
+//模拟后台战斗接口
+const readTest = (param: any,callback: Function) => {
+    let d = localStorage.stage;
+    if(d){
+        d = JSON.parse(d);
+    }else{
+        d = dataTest;
+    }
+    callback({ok:d});
+}
+
+//模拟后台战斗接口
+const fightTest = (param: any,callback: Function) => {
+    let r:any = {};
+    if(param.type == 1 && dataTest.fightCount < 5){
+        r.err = {reson:"Can't fight boss!"};
+        return callback(r);
+    }
+
+}
+//模拟后台结算接口
+const accountTest = (param: any,callback: Function) => {
+    dataTest.fightCount += 1;
+}
+Connect.setTest("app/stage@read",readTest);
+Connect.setTest("app/stage@fight",fightTest);
+Connect.setTest("app/stage@account",accountTest);

@@ -2,7 +2,6 @@
 import Scene from '../libs/ni/scene';
 import Widget from '../libs/ni/widget';
 
-// import {UiMainBottom} from './ui/mainBottom';
 import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/
@@ -10,23 +9,16 @@ import {AppEmitter} from './appEmitter';
  * 游戏主函数
  */
 export default class Equip {
-    static currTab = 0
+    //武器
+    static arms = []
+    //防具
+    static armors = []
     /**
      * @description 初始化装备界面
      */
     static init(){
         //创建顶部界面
-        Scene.open("app-ui-mainBottom",Scene.root);
-        //给按钮绑定事件
-        // Scene.bindEvent("fast_buy","tap",Equip.fastBuy);
-        // Scene.bindEvent("button_store","tap",Equip.openStore);
-        // Scene.bindEvent("bag_tab_attack","tap",function(e){
-        //     console.log(e);
-        //     Equip.bagTab(0);
-        // });
-        // Scene.bindEvent("bag_tab_armors","tap",function(){
-        //     Equip.bagTab(1);
-        // });
+        Scene.open("app-ui-mainBottom",Scene.root,Equip);
     }
     /**
      * @description 响应快速购买
@@ -43,18 +35,22 @@ export default class Equip {
 }
 /****************** 本地 ******************/
 //组件扩展
+//主界面下面部分
 class UiMainBottom extends Widget{
     added(){
         console.log("UiMainBottom added!!");
         matchBg(this.elements.get("bagBG"));
+        createEquipBg(this.elements.get("equipBG"));
     }
 }
+//装备黑色背景
 class WEquipBg extends Widget{
     setProps(props){
         super.setProps(props);
         this.cfg.data.url = props.url;
     }
 }
+//背包装备图标
 class WEquip extends Widget{
     setProps(props){
         super.setProps(props);
@@ -80,8 +76,13 @@ const matchBg = (bg) => {
 }
 //创建装备背景
 const createEquipBg = (node) => {
+    let o,l,t;
     for(let i = 0;i<16;i++){
-        Scene.open("app-ui-equipBg",node,null,{url:"app/images/ui/bag_border.png"});
+        o = Scene.open("app-ui-equipBg",node,null,{url:"images/ui/bag_border.png"});
+        l = i % 4;
+        t = Math.floor(i/4);
+        o.x = l * 120 + (l+1) * 30;
+        o.y = t * 120 + (t+1) * 30;
     }
 }
 /****************** 立即执行 ******************/

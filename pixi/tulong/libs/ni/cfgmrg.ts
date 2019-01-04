@@ -10,17 +10,17 @@ export default class CfgMgr {
   static add(data){
     for (let k in data) {
       for(let vk in data[k]){
-		caches[`${k}@${vk}`] = parse(data[k][vk].keys,data[k][vk].values);
-	  }
-	}
-	console.log(caches);
+      caches[`${k}@${vk}`] = parse(data[k][vk].keys,data[k][vk].values);
+      }
+    }
+    console.log(caches);
   }
   /**
    * @description 获取某张配置表
    * @param {string} path "cfg/xx@sheetName" 
    */
   static getOne(path: string){
-	return caches[path]
+	  return caches[path]
   }
 }
 /****************** 本地 ******************/

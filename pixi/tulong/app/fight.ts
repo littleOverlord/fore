@@ -103,7 +103,17 @@ export class FScene{
         if (left > 0 && right > 0)
             return 0;
         return left > 0 ? 1 : 2;
-	}
+    }
+    //更新fighter
+    modify(id:number,param:any){
+        let f = this.fighters.get(id);
+        if(!f){
+            return console.log(`There isn't the fighter who's id is ${id}`);
+        }
+        for(let k in param){
+            f[k] = param[k];
+        }
+    }
 }
 //战斗决策
 class Policy{

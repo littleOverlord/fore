@@ -13,7 +13,25 @@ export default class Scene {
 	//屏幕尺寸
 	static screen
 	// root node
-	static root;
+	static root
+	// fps node
+	static FPS = (():any=>{
+		let m: any = {},
+			c = 0,
+			t = Date.now();
+		m.loop = () => {
+			c += 1;
+			if(Date.now() - t >= 1000){
+				if(m.node){
+					m.node.text = `FPS ${c}`;
+				}
+				c = 0;
+				t = Date.now();
+			}
+		}
+		m.node = null;
+		return m;
+	})()
 	// object cache
 	static cache = {}
 	//SpriteSheets
@@ -28,17 +46,22 @@ export default class Scene {
 				point.x = x * cfg.screen.scale;
 				point.y = y * cfg.screen.scale;
 		}
+		//创建根节点
 		this.root = new Container();
 		this.root.width = cfg.screen._width;
 		this.root.height = cfg.screen._height;
 		this.root.position.set(cfg.screen.left,cfg.screen.top);
 		Events.bindGlobal(this.root);
+		app.stage.addChild(this.root);
+		//FPS
+		this.FPS.node = new Text("FPS 0",{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010,strokeThickness:2});
+		this.FPS.node.position.set(15,15);
+		app.stage.addChild(this.FPS.node);
 
 		this.screen = cfg.screen;
-		
-		app.stage.addChild(this.root);
-
+		//添加主循环
 		Frame.add(function(){
+			Scene.FPS.loop()
 			app.render();
 			Events.loop();
 		});

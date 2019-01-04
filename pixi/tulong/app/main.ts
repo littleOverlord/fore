@@ -54,7 +54,7 @@ export default class Main {
             loadCount -= 1;
             loadOk();
         });
-        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json","app/ui/tab.json","app/ui/equip.json","app/ui/equipCon.json"],function(res){
+        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json","app/ui/tab.json","app/ui/equip.json","app/ui/equipCon.json","app/ui/equipBg.json"],function(res){
             console.log(res);
             uiData = res;
             loadCount -= 1;
