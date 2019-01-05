@@ -257,8 +257,10 @@ const dataTest = {level:1,fightCount:0,lastFightTime:0};
 
 const findMonster = (type) => {
     let t = ["mAttr","bAttr"],
+        l = ["mLevel","bLevel"],
         cfg = CfgMgr.getOne("app/cfg/pve.json@stage")[dataTest.level],
-        attr = cfg[t[type]];
+        scale = cfg[t[type]],
+        attr = CfgMgr.getOne("app/cfg/pve.json@attribute")[cfg[l[type]]];
     
 }
 
