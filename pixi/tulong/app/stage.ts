@@ -29,10 +29,21 @@ export default class Stage {
             textMgrRed.loop();
             textMgrGreen.loop();
         });
-        //测试fighter
-        Stage.addOwer();
-        Stage.addMonster();
+        Stage.read(()=>{
+            //测试fighter
+            Stage.addOwer();
+            Connect.request({type:"app/stage@fight",arg:{type:dbData.fightCount == 5?1:0}},Stage.addMonster);
+        });
         
+    }
+    static read(callback){
+        Connect.request({type:"app/stage@read",arg:{}},(data)=>{
+            if(data.err){
+                return console.log(data.err.reason);
+            }
+            dbData = data.ok;
+            callback && callback();
+        })
     }
     //战斗循环
     static loop(){
@@ -67,20 +78,23 @@ export default class Stage {
         fightScene.insert(f);
     }
     //添加怪物
-    static addMonster(){
+    static addMonster(monster){
         let x = roleSelf?roleSelf.x + (monsterX - 340):monsterX,
-            f = new Fighter({
+            a = ["attack","hp","attackSpeed","attackDistance","speed"],
+            d:any = {
                 x: x,
                 y: 430,
                 sid: "60000",
-                module: "M_S_043",
-                attack: 20,
-                maxHp: 200,
-                hp: 200,
                 camp: 0,
-                passive: 1,
-                attackSpeed: 2500
-            });
+                passive: 1
+            },
+            f;
+        d.module = monster.module;
+        for(let i = 0,len = a.length; i < len; i++){
+            d[a[i]] = monster.attr[i];
+        }
+        d.maxHp = d.hp;
+        f = new Fighter(d);
         fightScene.insert(f);
     }
     //添加延迟事件
@@ -141,14 +155,34 @@ export default class Stage {
         Scene.remove(f._show);
         delete fighterMap[id];
         if(f.sid !== roleId){
-            Stage.addDelay(
-                Stage.addMonster,
-                2000
-            )
+            Stage.account(1,()=>{
+                Stage.addDelay(
+                    ()=>{
+                        Connect.request({type:"app/stage@fight",arg:{type:0}},Stage.addMonster)
+                    },
+                    2000
+                )
+            });
         }
+    }
+    //结算
+    static account(r,callback){
+        Connect.request({type:"app/stage@account",arg:{result:r}},(data) => {
+            if(data.err){
+                return console.log(data.err.reson);
+            }
+            if(dbData.fightCount == 5){
+                dbData.fightCount = 0;
+            }else {
+                dbData.fightCount += 1;
+            }
+            callback && callback();
+        })
     }
 }
 /****************** 本地 ******************/
+//关卡数据
+let dbData;
 //战斗场景
 let fightScene: FScene;
 //fighter显示列表
@@ -254,17 +288,28 @@ const eventHandler = {
  * @description 模拟后台测试
  */
 const dataTest = {level:1,fightCount:0,lastFightTime:0};
-
+//获取当前关卡怪物属性attack	hp	attackSpeed	attackDistance	speed
 const findMonster = (type) => {
-    let t = ["mAttr","bAttr"],
+    let a = ["attack","hp","attackSpeed","attackDistance","speed"],
+        t = ["mAttr","bAttr"],
         l = ["mLevel","bLevel"],
+        id = ["mId","bId"],
         cfg = CfgMgr.getOne("app/cfg/pve.json@stage")[dataTest.level],
         scale = cfg[t[type]],
-        attr = CfgMgr.getOne("app/cfg/pve.json@attribute")[cfg[l[type]]];
-    
+        attr = CfgMgr.getOne("app/cfg/pve.json@attribute")[cfg[l[type]]],
+        r = [];
+    for(let i = 0, len = a.length; i < len; i++){
+        r[i] = scale[i] * attr[a[i]];
+    }
+    console.log(cfg,attr);
+    return {module:cfg[id[type]],attr:r};
 }
 
-//模拟后台战斗接口
+const saveDb = () => {
+    localStorage.stage = JSON.stringify(dataTest);
+}
+
+//模拟后台读取接口
 const readTest = (param: any,callback: Function) => {
     let d = localStorage.stage;
     if(d){
@@ -278,15 +323,20 @@ const readTest = (param: any,callback: Function) => {
 //模拟后台战斗接口
 const fightTest = (param: any,callback: Function) => {
     let r:any = {};
-    if(param.type == 1 && dataTest.fightCount < 5){
+    if(param.arg.type == 1 && dataTest.fightCount < 5){
         r.err = {reson:"Can't fight boss!"};
         return callback(r);
     }
-
+    if(param.arg.type == 1){
+        dataTest.fightCount = 0;
+    }
+    saveDb();
+    callback(findMonster(param.arg.type));
 }
 //模拟后台结算接口
 const accountTest = (param: any,callback: Function) => {
     dataTest.fightCount += 1;
+    saveDb();
 }
 Connect.setTest("app/stage@read",readTest);
 Connect.setTest("app/stage@fight",fightTest);

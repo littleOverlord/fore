@@ -44,5 +44,5 @@ export default class Connect {
 //通讯接口参数
 interface NetParam {
     type: string
-    art: {}
+    arg: {}
 }
