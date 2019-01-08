@@ -1,5 +1,6 @@
 /**
  * @description 事件处理模块
+ * 事件顺序：widget -> logic -> parent widget -> parent logic -> ... -> root
  *  支持事件 
  *  tap 单击 不会触发end事件
  *  longtap 长按 结束后会紧跟end事件
@@ -10,9 +11,14 @@
 import Util from "./util";
 
 /****************** 导出 ******************/
+export enum HandlerResult {
+    BREAK_OK = 0, // （默认）结束事件调用，不再继续往上冒
+    OK // ok
+}
 export default class Events {
     //支持的事件类型
     static eventsType = {
+        start: "start",
         tap: "tap",
         longtap: "longtap",
         drag: "drag",
@@ -80,6 +86,10 @@ export default class Events {
         Events.status.startPos = {x:e.data.global.x,y:e.data.global.y};
         Events.status.time = Date.now();
         Events.status.event = e;
+        let {o,on,func,arg} = Events.findEvent(Events.eventsType.start);
+        if(on){
+            Events.responseEvent(o,e,arg,func,Events.eventsType.start);
+        }
         e.stopPropagation();
         console.log("start ",e,this);
     }
@@ -93,7 +103,7 @@ export default class Events {
         }
         let {o,on,func,arg} = Events.findEvent(Events.eventsType.drag);
         
-        if(!on || !Events.findEventCall(func,o) || (Events.status.eventType != Events.eventsType.drag && !Events.ismove(e.data.global))){
+        if(!on || (Events.status.eventType != Events.eventsType.drag && !Events.ismove(e.data.global))){
             return;
         }
         Events.responseEvent(o,e,arg,func,Events.eventsType.drag);
@@ -106,7 +116,7 @@ export default class Events {
             return Events.clear();
         }
         let {o,on,func,arg} = Events.tap(e);
-        if(!on || !Events.findEventCall(func,o)){
+        if(!on){
             return Events.clear();
         }
         Events.responseEvent(o,e,arg,func,Events.eventsType.end);
@@ -121,11 +131,9 @@ export default class Events {
         if(Events.status.eventType){
             return Events.findEvent(Events.eventsType.end);
         }
-        if(!on || !Events.findEventCall(func,o)){
-            return {o:null,on:null,func:null,arg:null};
+        if(on){
+            Events.responseEvent(o,e,arg,func,Events.eventsType.tap);
         }
-        Events.responseEvent(o,e,arg,func,Events.eventsType.tap);
-        
         return {o:null,on:null,func:null,arg:null};
     }
     /**
@@ -138,7 +146,7 @@ export default class Events {
             return;
         }
         let {o,on,func,arg} = Events.findEvent(Events.eventsType.longtap);
-        if(!on || !Events.findEventCall(func,o)){
+        if(!on){
             return;
         }
         Events.responseEvent(o,e,arg,func,Events.eventsType.longtap);
@@ -173,25 +181,26 @@ export default class Events {
         return {o,on,func,arg};
     }
     /**
-     * @description 寻找事件响应方法
-     * @param name 时间名字
-     * @param o 事件响应显示对象
-     */
-    static findEventCall(name,o){
-        let func = o.widget[name] || (o.logic?o.logic[name]:null);
-        return func;
-    }
-    /**
      * @description 找到事件，执行
      */
     static eventCall(name,o,arg){
-        let obj;
-        if(o.widget[name]){
-            obj = o.widget;
-        }else if(o.logic && o.logic[name]){
-            obj = o.logic;
+        let w,l;
+        while (o){
+            if(w != o.widget && o.widget[name]){
+                w = o.widget;
+                if(Util.objCall(w,name,arg) !== HandlerResult.OK){
+                    return;
+                }
+            }
+            
+            if(o.logic && l !=o.logic && o.logic[name]){
+                l = o.logic;
+                if(Util.objCall(w,name,arg) !== HandlerResult.OK){
+                    return;
+                }
+            }
+            o = o.parent;
         }
-        Util.objCall(obj,name,arg);
     }
     /**
      * @description 响应事件

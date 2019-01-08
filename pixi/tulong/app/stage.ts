@@ -288,7 +288,7 @@ const eventHandler = {
  * @description 模拟后台测试
  */
 const dataTest = {level:1,fightCount:0,lastFightTime:0};
-//获取当前关卡怪物属性attack	hp	attackSpeed	attackDistance	speed
+//获取当前关卡怪物属性[attack,hp,attackSpeed,attackDistance,speed]
 const findMonster = (type) => {
     let a = ["attack","hp","attackSpeed","attackDistance","speed"],
         t = ["mAttr","bAttr"],
