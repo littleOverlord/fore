@@ -15,13 +15,18 @@ export default class Player {
         Scene.open("app-ui-mainTop",Scene.root);
         
     }
-    
+    static updateStageLevel(stage){
+        let node = elements.get("stage_level");
+        node.text = `${stage.level}-${stage.fightCount}`;
+    }
 }
 /****************** 本地 ******************/
+let elements;
 class UiMainTop extends Widget{
 
     added(){
         console.log("UiMainTop add to the stage!");
+        elements = this.elements;
         Stage.init(this.elements.get("fightScene"));
     }
     destory(){
@@ -34,3 +39,4 @@ class UiMainTop extends Widget{
 Widget.registW("app-ui-mainTop",UiMainTop);
 //添加全局监听
 AppEmitter.add("intoMain",Player.init);
+AppEmitter.add("stageInfo",Player.updateStageLevel);

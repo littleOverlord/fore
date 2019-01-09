@@ -2,7 +2,7 @@
 import * as PIXI from '../pixijs/pixi.min';
 import Frame from './frame';
 import Animate from './animate';
-import Events from './events';
+import { Events } from './events';
 import Widget from './widget';
 /****************** 导出 ******************/
 export default class Scene {

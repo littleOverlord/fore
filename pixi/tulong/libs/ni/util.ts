@@ -131,6 +131,15 @@ export default class Util {
         return false;
     }
     /**
+     * @description 计算字符长度
+     * @param text:需要计算的文字
+     */
+    static characterSize(text: string) {
+        let ch = text.match(/[^\x00-\xff]/g);
+        if (ch) return ch.length + text.length;
+        return text.length
+    };
+    /**
      * @description 倍增同余算法
      * @param seed 
      */

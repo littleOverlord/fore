@@ -1,12 +1,15 @@
 /**
  * @description 组件管理
  */
+/****************** 导入 ******************/
+import Util from "./util";
+/****************** 导出 ******************/
 export default class Widget {
     constructor(url,props?){
         if(!this.url){
             this.url = url;
         }
-        this.cfg = Widget.cfgCache.get(this.url);
+        this.cfg = Util.copy(Widget.cfgCache.get(this.url));
         this.setProps(props);
     }
     //widget路径

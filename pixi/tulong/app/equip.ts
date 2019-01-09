@@ -58,7 +58,6 @@ class WEquip extends Widget{
     }
     drag(){
         console.log("drag");
-        matchBg(this.elements.get("bagBG"));
     }
     dragEnd(){
         console.log("dragend");

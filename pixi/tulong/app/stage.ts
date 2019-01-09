@@ -42,6 +42,7 @@ export default class Stage {
                 return console.log(data.err.reason);
             }
             dbData = data.ok;
+            AppEmitter.emit("stageInfo",dbData);
             callback && callback();
         })
     }
@@ -176,6 +177,7 @@ export default class Stage {
             }else {
                 dbData.fightCount += 1;
             }
+            AppEmitter.emit("stageInfo",dbData);
             callback && callback();
         })
     }
@@ -337,6 +339,7 @@ const fightTest = (param: any,callback: Function) => {
 const accountTest = (param: any,callback: Function) => {
     dataTest.fightCount += 1;
     saveDb();
+    callback({ok:""});
 }
 Connect.setTest("app/stage@read",readTest);
 Connect.setTest("app/stage@fight",fightTest);

@@ -15,7 +15,7 @@ export enum HandlerResult {
     BREAK_OK = 0, // （默认）结束事件调用，不再继续往上冒
     OK // ok
 }
-export default class Events {
+export class Events {
     //支持的事件类型
     static eventsType = {
         start: "start",
@@ -91,7 +91,7 @@ export default class Events {
             Events.responseEvent(o,e,arg,func,Events.eventsType.start);
         }
         e.stopPropagation();
-        console.log("start ",e,this);
+        // console.log("start ",e,this);
     }
     /**
      * @description 移动事件
@@ -128,7 +128,7 @@ export default class Events {
      */
     static tap(e){
         let {o,on,func,arg} = Events.findEvent(Events.eventsType.tap);
-        if(Events.status.eventType){
+        if(Events.status.eventType && Events.status.eventType != Events.eventsType.start){
             return Events.findEvent(Events.eventsType.end);
         }
         if(on){
@@ -195,7 +195,7 @@ export default class Events {
             
             if(o.logic && l !=o.logic && o.logic[name]){
                 l = o.logic;
-                if(Util.objCall(w,name,arg) !== HandlerResult.OK){
+                if(Util.objCall(l,name,arg) !== HandlerResult.OK){
                     return;
                 }
             }
@@ -207,6 +207,7 @@ export default class Events {
      */
     static responseEvent(o,e,arg,func,type){
         Events.status.eventType = type;
+        arg = arg || [];
         arg.push(e);
         arg.push(o);
         try{
