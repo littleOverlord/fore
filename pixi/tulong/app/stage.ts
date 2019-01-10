@@ -287,4 +287,6 @@ const eventHandler = {
 //初始化关卡数据库表
 DB.init("stage",{level:1,fightCount:0,lastFightTime:0});
 //注册页面打开事件
-AppEmitter.add("openTop",Stage.init);
+AppEmitter.add("openTop",(node)=>{
+    Stage.init(node);
+});

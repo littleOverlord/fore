@@ -16,7 +16,7 @@ export default class Player {
         
     }
     static updateStageLevel(){
-        if(!elements){
+        if(!elements || !DB.data.stage){
             return;
         }
         let node = elements.get("stage_level");

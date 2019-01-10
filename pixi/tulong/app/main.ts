@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 //mod
 import './player'
+import './stage'
 import './equip'
 //ui
 import './ui/tab'
