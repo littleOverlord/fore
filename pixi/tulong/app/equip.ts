@@ -17,7 +17,7 @@ export default class Equip {
      * @description 初始化装备界面
      */
     static init(){
-        //创建顶部界面
+        //创建底部界面
         Scene.open("app-ui-mainBottom",Scene.root,Equip);
     }
     /**

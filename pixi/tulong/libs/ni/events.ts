@@ -41,7 +41,7 @@ export class Events {
      * @description 初始化设备数据
      */
     static init(){
-        const ua = navigator.userAgent.toLowerCase();
+        const ua = navigator.userAgent.toLowerCase() || "";
         Events.mobile = (ua.indexOf('mobile') > -1) ? true : false;
         Events.bindFunc = Events.mobile?bindMobile:bindPc;
     }

@@ -6,6 +6,7 @@ import './equip'
 import './ui/tab'
 import './ui/button'
 //local use
+import './net';
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';
 import CfgMgr from '../libs/ni/cfgmrg';

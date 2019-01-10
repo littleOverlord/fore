@@ -34,7 +34,7 @@ export default class Connect {
      */
     static runTest(param: NetParam,callback: Function): boolean{
         if(Connect.testHandlers[param.type]){
-            Connect.testHandlers[param.type](param,callback);
+            Connect.testHandlers[param.type](param.arg,callback);
         }else{
             return false;
         }

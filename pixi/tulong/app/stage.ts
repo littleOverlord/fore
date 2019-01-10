@@ -5,6 +5,7 @@ import Util from '../libs/ni/util';
 import TextAnimate from "../libs/ni/textani";
 import Connect from "../libs/ni/connect";
 import CfgMgr from "../libs/ni/cfgmrg";
+import DB from "../libs/ni/db";
 
 import {Fighter as FighterCfg} from './ui/fighter';
 import {AppEmitter} from './appEmitter';
@@ -32,7 +33,7 @@ export default class Stage {
         Stage.read(()=>{
             //测试fighter
             Stage.addOwer();
-            Connect.request({type:"app/stage@fight",arg:{type:dbData.fightCount == 5?1:0}},Stage.addMonster);
+            Connect.request({type:"app/stage@fight",arg:{type:DB.data.stage.fightCount == 5?1:0}},Stage.addMonster);
         });
         
     }
@@ -41,8 +42,9 @@ export default class Stage {
             if(data.err){
                 return console.log(data.err.reason);
             }
-            dbData = data.ok;
-            AppEmitter.emit("stageInfo",dbData);
+            for(let k in data.ok){
+                DB.data.stage[k] = data.ok[k];
+            }
             callback && callback();
         })
     }
@@ -172,19 +174,16 @@ export default class Stage {
             if(data.err){
                 return console.log(data.err.reson);
             }
-            if(dbData.fightCount == 5){
-                dbData.fightCount = 0;
+            if(DB.data.stage.fightCount == 5){
+                DB.data.stage.fightCount = 0;
             }else {
-                dbData.fightCount += 1;
+                DB.data.stage.fightCount += 1;
             }
-            AppEmitter.emit("stageInfo",dbData);
             callback && callback();
         })
     }
 }
 /****************** 本地 ******************/
-//关卡数据
-let dbData;
 //战斗场景
 let fightScene: FScene;
 //fighter显示列表
@@ -285,62 +284,7 @@ const eventHandler = {
 }
 
 /****************** 立即执行 ******************/
-
-/**
- * @description 模拟后台测试
- */
-const dataTest = {level:1,fightCount:0,lastFightTime:0};
-//获取当前关卡怪物属性[attack,hp,attackSpeed,attackDistance,speed]
-const findMonster = (type) => {
-    let a = ["attack","hp","attackSpeed","attackDistance","speed"],
-        t = ["mAttr","bAttr"],
-        l = ["mLevel","bLevel"],
-        id = ["mId","bId"],
-        cfg = CfgMgr.getOne("app/cfg/pve.json@stage")[dataTest.level],
-        scale = cfg[t[type]],
-        attr = CfgMgr.getOne("app/cfg/pve.json@attribute")[cfg[l[type]]],
-        r = [];
-    for(let i = 0, len = a.length; i < len; i++){
-        r[i] = scale[i] * attr[a[i]];
-    }
-    console.log(cfg,attr);
-    return {module:cfg[id[type]],attr:r};
-}
-
-const saveDb = () => {
-    localStorage.stage = JSON.stringify(dataTest);
-}
-
-//模拟后台读取接口
-const readTest = (param: any,callback: Function) => {
-    let d = localStorage.stage;
-    if(d){
-        d = JSON.parse(d);
-    }else{
-        d = dataTest;
-    }
-    callback({ok:d});
-}
-
-//模拟后台战斗接口
-const fightTest = (param: any,callback: Function) => {
-    let r:any = {};
-    if(param.arg.type == 1 && dataTest.fightCount < 5){
-        r.err = {reson:"Can't fight boss!"};
-        return callback(r);
-    }
-    if(param.arg.type == 1){
-        dataTest.fightCount = 0;
-    }
-    saveDb();
-    callback(findMonster(param.arg.type));
-}
-//模拟后台结算接口
-const accountTest = (param: any,callback: Function) => {
-    dataTest.fightCount += 1;
-    saveDb();
-    callback({ok:""});
-}
-Connect.setTest("app/stage@read",readTest);
-Connect.setTest("app/stage@fight",fightTest);
-Connect.setTest("app/stage@account",accountTest);
+//初始化关卡数据库表
+DB.init("stage",{level:1,fightCount:0,lastFightTime:0});
+//注册页面打开事件
+AppEmitter.add("openTop",Stage.init);

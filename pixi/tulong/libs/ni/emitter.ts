@@ -16,7 +16,8 @@ export default class Emitter {
 			this.list[key] = [];
 		}
 		if(this.list[key].indexOf(func) >= 0){
-			return console.error("Has a same handler in the Emitter.list ",func);
+			// return console.error("Has a same handler in the Emitter.list ",func);
+			return;
 		}
 		this.list[key].push(func);
 	}
@@ -28,7 +29,7 @@ export default class Emitter {
 	emit(key,param?){
 		let evs = this.list[key],r = [];
 		if(!evs){
-			console.error(`There is no handler match '${key}'`);
+			// console.error(`There is no handler match '${key}'`);
 			return ;
 		}
 		for(let i = 0, len = evs.length; i < len; i++){

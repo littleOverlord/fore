@@ -1,9 +1,9 @@
 /****************** 导入 ******************/
 import Scene from '../libs/ni/scene';
 import Widget from '../libs/ni/widget';
+import DB from '../libs/ni/db';
 
 import {AppEmitter} from './appEmitter';
-import Stage from './stage';
 
 /****************** 导出 ******************/
 /**
@@ -15,9 +15,13 @@ export default class Player {
         Scene.open("app-ui-mainTop",Scene.root);
         
     }
-    static updateStageLevel(stage){
+    static updateStageLevel(){
+        if(!elements){
+            return;
+        }
         let node = elements.get("stage_level");
-        node.text = `${stage.level}-${stage.fightCount}`;
+        node.text = `${DB.data.stage.level}-${DB.data.stage.fightCount}`;
+        node.x = (208 - 16 * node.text.length)/2;
     }
 }
 /****************** 本地 ******************/
@@ -27,7 +31,8 @@ class UiMainTop extends Widget{
     added(){
         console.log("UiMainTop add to the stage!");
         elements = this.elements;
-        Stage.init(this.elements.get("fightScene"));
+        AppEmitter.emit("openTop",this.elements.get("fightScene"));
+        Player.updateStageLevel();
     }
     destory(){
         console.log("UiMainTop remove from the stage!");
@@ -39,4 +44,5 @@ class UiMainTop extends Widget{
 Widget.registW("app-ui-mainTop",UiMainTop);
 //添加全局监听
 AppEmitter.add("intoMain",Player.init);
-AppEmitter.add("stageInfo",Player.updateStageLevel);
+DB.emitter.add("stage.level",Player.updateStageLevel);
+DB.emitter.add("stage.fightCount",Player.updateStageLevel);
