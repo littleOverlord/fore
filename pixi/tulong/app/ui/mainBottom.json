@@ -23,8 +23,8 @@
             "type": "container",
             "data": {
                 "id": "equipBG",
-                "width": 750,
-                "height": 920,
+                "width": 660,
+                "height": 660,
                 "x": 65,
                 "y": 145
             }

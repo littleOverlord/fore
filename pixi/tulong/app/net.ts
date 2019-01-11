@@ -24,7 +24,7 @@ const findMonster = (type) => {
     for(let i = 0, len = a.length; i < len; i++){
         r[i] = scale[i] * attr[a[i]];
     }
-    console.log(cfg,attr);
+    // console.log(cfg,attr);
     return {module:cfg[id[type]],attr:r};
 }
 
@@ -53,10 +53,12 @@ const fightTest = (param: any,callback: Function) => {
     callback(findMonster(param.type));
 }
 //模拟后台结算接口
+//装备 [[1(装备类型0武器 1防具),1(位置),1(等级)]]
 const accountTest = (param: any,callback: Function) => {
     dataStage.fightCount += 1;
     saveDb("stage",dataStage);
-    callback({ok:""});
+    addEquip([]);
+    callback({ok:{}});
 }
 Connect.setTest("app/stage@read",readStage);
 Connect.setTest("app/stage@fight",fightTest);
@@ -92,9 +94,11 @@ const mixtureEquip = (param: any,callback: Function) => {
     callback({ok:r});
 }
 //添加装备
-const addEquip = (type,level) => {
-    let eq = dataEquip[type-1];
-    
+const addEquip = (data) => {
+    for(let i = 0, len = data.length; i < len; i++){
+        dataEquip[data[i][0]] = data[i][2];
+    }
+    saveDb("equip",dataEquip);
 }
 
 Connect.setTest("app/equip@read",readEquip);

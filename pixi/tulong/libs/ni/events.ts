@@ -86,6 +86,7 @@ export class Events {
         Events.status.startPos = {x:e.data.global.x,y:e.data.global.y};
         Events.status.time = Date.now();
         Events.status.event = e;
+        e.start = Events.status.startPos;
         let {o,on,func,arg} = Events.findEvent(Events.eventsType.start);
         if(on){
             Events.responseEvent(o,e,arg,func,Events.eventsType.start);

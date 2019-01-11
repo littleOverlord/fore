@@ -1,6 +1,9 @@
 /****************** 导入 ******************/
 import Scene from '../libs/ni/scene';
 import Widget from '../libs/ni/widget';
+import CfgMgr from '../libs/ni/cfgmrg';
+import DB from '../libs/ni/db';
+import Connect from '../libs/ni/connect';
 
 import {AppEmitter} from './appEmitter';
 
@@ -13,12 +16,17 @@ export default class Equip {
     static arms = []
     //防具
     static armors = []
+    //武器容器节点
+    static armsNode
+    //防具容器节点
+    static armorsNode
     /**
      * @description 初始化装备界面
      */
     static init(){
         //创建底部界面
         Scene.open("app-ui-mainBottom",Scene.root,Equip);
+        Equip.read();
     }
     /**
      * @description 响应快速购买
@@ -31,6 +39,30 @@ export default class Equip {
      */
     static openStore(e){
         console.log(`tap button_store button~~`,e);
+    }
+    /**
+     * @description 读取装备数据
+     */
+    static read(){
+        Connect.request({type:"app/equip@read",arg:{}},(data) => {
+            if(data.err){
+                return console.log(data.err.reson);
+            }
+            initRead("arms",data.ok[0]);
+            initRead("armors",data.ok[1]);
+        })
+    }
+    /**
+     * @description 创建装备显示节点
+     */
+    static createEquip(type,index,level){
+        Equip[type][index] = Scene.open("app-ui-equip",Equip[`${type}Node`],null,{index:index,level:level,type:type});
+    }
+    /**
+     * @description 移动装备
+     */
+    static dragEquip(index){
+        return false;
     }
 }
 /****************** 本地 ******************/
@@ -50,17 +82,43 @@ class WEquipBg extends Widget{
         this.cfg.data.url = props.url;
     }
 }
+//装备黑色背景
+class EquipCon extends Widget{
+    setProps(props){
+        super.setProps(props);
+        console.log("EquipCon");
+    }
+    added(){
+        Equip[this.props.index === 0?"armsNode":"armorsNode"] = this.elements.get(this.cfg.data.id);
+    }
+}
 //背包装备图标
 class WEquip extends Widget{
     setProps(props){
         super.setProps(props);
-
+        let cfg = CfgMgr.getOne("app/cfg/pve.json@equipment")[props.level],l,t;
+        this.cfg.on.drag.arg[0] = this.cfg.on.end.arg[0] = props.index;
+        this.cfg.data.url = `images/${props.type}/${cfg["icon"+(props.type == "arms"?1:2)]}.png`;
+        l = props.index % 4;
+        t = Math.floor(props.index/4);
+        this.cfg.data.x = l * 120 + (l+1) * 30;
+        this.cfg.data.y = t * 120 + (t+1) * 30;
+        this.cfg.children[0].data.text = `LV ${props.level}`;
     }
-    drag(){
-        console.log("drag");
+    drag(index,e,target){
+        console.log("drag",index,target,e);
+        let dx = e.data.global.x - e.start.x,
+            dy = e.data.global.y - e.start.y;
+        target.x = this.cfg.data.x + dx;
+        target.y = this.cfg.data.y + dy;
     }
-    dragEnd(){
-        console.log("dragend");
+    dragEnd(index,e,target){
+        console.log("dragend",index,target,e);
+        if(Equip.dragEquip(index)){
+            return;
+        }
+        target.x = this.cfg.data.x;
+        target.y = this.cfg.data.y;
     }
 }
 //适配背包背景
@@ -84,10 +142,37 @@ const createEquipBg = (node) => {
         o.y = t * 120 + (t+1) * 30;
     }
 }
+//初始化读取数据
+const initRead = (type: string,data: Array<number>) => {
+    let c = DB.data.equip[type];
+    for(let i = 0, len = data.length; i < len; i++){
+        c[i] = data[i];
+        if(data[i]){
+            Equip.createEquip(type,i,data[i]);
+        }
+    }
+}
+//结算奖励
+//[[1(装备类型0武器 1防具),1(位置),1(等级)]]
+const mixAccount = (data) => {
+    let type: string;
+    for(let i = 0, len = data.length; i < len; i++){
+        type = data[i][0] === 0? "arms":"armors";
+        DB.data.equip[type][data[i][1]] = data[i][2];
+        if(data[i][2]){
+            Equip.createEquip(type,data[i][1],data[i][2]);
+        }
+        
+    }
+}
 /****************** 立即执行 ******************/
+//初始化前台数据库表
+DB.init("equip",{arms:[],armors:[]});
 //注册组件
 Widget.registW("app-ui-mainBottom",UiMainBottom);
+Widget.registW("app-ui-equipCon",EquipCon);
 Widget.registW("app-ui-equip",WEquip);
 Widget.registW("app-ui-equipBg",WEquipBg);
 //注册全局广播监听
 AppEmitter.add("intoMain",Equip.init);
+AppEmitter.add("account_equip",mixAccount);

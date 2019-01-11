@@ -179,6 +179,9 @@ export default class Stage {
             }else {
                 DB.data.stage.fightCount += 1;
             }
+            for(let k in data.ok){
+                AppEmitter.emit("account_"+k,data.ok[k]);
+            }
             callback && callback();
         })
     }

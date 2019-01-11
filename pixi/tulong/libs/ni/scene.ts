@@ -124,7 +124,7 @@ export default class Scene {
 					this.stop();
 				}
 				if(this.ni.id){
-					console.log(`Delete the node which id is ${this.ni.id} from cache!!`);
+					// console.log(`Delete the node which id is ${this.ni.id} from cache!!`);
 					o.widget.elements.delete(o.ni.id);
 				}
 			})
