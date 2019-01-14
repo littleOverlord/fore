@@ -1,14 +1,21 @@
 {   
-    "type": "sprite",
+    "type": "container",
     "on":{"drag":{"func":"drag","arg":[]},"end":{"func":"dragEnd","arg":[]}},
     "data": {
-        "url": "",
         "width": 120,
-        "height": 120,
-        "x": 10,
-        "y": 10
+        "height": 120
     },
     "children": [
+        {
+            "type": "sprite",
+            "data": {
+                "url": "",
+                "width": 120,
+                "height": 120,
+                "x": 60,
+                "y": 60
+            }
+        },
         {
             "type": "text",
             "data": {

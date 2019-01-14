@@ -96,14 +96,16 @@ class EquipCon extends Widget{
 class WEquip extends Widget{
     setProps(props){
         super.setProps(props);
-        let cfg = CfgMgr.getOne("app/cfg/pve.json@equipment")[props.level],l,t;
+        let cfg = CfgMgr.getOne("app/cfg/pve.json@equipment")[props.level],l,t,tl;
         this.cfg.on.drag.arg[0] = this.cfg.on.end.arg[0] = props.index;
-        this.cfg.data.url = `images/${props.type}/${cfg["icon"+(props.type == "arms"?1:2)]}.png`;
         l = props.index % 4;
         t = Math.floor(props.index/4);
         this.cfg.data.x = l * 120 + (l+1) * 30;
         this.cfg.data.y = t * 120 + (t+1) * 30;
-        this.cfg.children[0].data.text = `LV ${props.level}`;
+        this.cfg.children[0].data.url = `images/${props.type}/${cfg["icon"+(props.type == "arms"?1:2)]}.png`;
+        this.cfg.children[1].data.text = `LV ${props.level}`;
+        tl = this.cfg.children[1].data.text.length;
+        this.cfg.children[1].data.x = 120 - tl * (this.cfg.children[1].data.style.fontSize / 2);
     }
     drag(index,e,target){
         console.log("drag",index,target,e);
