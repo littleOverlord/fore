@@ -14,18 +14,15 @@ const dataStage = {level:1,fightCount:0,lastFightTime:0};
 //获取当前关卡怪物属性[attack,hp,attackSpeed,attackDistance,speed]
 const findMonster = (type) => {
     let a = ["attack","hp","attackSpeed","attackDistance","speed"],
-        t = ["mAttr","bAttr"],
-        l = ["mLevel","bLevel"],
-        id = ["mId","bId"],
         cfg = CfgMgr.getOne("app/cfg/pve.json@stage")[dataStage.level],
-        scale = cfg[t[type]],
-        attr = CfgMgr.getOne("app/cfg/pve.json@attribute")[cfg[l[type]]],
+        scale = cfg[`attr${type+1}`],
+        attr = CfgMgr.getOne("app/cfg/pve.json@attribute")[cfg[`level${type+1}`]],
         r = [];
     for(let i = 0, len = a.length; i < len; i++){
         r[i] = scale[i] * attr[a[i]];
     }
     // console.log(cfg,attr);
-    return {module:cfg[id[type]],attr:r};
+    return {module:cfg[`id${type+1}`],attr:r};
 }
 
 //模拟后台读取接口
@@ -46,19 +43,26 @@ const fightTest = (param: any,callback: Function) => {
         r.err = {reson:"Can't fight boss!"};
         return callback(r);
     }
-    if(param.type == 1){
-        dataStage.fightCount = 0;
-    }
     saveDb("stage",dataStage);
     callback(findMonster(param.type));
 }
 //模拟后台结算接口
 //装备 [[1(装备类型0武器 1防具),1(位置),1(等级)]]
 const accountTest = (param: any,callback: Function) => {
-    dataStage.fightCount += 1;
+    let award:any = fightAward(param.type);
+    if(param.type == 1){
+        dataStage.fightCount = 0;
+        dataStage.level += 1;
+    }else{
+        dataStage.fightCount += 1;
+    }
     saveDb("stage",dataStage);
-    addEquip([]);
-    callback({ok:{}});
+    addEquip(award.equip);
+    callback({ok:{award:award}});
+}
+//获取关卡奖励
+const fightAward = (type):any => {
+    const cfg = CfgMgr.getOne("app/cfg/pve.json@stage")[dataStage.level];
 }
 Connect.setTest("app/stage@read",readStage);
 Connect.setTest("app/stage@fight",fightTest);
