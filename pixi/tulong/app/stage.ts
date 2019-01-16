@@ -4,7 +4,6 @@ import Frame from '../libs/ni/frame';
 import Util from '../libs/ni/util';
 import TextAnimate from "../libs/ni/textani";
 import Connect from "../libs/ni/connect";
-import CfgMgr from "../libs/ni/cfgmrg";
 import DB from "../libs/ni/db";
 
 import {Fighter as FighterCfg} from './ui/fighter';
@@ -33,7 +32,7 @@ export default class Stage {
         Stage.read(()=>{
             //测试fighter
             Stage.addOwer();
-            Connect.request({type:"app/stage@fight",arg:{type:DB.data.stage.fightCount == 5?1:0}},Stage.addMonster);
+            Stage.fight();
         });
         
     }
@@ -66,9 +65,9 @@ export default class Stage {
             }
         }
     }
-    static addOwer(){
+    static addOwer(x?: number){
         let f = new Fighter({
-            x: 340,
+            x: x || 340,
             y: 430,
             sid: roleId,
             module: "M_S_002",
@@ -154,23 +153,31 @@ export default class Stage {
     }
     //死亡移除战斗者
     static removeFighter(id){
-        let f = fighterMap[id];
+        let f = fighterMap[id],r = f.sid !== roleId?1:0;
         Scene.remove(f._show);
         delete fighterMap[id];
-        if(f.sid !== roleId){
-            Stage.account(1,()=>{
-                Stage.addDelay(
-                    ()=>{
-                        Connect.request({type:"app/stage@fight",arg:{type:0}},Stage.addMonster)
-                    },
-                    2000
-                )
-            });
+        Stage.account(r,()=>{
+            Stage.addDelay(
+                ()=>{
+                    if(r == 0){
+                        Stage.addOwer(roleSelf.x);
+                    }
+                    Stage.fight();
+                },
+                2000
+            )
+        });
+        if(r == 0){
+            fightScene.removeAll();
         }
+    }
+    static fight(){
+        fightType = DB.data.stage.fightCount == 5?1:0;
+        Connect.request({type:"app/stage@fight",arg:{type:fightType}},Stage.addMonster);
     }
     //结算
     static account(r,callback){
-        Connect.request({type:"app/stage@account",arg:{result:r}},(data) => {
+        Connect.request({type:"app/stage@account",arg:{result:r,type:fightType}},(data) => {
             if(data.err){
                 return console.log(data.err.reson);
             }
@@ -197,6 +204,8 @@ const roleId = "role";
 let roleSelf;
 //怪物位置
 const monsterX = 800;
+//怪物类型
+let fightType = 0;
 //战斗飘字管理
 let textMgrRed: TextAnimate, // 红色
     textMgrGreen: TextAnimate; // 绿色

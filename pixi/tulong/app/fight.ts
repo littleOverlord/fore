@@ -114,6 +114,13 @@ export class FScene{
             f[k] = param[k];
         }
     }
+    //移除所有战斗者
+    removeAll(){
+        this.fighters.forEach(f => {
+            this.addEvents([EType.remove,f.id]);
+            this.fighters.delete(f.id);
+        })
+    }
 }
 //战斗决策
 class Policy{

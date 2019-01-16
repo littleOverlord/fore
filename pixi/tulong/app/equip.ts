@@ -155,16 +155,15 @@ const initRead = (type: string,data: Array<number>) => {
     }
 }
 //结算奖励
-//[[1(装备类型0武器 1防具),1(位置),1(等级)]]
+//[[1(装备类型0武器 1防具),1(等级),1(位置)]]
 const mixAccount = (data) => {
     let type: string;
     for(let i = 0, len = data.length; i < len; i++){
         type = data[i][0] === 0? "arms":"armors";
-        DB.data.equip[type][data[i][1]] = data[i][2];
-        if(data[i][2]){
-            Equip.createEquip(type,data[i][1],data[i][2]);
+        DB.data.equip[type][data[i][2]] = data[i][1];
+        if(data[i][1]){
+            Equip.createEquip(type,data[i][2],data[i][1]);
         }
-        
     }
 }
 /****************** 立即执行 ******************/
