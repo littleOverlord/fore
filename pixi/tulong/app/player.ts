@@ -62,10 +62,12 @@ class UiMainTop extends Widget{
 }
 
 /****************** 立即执行 ******************/
+//初始化玩家数据库表
+DB.init("player",{money:1});
 //注册组件
 Widget.registW("app-ui-mainTop",UiMainTop);
 //添加全局监听
 AppEmitter.add("intoMain",Player.init);
-AppEmitter.add("account_money",Player.init);
+AppEmitter.add("account_money",Player.addMoney);
 DB.emitter.add("stage.level",Player.updateStageLevel);
 DB.emitter.add("stage.fightCount",Player.updateStageLevel);

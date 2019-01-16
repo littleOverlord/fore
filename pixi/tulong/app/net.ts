@@ -203,6 +203,7 @@ const addEquip = (data: Array<any>) => {
                 break;
             }
         }
+        item = data.shift();
     }
     saveDb("equip",dataEquip);
     return r;
