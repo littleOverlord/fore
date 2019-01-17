@@ -197,6 +197,10 @@ export default class Scene {
 			m2 = dif/Math.abs(dif);
 		s.scale.x = Math.abs(s.scale.x)*m2;
 	}
+	/**
+	 * @description 根据spritesheet json 创建 PIXI.Spritesheet
+	 * @param data spritesheet json
+	 */
 	static createSpriteSheets(data){
 		for(let k in data){
 			let texture = resources[k.replace(".json",".png")].texture.baseTexture;
@@ -207,6 +211,10 @@ export default class Scene {
 		}
 		console.log(Scene.spriteSheets);
 	}
+	/**
+	 * @description 根据图片路径获取spriteSheets
+	 * @param path like "app/images/arms/1222.png"
+	 */
 	static getTextureFromSpritesheet(path){
 		let m = path.match(/(\/[^\/\.]+)\.png/),
 			name,
@@ -255,11 +263,17 @@ const creater = {
 		o.ni = {z:data.z || 0, id: data.id || ""};
 		o.alpha = data.alpha || 1;
 	},
+	/**
+	 * @description 创建 PIXI.Container
+	 */
 	container: (data) => {
 		let o = new Container();
 		creater.init(o,data);
 		return o;
 	},
+	/**
+	 * @description 创建 PIXI.Sprite
+	 */
 	sprite: (data) => {
 		let t = Scene.getTextureFromSpritesheet(data.url),o;
 		if(!t){
