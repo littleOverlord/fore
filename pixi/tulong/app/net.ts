@@ -174,9 +174,9 @@ const readEquip = (param: any,callback: Function) => {
 const mixtureEquip = (param: any,callback: Function) => {
     let type = param.type-1,eq = dataEquip[type],s = eq[param.src], t = eq[param.target],r = [];
     if(s != t){
-        eq[param.src] = t;
-        eq[param.target] = s;
-        r = [t,s];
+        // eq[param.src] = t;
+        // eq[param.target] = s;
+        // r = [t,s];
     }else{
         eq[param.target] = s+1;
         eq[param.src] = 0;

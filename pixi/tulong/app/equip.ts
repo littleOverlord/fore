@@ -6,6 +6,7 @@ import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
 
 import {AppEmitter} from './appEmitter';
+import {AppUtil} from './util';
 
 /****************** 导出 ******************/
 /**
@@ -59,10 +60,54 @@ export default class Equip {
         Equip[type][index] = Scene.open("app-ui-equip",Equip[`${type}Node`],null,{index:index,level:level,type:type});
     }
     /**
+     * @description 删除装备显示节点
+     */
+    static removeEquip(type,index){
+        DB.data.equip[type][index] = 0;
+        Scene.remove(Equip[type][index]);
+        delete Equip[type][index];
+    }
+    /**
      * @description 移动装备
      */
-    static dragEquip(index){
+    static dragEquip(index,type){
+        let list = Equip[type],equip = list[index],near = 200 * 200,ni;
+        for(let i = 0, len = list.length; i < len; i++){
+            if(i == index || !list[i]){
+                continue;
+            }
+            
+            let dx = list[i].x - equip.x,dy = list[i].y - equip.y,
+                dd = dx * dx + dy * dy;
+            if(AppUtil.Rectangle(list[i],equip) && dd < near){
+                near = dd;
+                ni = i;
+            }
+        }
+        if(ni >= 0){
+            Equip.mixtureEquip(index,ni,type);
+            return true;
+        }
         return false;
+    }
+    /**
+     * @description 合成装备
+     * @param src 
+     * @param target 
+     * @param type 
+     */
+    static mixtureEquip(src,target,type){
+        Connect.request({type:"app/equip@mixture",arg:{src:src,target:target,type:(type == "arms"?1:2)}},(data) => {
+            if(data.err){
+                return console.log(data.err.reson);
+            }
+            if(data.ok[0] == 0){
+                Equip.removeEquip(src,type);
+                Equip.removeEquip(target,type);
+                DB.data.equip[type][target] = data.ok[1];
+                Equip.createEquip(type,target,data.ok[1]);
+            }
+        })
     }
 }
 /****************** 本地 ******************/
@@ -116,7 +161,7 @@ class WEquip extends Widget{
     }
     dragEnd(index,e,target){
         console.log("dragend",index,target,e);
-        if(Equip.dragEquip(index)){
+        if(Equip.dragEquip(index,this.props.type)){
             return;
         }
         target.x = this.cfg.data.x;
