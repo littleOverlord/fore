@@ -41,11 +41,11 @@ export default class Main {
             view: canvas,
             resolution: 1
         },cfg);
-        Loader.add(["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_002.png","images/arms.png","images/armors.png"],function(){
+        Loader.add(["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_044.png","images/ani/M_S_002.png","images/arms.png","images/armors.png"],function(){
             loadCount -= 1;
             loadOk();
         });
-        Loader.loadJson(["images/ani/M_S_043.json","images/ani/M_S_002.json","images/ui.json","images/arms.json","images/armors.json"],function(res){
+        Loader.loadJson(["images/ani/M_S_043.json","images/ani/M_S_044.json","images/ani/M_S_002.json","images/ui.json","images/arms.json","images/armors.json"],function(res){
             console.log(res);
             spriteSheetsData = res;
             loadCount -= 1;
