@@ -113,7 +113,7 @@
         {
             "type" : "animatedSprite",
             "data" : {
-                "url":"",
+                "url":"images/ua/equip_light.json",
                 "x":2000,
                 "y":0,
                 "id":"equipLight",
