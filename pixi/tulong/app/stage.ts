@@ -183,11 +183,14 @@ export default class Stage {
             }
             if(DB.data.stage.fightCount == 5){
                 DB.data.stage.fightCount = 0;
+                if(r == 1){
+                    DB.data.stage.level += 1;
+                }
             }else {
                 DB.data.stage.fightCount += 1;
             }
-            for(let k in data.ok){
-                AppEmitter.emit("account_"+k,data.ok[k]);
+            for(let k in data.ok.award){
+                AppEmitter.emit("account_"+k,data.ok.award[k]);
             }
             callback && callback();
         })

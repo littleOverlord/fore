@@ -102,8 +102,8 @@ export default class Equip {
                 return console.log(data.err.reson);
             }
             if(data.ok[0] == 0){
-                Equip.removeEquip(src,type);
-                Equip.removeEquip(target,type);
+                Equip.removeEquip(type,src);
+                Equip.removeEquip(type,target);
                 DB.data.equip[type][target] = data.ok[1];
                 Equip.createEquip(type,target,data.ok[1]);
             }
