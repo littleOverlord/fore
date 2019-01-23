@@ -181,7 +181,7 @@ export default class Stage {
             if(data.err){
                 return console.log(data.err.reson);
             }
-            if(DB.data.stage.fightCount == 5){
+            if(DB.data.stage.fightCount == 5 && r == 1){
                 DB.data.stage.fightCount = 0;
                 if(r == 1){
                     DB.data.stage.level += 1;

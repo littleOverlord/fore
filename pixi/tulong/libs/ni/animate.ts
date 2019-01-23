@@ -31,9 +31,8 @@ export default class Animate {
 			return ;
 		}
 		if(cf == rang[1]){
-			if(!o.ni.animate.once){
-				o.gotoAndPlay(rang[0]);
-			}else if(o.ni.anicallback){
+			o.gotoAndPlay(rang[0]);
+			if(o.ni.anicallback){
 				o.ni.anicallback("complete");
 			}
 		}

@@ -20,22 +20,6 @@
             }
         },
         {
-            "type": "container",
-            "data": {
-                "id": "equipBG",
-                "width": 660,
-                "height": 660,
-                "x": 65,
-                "y": 145
-            }
-        },
-        {
-            "type": "app-ui-tab",
-            "props": {"curr":0,"bg_n":"bag_tab_bg","bg_c":"bag_tab_curr","items":[
-                {"icon":"bag_tab_attack","con":"app-ui-equipCon"},{"icon":"bag_tab_armors","con":"app-ui-equipCon"}
-            ]}
-        },
-        {
             "type":"app-ui-button",
             "props":{
                 "on":{"tap":{"func":"openStore"}},
@@ -108,6 +92,35 @@
                 "text": "出售",
                 "size":30,
                 "color":"#d9c6ad"
+            }
+        },
+        {
+            "type": "container",
+            "data": {
+                "id": "equipBG",
+                "width": 660,
+                "height": 660,
+                "x": 65,
+                "y": 145
+            }
+        },
+        {
+            "type": "app-ui-tab",
+            "props": {"curr":0,"bg_n":"bag_tab_bg","bg_c":"bag_tab_curr","items":[
+                {"icon":"bag_tab_attack","con":"app-ui-equipCon"},{"icon":"bag_tab_armors","con":"app-ui-equipCon"}
+            ]}
+        },
+        {
+            "type" : "animatedSprite",
+            "data" : {
+                "url":"",
+                "x":2000,
+                "y":0,
+                "id":"equipLight",
+                "width": 240,
+                "height": 240,
+                "speed": 0.08,
+                "once": true
             }
         }
     ]

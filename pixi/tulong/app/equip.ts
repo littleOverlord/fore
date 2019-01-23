@@ -21,6 +21,10 @@ export default class Equip {
     static armsNode
     //防具容器节点
     static armorsNode
+    //合成动画节点
+    static equipLight
+    //装备合成延迟
+    static createEquipDelay
     /**
      * @description 初始化装备界面
      */
@@ -105,9 +109,33 @@ export default class Equip {
                 Equip.removeEquip(type,src);
                 Equip.removeEquip(type,target);
                 DB.data.equip[type][target] = data.ok[1];
-                Equip.createEquip(type,target,data.ok[1]);
+                Equip.createEquipDelay = ((a,b,c)=>{
+                    return () => {
+                        Equip.createEquip(a,b,c);
+                    }
+                })(type,target,data.ok[1]);
+                
             }
         })
+    }
+    /**
+     * @description 显示合成动画
+     */
+    static showLightAni(index){
+        let l = index % 4,
+        t = Math.floor(index/4);
+        Equip.equipLight.x = l * 120 + (l+1) * 30 + 65;
+        Equip.equipLight.y = t * 120 + (t+1) * 30 + 145;
+        Equip.equipLight.play();
+    }
+    /**
+     * @description 合成动画回调
+     */
+    static lightAniBack(){
+        Equip.equipLight.x = 2000;
+        Equip.equipLight.stop();
+        Equip.createEquipDelay && Equip.createEquipDelay();
+        Equip.createEquipDelay = null;
     }
 }
 /****************** 本地 ******************/
@@ -118,6 +146,9 @@ class UiMainBottom extends Widget{
         console.log("UiMainBottom added!!");
         matchBg(this.elements.get("bagBG"));
         createEquipBg(this.elements.get("equipBG"));
+        Equip.equipLight = this.elements.get("equipLight");
+        Equip.equipLight.ni.anicallback = Equip.lightAniBack;
+        Equip.equipLight.stop();
     }
 }
 //装备黑色背景
