@@ -242,6 +242,7 @@ const eventHandler = {
         }
         f._show.position.set(x,f.y);
         fighterMap[f.id] = f;
+        console.log("inert figter :: ", f.id);
     },
     move: (e) => {
         // console.log("move ==== ",e);
@@ -282,6 +283,7 @@ const eventHandler = {
         if(f.remove){
             Stage.addDelay(
                 ((_id) => {
+                    console.log("remove fighter::",_id);
                     return () => {
                         Stage.removeFighter(_id);
                     }
