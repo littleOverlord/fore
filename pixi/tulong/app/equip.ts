@@ -22,7 +22,7 @@ export default class Equip {
     //防具容器节点
     static armorsNode
     //合成动画节点
-    static equipLight
+    static bottomNode
     //装备合成延迟
     static createEquipDelay
     /**
@@ -55,6 +55,7 @@ export default class Equip {
             }
             initRead("arms",data.ok[0]);
             initRead("armors",data.ok[1]);
+            AppEmitter.emit("equipOk");
         })
     }
     /**
@@ -89,8 +90,7 @@ export default class Equip {
             }
         }
         if(ni >= 0){
-            Equip.mixtureEquip(index,ni,type);
-            return true;
+            return Equip.mixtureEquip(index,ni,type);
         }
         return false;
     }
@@ -100,7 +100,10 @@ export default class Equip {
      * @param target 
      * @param type 
      */
-    static mixtureEquip(src,target,type){
+    static mixtureEquip(src,target,type): boolean{
+        if(DB.data.equip[type][target] !== DB.data.equip[type][src]){
+            return false;
+        }
         Connect.request({type:"app/equip@mixture",arg:{src:src,target:target,type:(type == "arms"?1:2)}},(data) => {
             if(data.err){
                 return console.log(data.err.reson);
@@ -109,33 +112,45 @@ export default class Equip {
                 Equip.removeEquip(type,src);
                 Equip.removeEquip(type,target);
                 DB.data.equip[type][target] = data.ok[1];
-                Equip.createEquipDelay = ((a,b,c)=>{
-                    return () => {
-                        Equip.createEquip(a,b,c);
-                    }
-                })(type,target,data.ok[1]);
+                Equip.showLightAni(type,target,data.ok[1]);
+                if(data.ok[1] > DB.data.equip[type+"Max"]){
+                    DB.data.equip[type+"Max"] = data.ok[1];
+                }
+                // Equip.createEquipDelay = ((a,b,c)=>{
+                //     return () => {
+                //         Equip.createEquip(a,b,c);
+                //     }
+                // })(type,target,data.ok[1]);
                 
             }
         })
+        return true;
     }
     /**
      * @description 显示合成动画
      */
-    static showLightAni(index){
+    static showLightAni(type,index,level){
         let l = index % 4,
-        t = Math.floor(index/4);
-        Equip.equipLight.x = l * 120 + (l+1) * 30 + 65;
-        Equip.equipLight.y = t * 120 + (t+1) * 30 + 145;
-        Equip.equipLight.play();
+        t = Math.floor(index/4),
+        o = Scene.open("app-ui-ani",Equip.bottomNode,null,{
+            "url":"images/ua/equip_light.json",
+            "x":l * 120 + (l+1) * 30 + 65 - 60,
+            "y":t * 120 + (t+1) * 30 + 145 - 60,
+            "width": 240,
+            "height": 240,
+            "speed": 0.1,
+            "ani":"",
+            "once": true,
+            "anicallback": () => {
+                Equip.createEquip(type,index,level);
+                Scene.remove(o);
+            }
+        });
     }
     /**
      * @description 合成动画回调
      */
     static lightAniBack(){
-        Equip.equipLight.x = 2000;
-        Equip.equipLight.stop();
-        Equip.createEquipDelay && Equip.createEquipDelay();
-        Equip.createEquipDelay = null;
     }
 }
 /****************** 本地 ******************/
@@ -146,9 +161,7 @@ class UiMainBottom extends Widget{
         console.log("UiMainBottom added!!");
         matchBg(this.elements.get("bagBG"));
         createEquipBg(this.elements.get("equipBG"));
-        Equip.equipLight = this.elements.get("equipLight");
-        Equip.equipLight.ni.anicallback = Equip.lightAniBack;
-        Equip.equipLight.stop();
+        Equip.bottomNode = this.elements.get("bottom");
     }
 }
 //装备黑色背景
@@ -227,8 +240,12 @@ const initRead = (type: string,data: Array<number>) => {
         c[i] = data[i];
         if(data[i]){
             Equip.createEquip(type,i,data[i]);
+            if(data[i] > DB.data.equip[type+"Max"]){
+                DB.data.equip[type+"Max"] = data[i];
+            }
         }
     }
+    console.log("init db equip:: ");
 }
 //结算奖励
 //[[1(装备类型0武器 1防具),1(等级),1(位置)]]
@@ -239,12 +256,15 @@ const mixAccount = (data) => {
         DB.data.equip[type][data[i][2]] = data[i][1];
         if(data[i][1]){
             Equip.createEquip(type,data[i][2],data[i][1]);
+            if(data[i][1] > DB.data.equip[type+"Max"]){
+                DB.data.equip[type+"Max"] = data[i][1];
+            }
         }
     }
 }
 /****************** 立即执行 ******************/
 //初始化前台数据库表
-DB.init("equip",{arms:[],armors:[]});
+DB.init("equip",{arms:[],armors:[],armsMax:0,armorsMax:0});
 //注册组件
 Widget.registW("app-ui-mainBottom",UiMainBottom);
 Widget.registW("app-ui-equipCon",EquipCon);

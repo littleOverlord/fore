@@ -25,7 +25,11 @@ export default class Widget {
         this.props = props;
     }
     //组件被添加到场景,渲染周期内调用，谨慎使用
-    added(){}
+    /**
+     * 
+     * @param o 渲染对象
+     */
+    added(o){}
     //组件被销毁
     destory(){}
 

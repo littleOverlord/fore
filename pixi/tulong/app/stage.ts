@@ -2,6 +2,7 @@
 import Scene from '../libs/ni/scene';
 import Frame from '../libs/ni/frame';
 import Util from '../libs/ni/util';
+import CfgMgr from '../libs/ni/cfgmrg';
 import TextAnimate from "../libs/ni/textani";
 import Connect from "../libs/ni/connect";
 import DB from "../libs/ni/db";
@@ -17,9 +18,12 @@ import {Fighter, FScene} from './fight';
 export default class Stage {
     static fightScene
     static sceneNode
-    static delayCall = [];
-    static init(sceneNode){
-        Stage.sceneNode = sceneNode;
+    static delayCall = []
+    static initCount = 0
+    static init(){
+        if(Stage.initCount !== 2){
+            return;
+        }
         fightScene = new FScene();
         textMgrRed = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0xff0000});
         textMgrGreen = new TextAnimate(textAni,{fontFamily : 'Arial', fontSize: 24, fill : 0x00ff00});
@@ -71,9 +75,9 @@ export default class Stage {
             y: 430,
             sid: roleId,
             module: "M_S_002",
-            attack: 100,
-            maxHp: 800,
-            hp: 800,
+            attack: equipAttr(1,DB.data.equip.armsMax),
+            maxHp: equipAttr(1,DB.data.equip.armorsMax),
+            hp: equipAttr(1,DB.data.equip.armorsMax),
             camp: 1,
             attackSpeed: 2000
         });
@@ -281,9 +285,10 @@ const eventHandler = {
     anicallback: (e,id) => {
         let f = fighterMap[id];
         if(f.remove){
+            f.remove = 0;
             Stage.addDelay(
                 ((_id) => {
-                    console.log("remove fighter::",_id);
+                    console.log("remove fighter::",_id,Date.now());
                     return () => {
                         Stage.removeFighter(_id);
                     }
@@ -297,13 +302,59 @@ const eventHandler = {
     remove: (e) => {
         let f = fighterMap[e[1]];
         f.remove = 1;
+        console.log("set remove fighter ",f.id);
+    },
+    resetAttr: (e) => {
+        let f = fighterMap[e[1]],
+            param = e[2];
+        for(let i = 0, len = param.length; i < len; i++){
+            switch(param[i][0]){
+                case "hp":
+                    f.hp += param[i][2];
+                    Stage.modifyHp(f.hp);
+            }
+        }
+        
     }
 }
-
+/**
+ * @description 获取装备属性
+ * @param type 1武器 || 2防具
+ * @param level 装备等级
+ */
+const equipAttr = (type,level) => {
+    // let level = DB.data.equip[type+"Max"];
+    return CfgMgr.getOne("app/cfg/pve.json@equipment")[level]["attribute"+type];
+}
 /****************** 立即执行 ******************/
 //初始化关卡数据库表
 DB.init("stage",{level:1,fightCount:0,lastFightTime:0});
+DB.emitter.add("equip.armsMax",(old) => {
+    if(!old || !roleSelf){
+        return;
+    }
+    let n = equipAttr(1,DB.data.equip.armsMax),o = equipAttr(1,old);
+    if(o !== n){
+        fightScene.modify(roleSelf.id,[["attack","+",o-n]]);
+    }
+})
+DB.emitter.add("equip.armorsMax",(old) => {
+    if(!old || !roleSelf){
+        return;
+    }
+    let n = equipAttr(2,DB.data.equip.armorsMax),o = equipAttr(2,old);
+    if(o !== n){
+        fightScene.modify(roleSelf.id,[["hp","+",o-n]]);
+    }
+})
+
 //注册页面打开事件
 AppEmitter.add("openTop",(node)=>{
-    Stage.init(node);
+    Stage.sceneNode = node;
+    Stage.initCount += 1;
+    Stage.init();
+});
+AppEmitter.add("equipOk",()=>{
+    Stage.initCount += 1;
+    Stage.init();
 });

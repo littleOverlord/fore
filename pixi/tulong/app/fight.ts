@@ -6,7 +6,8 @@ const EType = {
     insert : "insert",
     move   : "move",
     damage : "damage",
-    remove : "remove"
+    remove : "remove",
+    resetAttr : "resetAttr"
 }
 //战斗者
 export class Fighter{
@@ -106,13 +107,18 @@ export class FScene{
     }
     //更新fighter
     modify(id:number,param:any){
-        let f = this.fighters.get(id);
+        let f = this.fighters.get(id),r = [];
         if(!f){
             return console.log(`There isn't the fighter who's id is ${id}`);
         }
-        for(let k in param){
-            f[k] = param[k];
+        for(let i = 0, len = param.length; i < len; i++){
+            if(param[i].length == 2){
+                f[param[i][0]] = param[i][1];
+            }else{
+                f[param[i][0]] += param[i][2];
+            }
         }
+        this.addEvents([EType.resetAttr,f.id,param]);
     }
     //移除所有战斗者
     removeAll(){

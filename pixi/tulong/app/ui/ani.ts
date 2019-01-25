@@ -26,17 +26,21 @@ class Ani extends Widget{
     */
     setProps(props){
         super.setProps(props);
-        const cfg = this.cfg,dk = ["id","url","width","height","x","y","speed","once","anicallback"];
+        const cfg = this.cfg,dk = ["id","url","width","height","x","y","speed","once","ani"];
         for(let i = 0, len = dk.length; i < len; i++){
             cfg.data[dk[i]] = props[dk[i]];
         }
-
+        if(!props.id){
+            props.id = id++;
+            cfg.data.id = props.id;
+        }
     }
-    added(){
+    added(o){
         console.log();
+        o.ni.anicallback = this.props.anicallback;
     }
 }
-
+let id = 1;
 /****************** 立即执行 ******************/
 //注册组件
 Widget.registW("app-ui-ani",Ani);

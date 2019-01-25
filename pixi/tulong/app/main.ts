@@ -8,7 +8,7 @@ import './ui/tab'
 import './ui/button'
 import './ui/ani'
 //local use
-import './net';
+import  './net';
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';
 import CfgMgr from '../libs/ni/cfgmrg';
@@ -58,7 +58,7 @@ export default class Main {
             loadCount -= 1;
             loadOk();
         });
-        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json","app/ui/tab.json","app/ui/equip.json","app/ui/equipCon.json","app/ui/equipBg.json","app/ui/button.json"],function(res){
+        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json","app/ui/tab.json","app/ui/equip.json","app/ui/equipCon.json","app/ui/equipBg.json","app/ui/button.json","app/ui/ani.json"],function(res){
             console.log(res);
             uiData = res;
             loadCount -= 1;

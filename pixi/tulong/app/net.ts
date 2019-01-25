@@ -4,9 +4,10 @@ import CfgMgr from "../libs/ni/cfgmrg";
 /**
  * @description 模拟后台测试
  */
+
 //存储
 const saveDb = (key,data) => {
-    localStorage[key] = JSON.stringify(data);
+    localStorage.setItem(key,JSON.stringify(data));
 }
 //权重
 class Weight{
@@ -42,12 +43,13 @@ class Weight{
     }
 }
 /****************** player ******************/
-const dataPlayer = {money:0};
+let dataPlayer = {money:0};
 //读取玩家信息
 const readPlayer = (param: any, callback) => {
-    let d = localStorage.player;
+    let d:any = localStorage.getItem("player");
     if(d){
         d = JSON.parse(d);
+        dataPlayer = d;
     }else{
         d = dataPlayer;
     }
@@ -64,7 +66,7 @@ Connect.setTest("app/player@read",readPlayer);
 
 /****************** stage ******************/
 
-const dataStage = {level:1,fightCount:0,lastFightTime:0};
+let dataStage = {level:1,fightCount:0,lastFightTime:0};
 //获取当前关卡怪物属性[attack,hp,attackSpeed,attackDistance,speed]
 const findMonster = (type) => {
     let a = ["attack","hp","attackSpeed","attackDistance","speed"],
@@ -81,9 +83,10 @@ const findMonster = (type) => {
 
 //模拟后台读取接口
 const readStage = (param: any,callback: Function) => {
-    let d = localStorage.stage;
+    let d:any = localStorage.getItem("stage");
     if(d){
         d = JSON.parse(d);
+        dataStage = d;
     }else{
         d = dataStage;
     }
@@ -158,12 +161,13 @@ Connect.setTest("app/stage@account",accountTest);
 
 /****************** equip ******************/
 //[[武器等级,..],[防具等级,...]]
-const dataEquip = [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
+let dataEquip = [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
 //模拟读取装备
 const readEquip = (param: any,callback: Function) => {
-    let d = localStorage.equip;
+    let d:any = localStorage.getItem("equip");
     if(d){
         d = JSON.parse(d);
+        dataEquip = d;
     }else{
         d = dataEquip;
     }

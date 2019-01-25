@@ -77,7 +77,7 @@ export default class Scene {
 	static open(name: string,parent: any,logic?:any,props?:any): any{
 		let w = Widget.factory(name,name,props),
 			o = Scene.create(null,w,parent,logic);
-		w.added();
+		w.added(o);
 		return o;
 	}
 	/**
@@ -111,7 +111,7 @@ export default class Scene {
 		if(!creater[option.type]){
 			w = Widget.factory(option.type,option.script||option.type,option.props);
 			o = Scene.create(null,w,parent,logic);
-			w.added();
+			w.added(o);
 		}else{
 			o = creater[option.type](option.data);
 			o.widget = w;
@@ -324,7 +324,7 @@ const creater = {
 			o = new AnimatedSprite(Scene.spriteSheets[data.url].animations[m[1]]);
 		creater.init(o,data);
 		o.animationSpeed = data.speed;
-		o.ni.actions = Scene.spriteSheets[data.url].data.actions;
+		o.ni.actions = Scene.spriteSheets[data.url].data.actions || {};
 		o.ni.anicallback = data.anicallback;
 		o.ni.animate = {};
 		for(let i = 0,len = attr.length; i < len; i++){
