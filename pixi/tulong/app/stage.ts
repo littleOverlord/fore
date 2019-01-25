@@ -36,7 +36,7 @@ export default class Stage {
         Stage.read(()=>{
             //测试fighter
             Stage.addOwer();
-            Stage.fight();
+            // Stage.fight();
         });
         
     }
@@ -71,13 +71,13 @@ export default class Stage {
     }
     static addOwer(x?: number){
         let f = new Fighter({
-            x: x || 340,
+            x: 340,
             y: 430,
             sid: roleId,
             module: "M_S_002",
             attack: equipAttr(1,DB.data.equip.armsMax),
-            maxHp: equipAttr(1,DB.data.equip.armorsMax),
-            hp: equipAttr(1,DB.data.equip.armorsMax),
+            maxHp: equipAttr(2,DB.data.equip.armorsMax),
+            hp: equipAttr(2,DB.data.equip.armorsMax),
             camp: 1,
             attackSpeed: 2000
         });
@@ -165,14 +165,19 @@ export default class Stage {
                 ()=>{
                     if(r == 0){
                         Stage.addOwer(roleSelf.x);
+                    }else{
+                        Stage.fight();
                     }
-                    Stage.fight();
                 },
                 2000
             )
         });
         if(r == 0){
             fightScene.removeAll();
+            for(let k in fighterMap){
+                Scene.remove(fighterMap[k]._show);
+                delete fighterMap[k];
+            }
         }
     }
     static fight(){
@@ -241,6 +246,7 @@ const eventHandler = {
             roleSelf = f;
             x = f.x;
             Stage.modifyHp(f.hp);
+            Stage.fight();
         }else{
             x = monsterX;
         }

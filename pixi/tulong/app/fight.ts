@@ -123,7 +123,6 @@ export class FScene{
     //移除所有战斗者
     removeAll(){
         this.fighters.forEach(f => {
-            this.addEvents([EType.remove,f.id]);
             this.fighters.delete(f.id);
         })
     }
