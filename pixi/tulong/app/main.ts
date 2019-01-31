@@ -3,6 +3,7 @@
 import './player'
 import './stage'
 import './equip'
+import './store'
 //ui
 import './ui/tab'
 import './ui/button'
@@ -58,7 +59,7 @@ export default class Main {
             loadCount -= 1;
             loadOk();
         });
-        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json","app/ui/tab.json","app/ui/equip.json","app/ui/equipCon.json","app/ui/equipBg.json","app/ui/button.json","app/ui/ani.json"],function(res){
+        Loader.loadJson(["app/ui/mainTop.json","app/ui/mainBottom.json","app/ui/tab.json","app/ui/equip.json","app/ui/equipCon.json","app/ui/equipBg.json","app/ui/button.json","app/ui/ani.json","app/ui/fastBuy.json"],function(res){
             console.log(res);
             uiData = res;
             loadCount -= 1;

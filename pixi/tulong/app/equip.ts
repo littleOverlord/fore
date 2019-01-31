@@ -5,6 +5,7 @@ import CfgMgr from '../libs/ni/cfgmrg';
 import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
 
+
 import {AppEmitter} from './appEmitter';
 import {AppUtil} from './util';
 
@@ -33,17 +34,16 @@ export default class Equip {
         Scene.open("app-ui-mainBottom",Scene.root,Equip);
         Equip.read();
     }
-    /**
-     * @description 响应快速购买
-     */
-    static fastBuy(e){
-        console.log(`tap fast_buy button~~`,e);
-    }
+    
     /**
      * @description 打开商店界面
      */
     static openStore(e){
         console.log(`tap button_store button~~`,e);
+    }
+    static tab(pos){
+        console.log("select equip type ",pos);
+        DB.data.equip.tab = pos;
     }
     /**
      * @description 读取装备数据
@@ -264,7 +264,7 @@ const mixAccount = (data) => {
 }
 /****************** 立即执行 ******************/
 //初始化前台数据库表
-DB.init("equip",{arms:[],armors:[],armsMax:0,armorsMax:0});
+DB.init("equip",{arms:[],armors:[],armsMax:0,armorsMax:0,tab: 0});
 //注册组件
 Widget.registW("app-ui-mainBottom",UiMainBottom);
 Widget.registW("app-ui-equipCon",EquipCon);

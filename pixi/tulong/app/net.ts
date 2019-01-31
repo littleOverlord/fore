@@ -22,6 +22,7 @@ class Weight{
             this.all += wTable[i];
             w.push(this.all);
             this.table[i] = w;
+            w = [];
         }
     }
     private all = 0
@@ -189,6 +190,7 @@ const mixtureEquip = (param: any,callback: Function) => {
     saveDb("equip",dataEquip);
     callback({ok:r});
 }
+
 //添加装备
 // [level,level,...]
 /**
@@ -215,3 +217,64 @@ const addEquip = (data: Array<any>) => {
 
 Connect.setTest("app/equip@read",readEquip);
 Connect.setTest("app/equip@mixture",mixtureEquip);
+
+/****************** equip ******************/
+/**
+ * {
+ *  fast:[level,money] // 
+ * }
+ */
+
+let dataStore = {fast:[[1,5],[1,5]]};
+//模拟读取商店数据
+const readStore = (param: any,callback: Function) => {
+    let d:any = localStorage.getItem("store");
+    if(d){
+        d = JSON.parse(d);
+        dataStore = d;
+    }else{
+        d = dataStore;
+    }
+    callback({ok:d});
+}
+//模拟快速购买装备
+//param {type: 武器(1)||防具(2)}
+const fastBuy = (param: any,callback: Function) => {
+    let fast = dataStore.fast[param.type-1],dm = dataPlayer.money - fast[1],eruips, r:any = {};
+    if(dm < 0){
+        r.err = {reson:"not enough money"};
+        return callback(r);
+    }
+    eruips = addEquip([[param.type-1,fast[0]]]);
+    if(eruips.length == 0){
+        r.err = {reson:"bag is full"};
+        return callback(r);
+    }
+    r.ok = {};
+    r.ok.equip = eruips;
+    r.ok.money = dm;
+    r.ok.fast = dataStore.fast[param.type-1] = caclFast(param.type-1);
+    dataPlayer.money = dm;
+    saveDb("store",dataStore);
+    saveDb("player",dataPlayer);
+    callback(r);
+}
+//模拟快速购买装备
+//param {type: 武器(1)||防具(2)}
+const caclFast = (type) => {
+    let list = [-7,-6,-5],w = equipWeight.cacl(),diff = list[w],equips = dataEquip[type],level,max = 0,cfg = CfgMgr.getOne("app/cfg/pve.json@equipment"),money;
+    for(let i = 0 ,len = equips.length; i < len; i++){
+        if(equips[i]> max){
+            max = equips[i];
+        }
+    }
+    level = max + diff;
+    if(level < 1){
+        level = 1;
+    }
+    money = cfg[level].money;
+    return [level,money];
+}
+
+Connect.setTest("app/store@read",readStore);
+Connect.setTest("app/store@fastbuy",fastBuy);

@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 import Scene from '../../libs/ni/scene';
 import Widget from '../../libs/ni/widget';
+import { HandlerResult } from '../../libs/ni/events';
 
 /****************** 导出 ******************/
 /****************** 本地 ******************/
@@ -43,6 +44,7 @@ class Tab extends Widget{
             }
         }
         index = pos;
+        return HandlerResult.OK;
     }
 }
 

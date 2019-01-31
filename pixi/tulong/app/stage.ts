@@ -132,14 +132,14 @@ export default class Stage {
         }
     }
     //更新自己的血量
-    static modifyHp(hp){
-        Stage.sceneNode.widget.elements.get("token_hp").text = hp+"";
+    static modifyShowAttr(type,value){
+        Stage.sceneNode.widget.elements.get("token_"+type).text = value+"";
     }
     //伤害延迟
     static damgeDelay(t: Fighter,damage: number){
         t.hp -= damage;
         if(t.sid == roleId){
-            Stage.modifyHp(t.hp);
+            Stage.modifyShowAttr("hp",t.hp);
         }
         textMgrRed.create({
             x: t._show.x - 20,
@@ -245,7 +245,8 @@ const eventHandler = {
         if(f.sid == roleId){
             roleSelf = f;
             x = f.x;
-            Stage.modifyHp(f.hp);
+            Stage.modifyShowAttr("hp",f.hp);
+            Stage.modifyShowAttr("attack",f.attack);
             Stage.fight();
         }else{
             x = monsterX;
@@ -317,7 +318,11 @@ const eventHandler = {
             switch(param[i][0]){
                 case "hp":
                     f.hp += param[i][2];
-                    Stage.modifyHp(f.hp);
+                    Stage.modifyShowAttr("hp",f.hp);
+                    break;
+                case "attack":
+                    f.attack += param[i][2];
+                    Stage.modifyShowAttr("attack",f.attack);
             }
         }
         

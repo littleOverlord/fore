@@ -36,6 +36,7 @@ export default class Player {
         let node = elements.get("token_money");
         node.text = `${money}`;
         node.x = (208 - 16 * node.text.length)/2;
+        console.log("update money ",money);
     }
     static read(){
         Connect.request({type:"app/player@read",arg:{}},(data) => {
