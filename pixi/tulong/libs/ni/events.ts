@@ -98,7 +98,7 @@ export class Events {
      * @description 移动事件
      */
     static move(e){
-        console.log("move this ",this);
+        // console.log("move this ",this);
         if(!Events.status.currTarget){
             return;
         }

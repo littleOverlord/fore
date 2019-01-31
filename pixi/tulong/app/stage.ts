@@ -346,7 +346,7 @@ DB.emitter.add("equip.armsMax",(old) => {
     }
     let n = equipAttr(1,DB.data.equip.armsMax),o = equipAttr(1,old);
     if(o !== n){
-        fightScene.modify(roleSelf.id,[["attack","+",o-n]]);
+        fightScene.modify(roleSelf.id,[["attack","+",n-o]]);
     }
 })
 DB.emitter.add("equip.armorsMax",(old) => {
@@ -355,7 +355,7 @@ DB.emitter.add("equip.armorsMax",(old) => {
     }
     let n = equipAttr(2,DB.data.equip.armorsMax),o = equipAttr(2,old);
     if(o !== n){
-        fightScene.modify(roleSelf.id,[["hp","+",o-n]]);
+        fightScene.modify(roleSelf.id,[["hp","+",n-o]]);
     }
 })
 
