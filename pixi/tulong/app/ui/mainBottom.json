@@ -38,19 +38,30 @@
             "type": "app-ui-fastBuy"
         },
         {
-            "type":"app-ui-button",
-            "props":{
-                "on":{"tap":{"func":"sale"}},
-                "id":"button_sale",
-                "url": "images/ui/button_sale.png",
+            "type": "container",
+            "data": {
+                "id": "button_sale",
                 "width": 136,
                 "height": 100,
                 "x": 524,
-                "y": 770,
-                "text": "出售",
-                "size":30,
-                "color":"#d9c6ad"
-            }
+                "y": 770
+            },
+            "children":[
+                {
+                    "type":"app-ui-button",
+                    "props":{
+                        "id":"button_sale",
+                        "url": "images/ui/button_sale.png",
+                        "width": 136,
+                        "height": 100,
+                        "x": 0,
+                        "y": 0,
+                        "text": "出售",
+                        "size":30,
+                        "color":"#d9c6ad"
+                    }
+                }
+            ]
         },
         {
             "type": "container",

@@ -14,6 +14,19 @@ export class AppUtil{
        if( a_x_w < b_w_w && a_y_h < b_h_h ) return true;
        else return false;
    }
+   /**
+    * @description 计算 !! 为true的元素个数
+    * @param o []
+    */
+   static caclEmptyInObj(o: Array<any>): number{
+    let c = 0;
+    for(let i = 0, len = o.length; i < len; i++){
+        if(!!o[i]){
+            c ++;
+        }
+    }
+    return c;
+   }
 }
 
 /****************** 立即执行 ******************/

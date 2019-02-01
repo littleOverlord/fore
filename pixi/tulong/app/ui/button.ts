@@ -31,12 +31,12 @@ class Button extends Widget{
         for(let i = 0, len = dk.length; i < len; i++){
             cfg.data[dk[i]] = props[dk[i]];
         }
-        cfg.on = props.on;
+        cfg.on = props.on || {"tap":{"func":"buttonTap",arg:[]}};
         text.text = props.text;
         text.style.fontSize = props.size;
         text.style.fill = props.color;
 
-        if(cfg.on.tap){
+        if(props.on && props.on.tap){
             this[cfg.on.tap.func] = ()=>{
                 return this.buttonTap();
             }

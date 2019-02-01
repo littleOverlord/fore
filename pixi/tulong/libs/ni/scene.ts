@@ -229,6 +229,18 @@ export default class Scene {
 		t = Scene.spriteSheets[name].textures[m[0].replace(/\//,"")]
 		return t;
 	}
+	/**
+	 * @description 获取对象全局位置
+	 * @returns PIXI.Rectangle
+	 */
+	static getGlobal(o){
+		let r = new Rectangle(),g = o.toGlobal(new Point(0,0),null,true);
+		r.width = o.width;
+		r.height = o.height;
+		r.x = g.x;
+		r.y = g.y;
+		return r;
+	}
 }
 /****************** 本地 ******************/
 let Application = PIXI.Application,
@@ -240,6 +252,7 @@ let Application = PIXI.Application,
 		Text = PIXI.Text,
 		Spritesheet = PIXI.Spritesheet,
 		AnimatedSprite = PIXI.extras.AnimatedSprite,
+		Point = PIXI.Point,
 		//当前渲染实例 new PIXI.Application()
 		app;
 /**

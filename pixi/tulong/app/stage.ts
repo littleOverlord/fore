@@ -16,10 +16,17 @@ import {Fighter, FScene} from './fight';
  * 关卡
  */
 export default class Stage {
+    // 战斗逻辑场景
     static fightScene
+    // 场景节点
     static sceneNode
+    // 延迟函数列表
     static delayCall = []
+    // 装备最高等级是否发生变化
+    static equipMaxStatus = false
+    // 初始调用计数，调用第二次执行
     static initCount = 0
+    // 初始函数
     static init(){
         if(Stage.initCount !== 2){
             return;
@@ -40,6 +47,7 @@ export default class Stage {
         });
         
     }
+    //读取关卡数据
     static read(callback){
         Connect.request({type:"app/stage@read",arg:{}},(data)=>{
             if(data.err){
@@ -69,6 +77,7 @@ export default class Stage {
             }
         }
     }
+    //在战斗场景中创建自己
     static addOwer(x?: number){
         let f = new Fighter({
             x: 340,
@@ -83,7 +92,7 @@ export default class Stage {
         });
         fightScene.insert(f);
     }
-    //添加怪物
+    //在战斗场景中添加怪物
     static addMonster(monster){
         let x = roleSelf?roleSelf.x + (monsterX - 340):monsterX,
             a = ["attack","hp","attackSpeed","attackDistance","speed"],
@@ -178,10 +187,19 @@ export default class Stage {
                 Scene.remove(fighterMap[k]._show);
                 delete fighterMap[k];
             }
+        }else{
+            fullHp();
         }
     }
+    // 调用战斗接口
+    // 如果挑战boss失败，则在装备最高等级变化后重新尝试挑战
     static fight(){
-        fightType = DB.data.stage.fightCount == 5?1:0;
+        if(DB.data.stage.fightCount == 5 || (Stage.equipMaxStatus && DB.data.stage.fightCount > 5)){
+            fightType = 1;
+            Stage.equipMaxStatus = false;
+        }else{
+            fightType = 0;
+        }
         Connect.request({type:"app/stage@fight",arg:{type:fightType}},Stage.addMonster);
     }
     //结算
@@ -190,13 +208,11 @@ export default class Stage {
             if(data.err){
                 return console.log(data.err.reson);
             }
-            if(DB.data.stage.fightCount == 5 && r == 1){
-                DB.data.stage.fightCount = 0;
-                if(r == 1){
-                    DB.data.stage.level += 1;
-                }
-            }else {
-                DB.data.stage.fightCount += 1;
+            if(DB.data.stage.fightCount !== data.ok.fightCount){
+                DB.data.stage.fightCount = data.ok.fightCount;
+            }
+            if(DB.data.stage.level !== data.ok.level){
+                DB.data.stage.level = data.ok.level;
             }
             for(let k in data.ok.award){
                 AppEmitter.emit("account_"+k,data.ok.award[k]);
@@ -337,6 +353,12 @@ const equipAttr = (type,level) => {
     // let level = DB.data.equip[type+"Max"];
     return CfgMgr.getOne("app/cfg/pve.json@equipment")[level]["attribute"+type];
 }
+const fullHp = () => {
+    let d = roleSelf.maxHp - roleSelf.hp;
+    if(d > 0){
+        fightScene.modify(roleSelf.id,[["hp","+",d]]);
+    }
+}
 /****************** 立即执行 ******************/
 //初始化关卡数据库表
 DB.init("stage",{level:1,fightCount:0,lastFightTime:0});
@@ -346,6 +368,7 @@ DB.emitter.add("equip.armsMax",(old) => {
     }
     let n = equipAttr(1,DB.data.equip.armsMax),o = equipAttr(1,old);
     if(o !== n){
+        Stage.equipMaxStatus = true;
         fightScene.modify(roleSelf.id,[["attack","+",n-o]]);
     }
 })
@@ -355,6 +378,7 @@ DB.emitter.add("equip.armorsMax",(old) => {
     }
     let n = equipAttr(2,DB.data.equip.armorsMax),o = equipAttr(2,old);
     if(o !== n){
+        Stage.equipMaxStatus = true;
         fightScene.modify(roleSelf.id,[["hp","+",n-o]]);
     }
 })

@@ -107,15 +107,15 @@ const fightTest = (param: any,callback: Function) => {
 //模拟后台结算接口
 //装备 [[1(装备类型0武器 1防具),1(等级),1(位置)]]
 const accountTest = (param: any,callback: Function) => {
-    let award:any = fightAward(param.type);
+    let award:any = param.result?fightAward(param.type):{};
     if(param.type == 1 && param.result){
         dataStage.fightCount = 0;
         dataStage.level += 1;
-    }else{
+    }else if(param.result){
         dataStage.fightCount += 1;
     }
     saveDb("stage",dataStage);
-    callback({ok:{award:award}});
+    callback({ok:{award:award,fightCount:dataStage.fightCount,level:dataStage.level}});
 }
 const equipWeight = new Weight([4,2,1]); 
 //获取关卡奖励
@@ -190,7 +190,24 @@ const mixtureEquip = (param: any,callback: Function) => {
     saveDb("equip",dataEquip);
     callback({ok:r});
 }
-
+/**
+ * @description 模拟出售装备
+ * @param param {index:装备源位置, type: 武器(1)||防具(2)}
+ * @param callback 
+ */
+const saleEquip = (param: any,callback: Function) => {
+    let type = param.type-1,eq = dataEquip[type],s = eq[param.index],cfg = CfgMgr.getOne("app/cfg/pve.json@equipment"),r:any = {};
+    if(!s){
+        r.err = {reson:"It's not a equip at index of "+param.index};
+        return callback(r);
+    }
+    dataPlayer.money += cfg[s].money;
+    eq[param.index] = 0;
+    r.money = dataPlayer.money;
+    saveDb("equip",dataEquip);
+    saveDb("player",dataPlayer);
+    callback({ok:r});
+}
 //添加装备
 // [level,level,...]
 /**
@@ -217,7 +234,7 @@ const addEquip = (data: Array<any>) => {
 
 Connect.setTest("app/equip@read",readEquip);
 Connect.setTest("app/equip@mixture",mixtureEquip);
-
+Connect.setTest("app/equip@sale",saleEquip);
 /****************** equip ******************/
 /**
  * {

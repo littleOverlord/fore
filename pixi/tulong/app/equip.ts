@@ -24,6 +24,8 @@ export default class Equip {
     static armorsNode
     //合成动画节点
     static bottomNode
+    //出售按钮
+    static saleNode
     //装备合成延迟
     static createEquipDelay
     /**
@@ -95,6 +97,30 @@ export default class Equip {
         return false;
     }
     /**
+     * @description 出售装备
+     * @param index 装备位置
+     * @param type 装备类型 "arms" || "armors"
+     */
+    static sale(index: number,type: string): boolean{
+        let list = Equip[type],equip = list[index],
+            arg = {index:index,type:type == "arms"?1:2},
+            level = DB.data.equip[type][index],
+            ml = DB.data.equip[type+"Max"];
+        if(AppUtil.caclEmptyInObj(list) > 1 && AppUtil.Rectangle(Scene.getGlobal(Equip.saleNode),Scene.getGlobal(equip))){
+            Connect.request({type:"app/equip@sale",arg: arg},(data) => {
+                if(data.err){
+                    return console.log(data.err.reson);
+                }
+                Equip.removeEquip(type,index);
+                if(level == ml){
+                    Equip.caclMaxEquip(type);
+                }
+                AppEmitter.emit("account_money",data.ok.money);
+            });
+            return true;
+        }
+    }
+    /**
      * @description 合成装备
      * @param src 
      * @param target 
@@ -148,6 +174,19 @@ export default class Equip {
         });
     }
     /**
+     * @description 找到最大等级装备
+     * @param type 
+     */
+    static caclMaxEquip(type: string){
+        let eqs = DB.data.equip[type],ml = 0;
+        for(let i = 0, len = eqs.length; i < len; i++){
+            if(ml < eqs[i]){
+                ml = eqs[i];
+            }
+        }
+        DB.data.equip[type+"Max"] = ml;
+    }
+    /**
      * @description 合成动画回调
      */
     static lightAniBack(){
@@ -162,6 +201,7 @@ class UiMainBottom extends Widget{
         matchBg(this.elements.get("bagBG"));
         createEquipBg(this.elements.get("equipBG"));
         Equip.bottomNode = this.elements.get("bottom");
+        Equip.saleNode = this.elements.get("button_sale");
     }
 }
 //装备黑色背景
@@ -205,7 +245,7 @@ class WEquip extends Widget{
     }
     dragEnd(index,e,target){
         console.log("dragend",index,target,e);
-        if(Equip.dragEquip(index,this.props.type)){
+        if(Equip.dragEquip(index,this.props.type) || Equip.sale(index,this.props.type)){
             return;
         }
         target.x = this.cfg.data.x;

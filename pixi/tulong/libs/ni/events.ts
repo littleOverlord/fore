@@ -187,7 +187,7 @@ export class Events {
     static eventCall(name,o,arg){
         let w,l;
         while (o){
-            if(w != o.widget && o.widget[name]){
+            if(o.widget && w != o.widget && o.widget[name]){
                 w = o.widget;
                 if(Util.objCall(w,name,arg) !== HandlerResult.OK){
                     return;
