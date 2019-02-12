@@ -55,7 +55,7 @@ export default class Scene {
 		app.stage.addChild(this.root);
 		//FPS
 		this.FPS.node = new Text("FPS 0",{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010,strokeThickness:2});
-		this.FPS.node.position.set(15,15);
+		this.FPS.node.position.set(15,115);
 		app.stage.addChild(this.FPS.node);
 
 		this.screen = cfg.screen;

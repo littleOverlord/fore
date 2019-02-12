@@ -237,14 +237,14 @@ class WEquip extends Widget{
         this.cfg.children[1].data.x = 120 - tl * (this.cfg.children[1].data.style.fontSize / 2);
     }
     drag(index,e,target){
-        console.log("drag",index,target,e);
+        // console.log("drag",index,target,e);
         let dx = e.data.global.x - e.start.x,
             dy = e.data.global.y - e.start.y;
         target.x = this.cfg.data.x + dx;
         target.y = this.cfg.data.y + dy;
     }
     dragEnd(index,e,target){
-        console.log("dragend",index,target,e);
+        // console.log("dragend",index,target,e);
         if(Equip.dragEquip(index,this.props.type) || Equip.sale(index,this.props.type)){
             return;
         }
