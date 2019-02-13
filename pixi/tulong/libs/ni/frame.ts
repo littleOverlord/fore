@@ -1,5 +1,5 @@
 /****************** 导入 ******************/
-import * as PIXI from '../pixijs/pixi.min';
+import * as PIXI from '../pixijs/pixi';
 /****************** 导出 ******************/
 export default class Frame {
 	static list = [];
@@ -42,6 +42,9 @@ export default class Frame {
 			f = Frame.list[i];
 			if(!f.interval || t - f.last >= f.interval){
 				f.frameCall();
+				if(Date.now() - t > 5){
+					// console.log("slow task ",Date.now() - t,f.frameCall);
+				}
 				f.last = t;
 				if(f.once){
 					Frame.delete(f);
@@ -53,6 +56,7 @@ export default class Frame {
 }
 /****************** 本地 ******************/
 const ticker = new PIXI.ticker.Ticker();
+let t = 0;
 /****************** 立即执行 ******************/
 ticker.stop();
 ticker.add((deltaTime) => {

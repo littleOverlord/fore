@@ -1,5 +1,5 @@
 /****************** 导入 ******************/
-import * as PIXI from '../pixijs/pixi.min';
+import * as PIXI from '../pixijs/pixi';
 import Frame from './frame';
 import Animate from './animate';
 import { Events } from './events';
@@ -59,9 +59,10 @@ export default class Scene {
 		app.stage.addChild(this.FPS.node);
 
 		this.screen = cfg.screen;
+		let t;
 		//添加主循环
 		Frame.add(function(){
-			Scene.FPS.loop()
+			Scene.FPS.loop();
 			app.render();
 			Events.loop();
 		});

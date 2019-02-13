@@ -26,6 +26,8 @@ export default class Stage {
     static equipMaxStatus = false
     // 初始调用计数，调用第二次执行
     static initCount = 0
+    //前一次战斗是否失败
+    static fightFail = false
     // 初始函数
     static init(){
         if(Stage.initCount !== 2){
@@ -194,22 +196,29 @@ export default class Stage {
     // 调用战斗接口
     // 如果挑战boss失败，则在装备最高等级变化后重新尝试挑战
     static fight(){
-        if(DB.data.stage.fightCount == 5 || (Stage.equipMaxStatus && DB.data.stage.fightCount > 5)){
+        if(!Stage.fightFail && (DB.data.stage.fightCount == 5 || (Stage.equipMaxStatus && DB.data.stage.fightCount > 5))){
             fightType = 1;
             Stage.equipMaxStatus = false;
+            Stage.fightFail = false;
         }else{
             fightType = 0;
+            if(DB.data.stage.fightCount > 5){
+                Stage.fightFail = false;
+            }
         }
         Connect.request({type:"app/stage@fight",arg:{type:fightType}},Stage.addMonster);
     }
     //结算
     static account(r,callback){
+        if(!r){
+            Stage.fightFail = true;
+        }
         Connect.request({type:"app/stage@account",arg:{result:r,type:fightType}},(data) => {
             if(data.err){
                 return console.log(data.err.reson);
             }
             if(DB.data.stage.fightCount !== data.ok.fightCount){
-                DB.data.stage.fightCount = data.ok.fightCount;
+                DB.data.stage.fightCount = data.ok.fightCount + (!r?1:0);
             }
             if(DB.data.stage.level !== data.ok.level){
                 DB.data.stage.level = data.ok.level;

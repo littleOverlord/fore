@@ -1,5 +1,5 @@
 /****************** 导入 ******************/
-import * as PIXI from '../pixijs/pixi.min';
+import * as PIXI from '../pixijs/pixi';
 
 /****************** 导出 ******************/
 export default class Loader {
