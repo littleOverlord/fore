@@ -22,6 +22,10 @@ let node = {
 }
 //快速购买按钮
 class FastBuy extends Widget{
+    /**
+     * 上一次购买的时间点
+     */
+    // buyTimer = 0
     setProps(props){
         super.setProps(props);
         console.log("FastBuy");
@@ -38,6 +42,10 @@ class FastBuy extends Widget{
      */
     fastBuy(e){
         console.log(`tap fast_buy button~~`,e);
+        // if(this.buyTimer && Date.now() - this.buyTimer < 300){
+        //     return;
+        // }
+        // this.buyTimer = Date.now();
         Connect.request({type:"app/store@fastbuy",arg:{type:DB.data.equip.tab+1,max: DB.data.equip[(DB.data.equip.tab?"arms":"armors")+"Max"]}},(data) => {
             if(data.err){
                 return console.log(data.err.reson);
