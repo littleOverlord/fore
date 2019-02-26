@@ -22,7 +22,7 @@ import {AppEmitter} from './appEmitter';
  */
 export default class Main {
     constructor(cfg) {
-        let loadCount = 4,
+        let loadCount = 5,
             spriteSheetsData,
             cfgData,
             uiData,
@@ -44,6 +44,10 @@ export default class Main {
             resolution: 1
         },cfg);
         Loader.add(["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_044.png","images/ani/M_S_002.png","images/arms.png","images/armors.png","images/ua/equip_light.png"],function(){
+            loadCount -= 1;
+            loadOk();
+        });
+        Loader.add(["images/ani/Boy_ShortsShirt_Angry.json"],function(){
             loadCount -= 1;
             loadOk();
         });

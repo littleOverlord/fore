@@ -4,6 +4,7 @@ import Frame from './frame';
 import Animate from './animate';
 import { Events } from './events';
 import Widget from './widget';
+import "../pixijs/pixi-spine";
 /****************** 导出 ******************/
 export default class Scene {
 	// render
@@ -59,13 +60,13 @@ export default class Scene {
 		app.stage.addChild(this.FPS.node);
 
 		this.screen = cfg.screen;
-		let t;
 		//添加主循环
 		Frame.add(function(){
 			Scene.FPS.loop();
 			app.render();
 			Events.loop();
 		});
+		console.log(PIXI.spine);
 		return app;
 	}
 	/**
