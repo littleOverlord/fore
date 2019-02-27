@@ -1,6 +1,6 @@
 /****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi';
-
+import Util from "./util";
 /****************** 导出 ******************/
 export default class Loader {
 	/**
@@ -18,8 +18,8 @@ export default class Loader {
 	/**
 	 * @description 下载进度回调,由外部重载
 	 */
-	static process = (load,resource) => {
-		console.log(`load progress：${load.progress}`);
+	static process = (r) => {
+		console.log(`load progress：${r}`);
 	}
 	/**
 	 * @description 添加下载任务
@@ -28,27 +28,24 @@ export default class Loader {
 	 */
 	static add(arr,successCallback){
 		if(Loader.status === Loader.LOADSTATUS.loading){
-			return Loader.wait.push([arr,successCallback]);
+			return Loader.wait.push(new Waiter(arr,successCallback));
 		}
-		Loader.load(arr, successCallback);
+		(new Waiter(arr,successCallback)).start();
 	}
 	/**
 	 * @description 下载
 	 */
-	static load(arr,successCallback){
-		Loader.status = Loader.LOADSTATUS.loading;
-		loader.add(arr)
-			.on("progress", Loader.process)
+	static loadImg(waiter: Waiter,successCallback){
+		loader.add(waiter.images)
+			.on("progress", ()=>{
+					waiter.process();
+				})
 			.load((ld,res)=>{
-				Loader.status = Loader.LOADSTATUS.free;
-				loader.reset();
 				try{
 					successCallback && successCallback(ld,res);
 				}catch(e){
 					console.error(e);
 				}
-				Loader.next();
-				
 			});
 	}
 	/**
@@ -57,24 +54,80 @@ export default class Loader {
 	static next(){
 		let next = Loader.wait.shift();
 		if(Loader.status === Loader.LOADSTATUS.free && next){
-			Loader.load(next[0],next[1]);
+			next.start();
 		}
 	}
 	/**
 	 * @description 加载json文件
 	 */
-	static loadJson(arr,successCallback){
-		const r = {};
-		for(let i = 0, len = arr.length; i < len; i++){
-			let data = fs.readFileSync(arr[i], "utf8");
-			r[arr[i]] = JSON.parse(data);
+	static loadOther(waiter: Waiter,successCallback: Function,encoding?: string){
+		let r = {},count = 0;
+		for(let i = 0, len = waiter.text.length; i < len; i++){
+			fs.readFile({filePath: waiter.text[i], encoding: encoding || "utf8", success: (res)=>{
+				if(res.errMsg.indexOf("ok")<0){
+					return console.log(res.errMsg);
+				}
+				r[waiter.text[i]] = res.data;
+				count ++;
+				waiter.process();
+				if(count == waiter.text.length){
+					successCallback(r);
+				}
+			}});
 		}
-		setTimeout(() => {
-			successCallback(r);
-		}, 0);
 	}
 }
 /****************** 本地 ******************/
 declare const wx;
 const loader = PIXI.loader;
 const fs = wx.getFileSystemManager();
+enum Image {
+	".png"=1,
+	".jpg"
+}
+class Waiter{
+	text = [];
+	images = [];
+	callback = null;
+	resource = {};
+	total = 0;
+	loaded = 0;
+	constructor(arr,callback){
+		let suffix;
+		this.total = arr.length;
+		for(let i = 0,len = arr.length; i < len; i++){
+			suffix = Util.fileSuffix(arr[i]);
+			if(Image[suffix]){
+				this.images.push(arr[i]);
+			}else{
+				this.text.push(arr[i]);
+			}
+		}
+		this.callback = callback;
+	}
+	start(){
+		const _this = this;
+		Loader.status = Loader.LOADSTATUS.loading;
+		Loader.loadImg(this,()=>{
+			_this.images = [];
+			_this.complete();
+		});
+		Loader.loadOther(this,(res)=>{
+			_this.text = [];
+			this.resource = res;
+			_this.complete();
+		});
+	}
+	process(){
+		this.loaded += 1;
+		Loader.process(this.loaded/this.total);
+	}
+	complete(){
+		if(this.images.length === 0 && this.text.length === 0){
+			Loader.status = Loader.LOADSTATUS.free;
+			loader.reset();
+			this.callback && this.callback(this.resource);
+			Loader.next();
+		}
+	}
+}

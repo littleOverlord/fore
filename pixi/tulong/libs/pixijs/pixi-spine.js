@@ -7305,9 +7305,15 @@ var pixi_spine;
         };
     }
     pixi_spine.staticImageLoader = staticImageLoader;
-    if (PIXI.loaders.Loader) {
-        PIXI.loaders.Loader.addPixiMiddleware(atlasParser);
-        PIXI.loader.use(atlasParser());
+    function parseAltas(json, atlas, getTexture, callback) {
+        var resource = {};
+        new pixi_spine.core.TextureAtlas(atlas, getTexture, function (spineAtlas) {
+            var spineJsonParser = new pixi_spine.core.SkeletonJson(new pixi_spine.core.AtlasAttachmentLoader(spineAtlas));
+            resource.spineData = spineJsonParser.readSkeletonData(json);
+            resource.spineAtlas = spineAtlas;
+            callback && callback(resource);
+        });
     }
+    pixi_spine.parseAltas = parseAltas;
 })(pixi_spine || (pixi_spine = {}));
 //# sourceMappingURL=pixi-spine.js.map

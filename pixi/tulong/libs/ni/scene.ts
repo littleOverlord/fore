@@ -1,10 +1,12 @@
 /****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi';
+import "../pixijs/pixi-spine";
 import Frame from './frame';
 import Animate from './animate';
 import { Events } from './events';
+import Spine from './spine';
 import Widget from './widget';
-import "../pixijs/pixi-spine";
+
 /****************** 导出 ******************/
 export default class Scene {
 	// render
@@ -367,6 +369,15 @@ const creater = {
 		})(o);
 		//默认立即播放
 		o.play();
+		return o;
+	},
+	spine: (data)=>{
+		let o = Spine.create(data.url);
+		if(!o){
+			return console.error(`Can't find the spine data by "${data.url}".`);
+		}
+		creater.init(o,data);
+
 		return o;
 	}
 }

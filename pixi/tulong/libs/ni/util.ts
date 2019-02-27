@@ -326,6 +326,17 @@ export default class Util {
         return /^[+-]?([0-9]*\.?[0-9]+|[0-9]+\.?[0-9]*)([eE][+-]?[0-9]+)?$/.test(s) ? parseFloat(s) : false;
     }
     /**
+     * @description 获取文件后缀
+     * @param path 文件路径
+     */
+    static fileSuffix(path: string): string{
+        let s = /\.[^\.]+$/.exec(path),r = "";
+        if(s){
+            r = s[0];
+        }
+        return r;
+    }
+    /**
      * @description 函数调用
      * @example
      */
