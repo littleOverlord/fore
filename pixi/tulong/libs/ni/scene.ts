@@ -214,6 +214,7 @@ export default class Scene {
 			})
 		}
 		console.log(Scene.spriteSheets);
+		console.log(PIXI.loader);
 	}
 	/**
 	 * @description 根据图片路径获取spriteSheets
@@ -244,6 +245,10 @@ export default class Scene {
 		r.x = g.x;
 		r.y = g.y;
 		return r;
+	}
+	//
+	static addResources(res){
+		
 	}
 }
 /****************** 本地 ******************/

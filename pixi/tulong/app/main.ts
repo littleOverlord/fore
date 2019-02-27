@@ -27,7 +27,7 @@ export default class Main {
             cfgData = {},
             uiData = {},
             spineData = {},
-            images = ["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_044.png","images/ani/M_S_002.png","images/arms.png","images/armors.png","images/ua/equip_light.png","images/ani/Boy_ShortsShirt_Angry.json"],
+            images = ["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_044.png","images/ani/M_S_002.png","images/arms.png","images/armors.png","images/ua/equip_light.png","images/ani/Boy_ShortsShirt_Angry.png"],
             spines = ["images/ani/Boy_ShortsShirt_Angry.json"],
             atlas = ["images/ani/Boy_ShortsShirt_Angry.atlas"],
             cfgs = ["app/cfg/pve.json"],

@@ -25,7 +25,7 @@ export default class Spine {
 				((key)=>{
 					PIXI.spine.parseAltas(data[key],data[key.replace(".json",".atlas")],(name,loaderFunction)=>{
 						console.log("spine get texture ",name);
-						loaderFunction(PIXI.loader.resources[key.replace(".json",".png")].texture.baseTexture);
+						// loaderFunction(PIXI.loader.resources[key.replace(".json",".png")].texture.baseTexture);
 					},(res)=>{
 						Spine.spineData[key] = res;
 					})
