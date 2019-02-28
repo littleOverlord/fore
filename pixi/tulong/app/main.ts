@@ -20,9 +20,9 @@ import {AppEmitter} from './appEmitter';
  */
 export default class Main {
     constructor(cfg) {
-        let images = ["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_044.png","images/ani/M_S_002.png","images/arms.png","images/armors.png","images/ua/equip_light.png","images/ani/Boy_ShortsShirt_Angry.png"],
-            spines = ["images/ani/Boy_ShortsShirt_Angry.json"],
-            atlas = ["images/ani/Boy_ShortsShirt_Angry.atlas"],
+        let images = ["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_044.png","images/ani/M_S_002.png","images/arms.png","images/armors.png","images/ua/equip_light.png","images/ani/Boy_ShortsShirt_Angry.png","images/ani/skeleton.png"],
+            spines = ["images/ani/Boy_ShortsShirt_Angry.json","images/ani/skeleton.json"],
+            atlas = ["images/ani/Boy_ShortsShirt_Angry.atlas","images/ani/skeleton.atlas"],
             cfgs = ["app/cfg/pve.json"],
             ui = ["app/ui/mainTop.json","app/ui/mainBottom.json","app/ui/tab.json","app/ui/equip.json","app/ui/equipCon.json","app/ui/equipBg.json","app/ui/button.json","app/ui/ani.json","app/ui/fastBuy.json"],
             anims = ["images/ani/M_S_043.json","images/ani/M_S_044.json","images/ani/M_S_002.json","images/ui.json","images/arms.json","images/armors.json","images/ua/equip_light.json"],
