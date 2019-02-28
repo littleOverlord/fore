@@ -1,16 +1,23 @@
 /****************** 导入 ******************/
-
+import Loader from "./loader";
 /****************** 导出 ******************/
 
 export default class CfgMgr {
+  //配置资源目录
+  static cfgDir = "app/cfg/"
   /**
    * @description 初始化配置表
    * @param data 配置数据{"cfg/xx":{"sheetName":{"keys":[],"values":{}}}}
    */
-  static add(data){
+  static registCfg(data){
+    let _data;
     for (let k in data) {
-      for(let vk in data[k]){
-      caches[`${k}@${vk}`] = parse(data[k][vk].keys,data[k][vk].values);
+      if(k.indexOf(CfgMgr.cfgDir) == 0){
+        _data = JSON.parse(data[k]);
+        for(let vk in _data){
+          caches[`${k}@${vk}`] = parse(_data[vk].keys,_data[vk].values);
+        }
+        delete data[k];
       }
     }
     console.log(caches);
@@ -43,3 +50,7 @@ const parse = (keys: Array<string>,data: any): any => {
 	}
 	return r;
 }
+
+/****************** 立即执行 ******************/
+//绑定资源监听
+Loader.addResListener("registCfg",CfgMgr.registCfg);

@@ -3,6 +3,7 @@
  */
 /****************** 导入 ******************/
 import Util from "./util";
+import Loader from "./loader";
 /****************** 导出 ******************/
 export default class Widget {
     constructor(url,props?){
@@ -12,6 +13,7 @@ export default class Widget {
         this.cfg = Util.copy(Widget.cfgCache.get(this.url));
         this.setProps(props);
     }
+    static cfgDir = "app/ui/"
     //widget路径
     url: string
     //组件配置
@@ -49,9 +51,12 @@ export default class Widget {
      * @description 注册组件配置
      * @param cfgs 组件配置
      */
-    static registC(cfgs: any): void{
+    static registWC(cfgs: any): void{
         for(let k in cfgs){
-            Widget.cfgCache.set(k.replace(".json","").replace(/\//g,"-"),cfgs[k]);
+            if(k.indexOf(Widget.cfgDir) == 0){
+                Widget.cfgCache.set(k.replace(".json","").replace(/\//g,"-"),JSON.parse(cfgs[k]));
+                delete cfgs[k];
+            }
         }
     }
     /**
@@ -64,3 +69,7 @@ export default class Widget {
         return new w(name, prop);
     }
 };
+
+/****************** 立即执行 ******************/
+//绑定资源监听
+Loader.addResListener("registWC",Widget.registWC);

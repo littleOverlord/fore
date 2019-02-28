@@ -10,11 +10,19 @@ export default class Loader {
 		free : 0, // 空闲
 		loading : 1 // 加载中
 	}
-	static status = Loader.LOADSTATUS.free;
+	static status = Loader.LOADSTATUS.free
 	/**
 	 * @description 等待下载的任务，先进先下
 	 */
-	static wait = [];
+	static wait = []
+	/**
+	 * @description 图片资源缓存
+	 */
+	static resources = {}
+	/**
+	 * @description 资源下载监听
+	 */
+	static resListener: any = {}
 	/**
 	 * @description 下载进度回调,由外部重载
 	 */
@@ -42,7 +50,7 @@ export default class Loader {
 				})
 			.load((ld,res)=>{
 				try{
-					successCallback && successCallback(ld,res);
+					successCallback && successCallback(res,ld);
 				}catch(e){
 					console.error(e);
 				}
@@ -76,22 +84,51 @@ export default class Loader {
 			}});
 		}
 	}
+	/**
+	 * @description 更新图片资源
+	 * @param res 
+	 */
+	static addResource(res){
+		for(let k in res){
+			Loader.resources[k] = res[k];
+		}
+	}
+	/**
+	 * @description 设置资源监听
+	 * @param name 函数名字
+	 * @param func 函数
+	 */
+	static addResListener(name: string,func: any){
+		Loader.resListener[name] = func;
+	}
+	/**
+	 * @description 分发资源到各个模块，暂时只有json
+	 */
+	static distributeResource(res){
+		Loader.resListener.registWC(res);
+		Loader.resListener.registCfg(res);
+		Loader.resListener.addSpineData(res);
+		Loader.resListener.createSpriteSheets(res);
+	}
 }
 /****************** 本地 ******************/
 declare const wx;
 const loader = PIXI.loader;
-const fs = wx.getFileSystemManager();
+const fs = wx?wx.getFileSystemManager():()=>{};
+//图片资源后缀
 enum Image {
 	".png"=1,
 	".jpg"
 }
+
+//资源下载类，每批资源都通过该类封装下载
 class Waiter{
 	text = [];
 	images = [];
 	callback = null;
-	resource = {};
 	total = 0;
 	loaded = 0;
+	resource = {};
 	constructor(arr,callback){
 		let suffix;
 		this.total = arr.length;
@@ -108,13 +145,14 @@ class Waiter{
 	start(){
 		const _this = this;
 		Loader.status = Loader.LOADSTATUS.loading;
-		Loader.loadImg(this,()=>{
+		Loader.loadImg(this,(res,ld)=>{
 			_this.images = [];
+			Loader.addResource(res);
 			_this.complete();
 		});
 		Loader.loadOther(this,(res)=>{
 			_this.text = [];
-			this.resource = res;
+			_this.resource = res;
 			_this.complete();
 		});
 	}
@@ -126,7 +164,8 @@ class Waiter{
 		if(this.images.length === 0 && this.text.length === 0){
 			Loader.status = Loader.LOADSTATUS.free;
 			loader.reset();
-			this.callback && this.callback(this.resource);
+			Loader.distributeResource(this.resource);
+			this.callback && this.callback();
 			Loader.next();
 		}
 	}

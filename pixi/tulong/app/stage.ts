@@ -7,7 +7,7 @@ import TextAnimate from "../libs/ni/textani";
 import Connect from "../libs/ni/connect";
 import DB from "../libs/ni/db";
 
-import {Fighter as FighterCfg} from './ui/fighter';
+import {Fighter as FighterCfg, SpineFighter} from './ui/fighter';
 import {AppEmitter} from './appEmitter';
 import {Fighter, FScene} from './fight';
 
@@ -46,6 +46,7 @@ export default class Stage {
             //测试fighter
             Stage.addOwer();
             // Stage.fight();
+            testSpine();
         });
         
     }
@@ -253,6 +254,17 @@ const textAni = (o): boolean => {
     }
     o.y -= 2;
     o.alpha -= 0.02;
+}
+//测试spine
+const testSpine = () => {
+    let sp = Scene.create(new SpineFighter(`fighter00`,"Boy_ShortsShirt_Angry",256,256,"standby",((id)=>{
+        return (e) => {
+            console.log("spine animation ",e);
+        }
+    })("spine")),null,Stage.sceneNode,null);
+    sp.scale.x = 0.5;
+    sp.scale.y = 0.5;
+    sp.state.addAnimationByName(0, 'angry_sender_0', true, 0);
 }
 //战斗事件处理器列表
 const eventHandler = {

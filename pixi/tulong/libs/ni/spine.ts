@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi';
 import Util from "./util"
+import Loader from "./loader";
 /****************** 导出 ******************/
 export default class Spine {
 	/**
@@ -18,19 +19,24 @@ export default class Spine {
 	/**
 	 * @description 添加配置
 	 */
-	static addCaches(data){
+	static addSpineData(data){
+		let jk,rawSkeletonData,rawAtlasData,spineAtlas,spineAtlasLoader,spineJsonParser,spineData;
 		for(let k in data){
 			Spine.cfgs[k] = data[k];
-			if(Util.fileSuffix(k) == ".json"){
-				((key)=>{
-					PIXI.spine.parseAltas(data[key],data[key.replace(".json",".atlas")],(name,loaderFunction)=>{
-						console.log("spine get texture ",name);
-						// loaderFunction(PIXI.loader.resources[key.replace(".json",".png")].texture.baseTexture);
-					},(res)=>{
-						Spine.spineData[key] = res;
-					})
-				})(k)
-				
+			if(Util.fileSuffix(k) == ".atlas"){
+				jk = k.replace(".atlas",".json");
+				rawSkeletonData = JSON.parse(data[jk]);
+				rawAtlasData = data[k];
+				spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function(line, callback) {
+					callback(Loader.resources[k.replace(".atlas",".png")].texture.baseTexture);
+				}); 
+				spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas)
+				spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
+				spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
+				console.log(spineData);
+				Spine.spineData[k] = spineData;
+				delete data[k];
+				delete data[jk];
 			}
 		}
 	}
@@ -51,3 +57,6 @@ export default class Spine {
 	}
 }
 /****************** 本地 ******************/
+/****************** 立即执行 ******************/
+//绑定资源监听
+Loader.addResListener("addSpineData",Spine.addSpineData);

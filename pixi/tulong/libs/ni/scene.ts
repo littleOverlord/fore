@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi';
 import "../pixijs/pixi-spine";
+import Loader from "./loader";
 import Frame from './frame';
 import Animate from './animate';
 import { Events } from './events';
@@ -207,11 +208,12 @@ export default class Scene {
 	 */
 	static createSpriteSheets(data){
 		for(let k in data){
-			let texture = resources[k.replace(".json",".png")].texture.baseTexture;
-			Scene.spriteSheets[k] = new Spritesheet(texture,data[k]);
+			let texture = Loader.resources[k.replace(".json",".png")].texture.baseTexture;
+			Scene.spriteSheets[k] = new Spritesheet(texture,JSON.parse(data[k]));
 			Scene.spriteSheets[k].parse(function(sps){
 				console.log(sps);
-			})
+			});
+			delete data[k];
 		}
 		console.log(Scene.spriteSheets);
 		console.log(PIXI.loader);
@@ -246,15 +248,10 @@ export default class Scene {
 		r.y = g.y;
 		return r;
 	}
-	//
-	static addResources(res){
-		
-	}
 }
 /****************** 本地 ******************/
 let Application = PIXI.Application,
 		Container = PIXI.Container,
-		resources = PIXI.loader.resources,
 		TextureCache = PIXI.utils.TextureCache,
 		Sprite = PIXI.Sprite,
 		Rectangle = PIXI.Rectangle,
@@ -327,7 +324,7 @@ const creater = {
 		return o;
 	},
 	/**
-	 * @description 创建动画
+	 * @description 创建帧动画
 	 * @param data {
 	 * 		...,
 	 * 		ani: "",
@@ -376,6 +373,9 @@ const creater = {
 		o.play();
 		return o;
 	},
+	/**
+	 * @description 创建spine
+	 */
 	spine: (data)=>{
 		let o = Spine.create(data.url);
 		if(!o){
@@ -386,3 +386,6 @@ const creater = {
 		return o;
 	}
 }
+/****************** 立即执行 ******************/
+//绑定资源监听
+Loader.addResListener("createSpriteSheets",Scene.createSpriteSheets)

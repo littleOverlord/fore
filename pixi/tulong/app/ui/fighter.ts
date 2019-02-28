@@ -22,3 +22,23 @@ export class Fighter{
         anicallback: Function
     }
 }
+
+export class SpineFighter{
+    constructor(id,skin,x,y,ani,anicallback){
+        this.data.url = `images/ani/${skin}.atlas`;
+        this.data.id = id;
+        this.data.x = x;
+        this.data.y = y;
+        this.data.ani = ani;
+        this.data.anicallback = anicallback;
+    }
+    type = "spine"
+    data = {
+        url:"images/ani/.atlas",
+        x:0,
+        y:0,
+        id:'',
+        ani: "standby",
+        anicallback: Function
+    }
+}
