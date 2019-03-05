@@ -1,6 +1,5 @@
 /****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi';
-import "../pixijs/pixi-spine";
 import Loader from "./loader";
 import Frame from './frame';
 import Animate from './animate';

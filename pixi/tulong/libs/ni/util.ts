@@ -326,6 +326,17 @@ export default class Util {
         return /^[+-]?([0-9]*\.?[0-9]+|[0-9]+\.?[0-9]*)([eE][+-]?[0-9]+)?$/.test(s) ? parseFloat(s) : false;
     }
     /**
+     * @description 获取文件名
+     * @param path 文件路径
+     */
+    static fileName(path: string): string{
+        let s = path.match(/([^<>/\\\|:\*\?]+)\.\w+$/),r = "";
+        if(s){
+            r = s[1];
+        }
+        return r;
+    }
+    /**
      * @description 获取文件后缀
      * @param path 文件路径
      */
