@@ -1,4 +1,5 @@
 import './libs/wx/weapp-adapter';
+import './depend';
 
 import Config from "./config";
 import Main from './app/main';

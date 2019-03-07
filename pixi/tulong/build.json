@@ -17,6 +17,11 @@
                 "mod":"pngmin",
                 "quality":60
             }
+        },
+        "depend":{
+            "name":"depend.js",
+            "prev":"import Fs from './libs/ni/fs';\nFs.parseDepend(\n",
+            "last":"\n);"
         }
     }
 ]

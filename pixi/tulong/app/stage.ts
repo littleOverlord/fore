@@ -46,7 +46,7 @@ export default class Stage {
             //测试fighter
             Stage.addOwer();
             // Stage.fight();
-            testSpine();
+            // testSpine();
         });
         
     }

@@ -18,6 +18,8 @@ export default class Config{
         this.screen.top = t;
         this.screen.scale = s;
     }
+    platForm = "wx"
+    name = "tulong"
     screen = {
         _width: 750,
         _height: 1334,

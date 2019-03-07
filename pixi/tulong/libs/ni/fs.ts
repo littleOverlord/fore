@@ -13,6 +13,10 @@ export default class Fs {
 	 */
 	static fs
 	/**
+	 * @description depend处理对象
+	 */
+	static depend: Depend
+	/**
 	 * @description 文件处理列表
 	 * @elements {method:"read"||"write",path:"",callback: Function}
 	 */
@@ -59,7 +63,8 @@ export default class Fs {
 	 * @description 解析项目全资源表
 	 */
 	static parseDepend(data){
-
+		Fs.depend = new Depend(data);
+		console.log(Fs.depend);
 	}
 	/**
 	 * @description 写缓存depend文件，方便查找是否已经存储到本地缓存
@@ -252,6 +257,54 @@ class Browser{
 			callback(error);
 		};
 	};
+}
+
+/**
+ * @description 解析depend
+ */
+class Depend{
+	/**
+	 * @description 全资源列表，同depend文件，唯一去除了路径的"/"开头
+	 */
+	all = {}
+	/**
+	 * @description 文件夹资源列表
+	 * @element dir: [file,file,...]
+	 */
+	dir = {}
+	constructor(data){
+		let p,d;
+		for(let k in data){
+			p = k.replace("/","");
+			this.all[p] = data[k];
+			data[k].path = p;
+			if(data[k].depends){
+				for(let i = 0,len = data[k].depends.length;i < len; i++){
+					data[k].depends[i] = data[k].depends[i].replace("/","");
+				}
+			}
+			d = p.replace(/[^\/]+$/,"");
+			if(!this.dir[d]){
+				this.dir[d] = [];
+			}
+			this.dir[d].push(p);
+		}
+	}
+	/**
+	 * @description 获取文件
+	 * @param arr 路径或者目录组成的数组
+	 */
+	getFiles(arr: string[]): string[]{
+		let r = [];
+		for(let i = 0, len = arr.length; i < len; i++){
+			if(this.dir[arr[i]]){
+				r = r.concat(this.dir[arr[i]]);
+			}else{
+				r.push(arr[i]);
+			}
+		}
+		return r;
+	}
 }
 
 class Resouse{

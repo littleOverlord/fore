@@ -23,32 +23,33 @@ export default class DragonBones {
 	static addDragonData(data){
 		let jk,rawSkeletonData,rawAtlasData,spineAtlas,spineAtlasLoader,spineJsonParser,spineData;
 		for(let k in data){
-			Spine.cfgs[k] = data[k];
-			if(Util.fileSuffix(k) == ".atlas"){
-				jk = k.replace(".atlas",".json");
-				rawSkeletonData = JSON.parse(data[jk]);
-				rawAtlasData = data[k];
-				spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function(line, callback) {
-					callback(Loader.resources[k.replace(".atlas",".png")].texture.baseTexture);
-				}); 
-				spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas)
-				spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
-				spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
-				console.log(spineData);
-				Spine.spineData[k] = spineData;
-				delete data[k];
-				delete data[jk];
-			}
+			// Spine.cfgs[k] = data[k];
+			// if(Util.fileSuffix(k) == ".atlas"){
+			// 	jk = k.replace(".atlas",".json");
+			// 	rawSkeletonData = JSON.parse(data[jk]);
+			// 	rawAtlasData = data[k];
+			// 	spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function(line, callback) {
+			// 		callback(Loader.resources[k.replace(".atlas",".png")].texture.baseTexture);
+			// 	}); 
+			// 	spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas)
+			// 	spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
+			// 	spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
+			// 	console.log(spineData);
+			// 	Spine.spineData[k] = spineData;
+			// 	delete data[k];
+			// 	delete data[jk];
+			// }
 		}
 	}
 	/**
 	 * @description 创建pine动画
 	 */
 	static create(name){
-		if(!Spine.spineData[name]){
-			return ;
-		}
-		return new PIXI.spine.Spine(Spine.spineData[name]);
+		return {};
+		// if(!Spine.spineData[name]){
+		// 	return ;
+		// }
+		// return new PIXI.spine.Spine(Spine.spineData[name]);
 	}
 	/**
 	 * @description 更新动画

@@ -4,7 +4,7 @@ import Loader from "./loader";
 import Frame from './frame';
 import Animate from './animate';
 import { Events } from './events';
-import Spine from './spine';
+import DragonBones from './dragonbones';
 import Widget from './widget';
 
 /****************** 导出 ******************/
@@ -373,10 +373,10 @@ const creater = {
 		return o;
 	},
 	/**
-	 * @description 创建spine
+	 * @description 创建dragonbones
 	 */
-	spine: (data)=>{
-		let o = Spine.create(data.url);
+	dragonbones: (data)=>{
+		let o = DragonBones.create(data.url);
 		if(!o){
 			return console.error(`Can't find the spine data by "${data.url}".`);
 		}

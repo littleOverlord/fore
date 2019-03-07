@@ -10,6 +10,7 @@ import './ui/button'
 import './ui/ani'
 //local use
 import  './net';
+import Fs from '../libs/ni/fs';
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';
 import {AppEmitter} from './appEmitter';
@@ -20,6 +21,7 @@ import {AppEmitter} from './appEmitter';
  */
 export default class Main {
     constructor(cfg) {
+        Fs.init(cfg);
         let images = ["images/ui.png","images/ani/M_S_043.png","images/ani/M_S_044.png","images/ani/M_S_002.png","images/arms.png","images/armors.png","images/ua/equip_light.png","images/ani/Boy_ShortsShirt_Angry.png","images/ani/skeleton.png"],
             spines = ["images/ani/Boy_ShortsShirt_Angry.json","images/ani/skeleton.json"],
             atlas = ["images/ani/Boy_ShortsShirt_Angry.atlas","images/ani/skeleton.atlas"],
