@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi';
 import Util from "./util";
+import Fs from './fs';
 /****************** 导出 ******************/
 export default class Loader {
 	/**
@@ -41,47 +42,12 @@ export default class Loader {
 		(new Waiter(arr,successCallback)).start();
 	}
 	/**
-	 * @description 下载
-	 */
-	static loadImg(waiter: Waiter,successCallback){
-		loader.add(waiter.images)
-			.on("progress", ()=>{
-					waiter.process();
-				})
-			.load((ld,res)=>{
-				try{
-					successCallback && successCallback(res,ld);
-				}catch(e){
-					console.error(e);
-				}
-			});
-	}
-	/**
 	 * @description 下载下一批资源
 	 */
 	static next(){
 		let next = Loader.wait.shift();
 		if(Loader.status === Loader.LOADSTATUS.free && next){
 			next.start();
-		}
-	}
-	/**
-	 * @description 加载json文件
-	 */
-	static loadOther(waiter: Waiter,successCallback: Function,encoding?: string){
-		let r = {},count = 0;
-		for(let i = 0, len = waiter.text.length; i < len; i++){
-			fs.readFile({filePath: waiter.text[i], encoding: encoding || "utf8", success: (res)=>{
-				if(res.errMsg.indexOf("ok")<0){
-					return console.log(res.errMsg);
-				}
-				r[waiter.text[i]] = res.data;
-				count ++;
-				waiter.process();
-				if(count == waiter.text.length){
-					successCallback(r);
-				}
-			}});
 		}
 	}
 	/**
@@ -124,42 +90,67 @@ enum Image {
 
 //资源下载类，每批资源都通过该类封装下载
 class Waiter{
-	text = [];
-	images = [];
-	callback = null;
-	total = 0;
-	loaded = 0;
-	resource = {};
-	constructor(arr,callback){
+	text = []
+	images = []
+	callback = null
+	total = 0
+	loaded = 0
+	resource = {}
+	list: string[] = []
+	_process: Function
+	constructor(arr: string[],callback: Function, process?: Function){
+		this.list = arr;
+		this.callback = callback;
+		this._process = process;
+	}
+	/**
+	 * @description 找出
+	 * @param res 
+	 */
+	private findImg(res: any){
 		let suffix;
-		this.total = arr.length;
-		for(let i = 0,len = arr.length; i < len; i++){
-			suffix = Util.fileSuffix(arr[i]);
+		for(let k in res){
+			suffix = Util.fileSuffix(k);
 			if(Image[suffix]){
-				this.images.push(arr[i]);
+				this.images.push(k);
 			}else{
-				this.text.push(arr[i]);
+				this.text.push(k);
 			}
 		}
-		this.callback = callback;
 	}
 	start(){
 		const _this = this;
 		Loader.status = Loader.LOADSTATUS.loading;
-		Loader.loadImg(this,(res,ld)=>{
-			_this.images = [];
-			Loader.addResource(res);
-			_this.complete();
-		});
-		Loader.loadOther(this,(res)=>{
-			_this.text = [];
-			_this.resource = res;
-			_this.complete();
-		});
+		this.resource = Fs.read(this.list,()=>{
+			_this.downloaded();
+		},(r)=>{
+			_this.process();
+		})
+		this.findImg(this.resource);
+		this.total = (this.images.length * 2) + this.text.length;
 	}
 	process(){
 		this.loaded += 1;
-		Loader.process(this.loaded/this.total);
+		if(this._process){
+			this._process(this.loaded/this.total);
+		}else{
+			Loader.process(this.loaded/this.total);
+		}
+	}
+	downloaded(){
+		const _this = this;
+		if(this.images.length == 0){
+			return _this.complete();
+		}
+		for(let i = 0, len = this.images.length;i < len; i++){
+			loader.add(this.images[i],Fs.fs.createImg(this.images[i],this.resource[this.images[i]]));
+		}
+		loader.on("progress", ()=>{
+			_this.process();
+		})
+		.load((ld,res)=>{
+			_this.complete();
+		});
 	}
 	complete(){
 		if(this.images.length === 0 && this.text.length === 0){

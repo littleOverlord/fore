@@ -5,9 +5,11 @@
  * @item 浏览器，写入indexDB,如果没有则直接放入内存
  */
 /****************** 导入 ******************/
-
+import Http from "./http";
+import Util from "./util";
 /****************** 导出 ******************/
 export default class Fs {
+	static remote = ""
 	/**
 	 * @description 文件处理具体模块，根据不同平台匹配
 	 */
@@ -26,30 +28,83 @@ export default class Fs {
 	 */
 	static writeCacheDependTimer: number
 	/**
+	 * @description 后缀名对应的Blob类型
+	 */
+	static BlobType = {
+		".png": 'image/png',
+		".jpg": 'image/jpeg',
+		".jpeg": 'image/jpeg',
+		".webp": 'image/webp',
+		".gif": 'image/gif',
+		".svg": 'image/svg+xml',
+		".ttf": 'application/x-font-ttf',
+		".otf": 'application/x-font-opentype',
+		".woff": 'application/x-font-woff',
+		".woff2": 'application/x-font-woff2'
+	};
+	/**
 	 * @description 初始化,根据cfg匹配不同平台处理文件对象
 	 */
-	static init(cfg){
+	static init(cfg,callback){
+		Fs.remote = cfg.remote || "";
 		if(cfg.platForm == "wx"){
-			Fs.fs = new WXFS(cfg,Fs.runWait);
+			Fs.fs = new WXFS(cfg,()=>{
+				Fs.mkDirs();
+				callback();
+			});
 		}else if(cfg.platForm == "pc"){
 			Fs.fs = new PC();
+			callback && callback();
 		}else if(cfg.platForm == "browser"){
-			Fs.fs = new Browser(cfg,Fs.runWait);
+			Fs.fs = new Browser(cfg,callback);
 		}
 	}
 	/**
-	 * @description 读文件
+	 * @description 读文件,如果本地没有则去远端下载
 	 */
-	static read(path: string,callback: Function):void{
-
-	}
-	/**
-	 * @description 写文件
-	 * @param path 
-	 * @param callback 
-	 */
-	static write(path: string,callback: Function):void{
-
+	static read(paths: string[],callback: Function, process?: Function): any{
+		let arr = Fs.depend.getFiles(paths,Fs.fs.except), fileMap = {},
+			loaded = (() => {
+				let c = 0, total = arr.length;
+				return ()=>{
+					c += 1;
+					process && process(c/total);
+					if(c == total){
+						callback(fileMap);
+					}
+				}
+			})(), 
+			deal = (p,isLocal) => {
+				return (err,data)=>{
+					if(err){
+						return console.log(err);
+					}
+					fileMap[p] = data;
+					if(!isLocal){
+						Fs.fs.write(p,data,(_err,rp)=>{
+							if(_err){
+								return console.log(_err);
+							}
+							loaded();
+						});
+					}else{
+						loaded();
+					}
+				}
+			};
+		for(let i = 0, len = arr.length; i < len; i++){
+			fileMap[arr[i]] = 0;
+			if(Fs.fs.isLocal(arr[i])){
+				Fs.fs.read(arr[i],deal(arr[i],true));
+			}else{
+				if(Fs.fs.get){
+					Fs.fs.get(arr[i],Fs.remote,deal(arr[i],true));
+				}else{
+					Http.get(`${Fs.remote}/${arr[i]}`,"",Util.fileSuffix(arr[i]) == ".png"?"BIN":"",deal(arr[i],false));
+				}
+			}
+		}
+		return fileMap;
 	}
 	/**
 	 * @description 执行等待列表
@@ -74,8 +129,19 @@ export default class Fs {
 			clearTimeout(Fs.writeCacheDependTimer)
 		}
 		Fs.writeCacheDependTimer = setTimeout(()=>{
-			Fs.fs.writeDepend();
+			Fs.fs.writeDepend(()=>{});
+			Fs.writeCacheDependTimer = null;
 		},10000);
+	}
+	/**
+	 * @
+	 */
+	static mkDirs(){
+		if(Fs.fs && Fs.fs.mkDir){
+			for(let k in Fs.depend.dir){
+				Fs.fs.mkDir(k);
+			}
+		}
 	}
 }
 /****************** 本地 ******************/
@@ -88,14 +154,16 @@ class WXFS{
 	private fs: any
 	private userDir: string
 	private depend: any
+	private waitDir = {}
 	constructor(cfg: any,callback: Function){
 		this.fs = wx.getFileSystemManager();
 		this.userDir = wx.env.USER_DATA_PATH;
-		this.read("_.depend",(err,data)=>{
+		this.read(`_.depend`,(err,data)=>{
 			this.depend = err?{}:JSON.parse(data);
 			callback && callback();
 		})
 	}
+	except: string[] = [".js"]
 	isReady: boolean = false
 	isLocal(path){
 		return !!this.depend[path];
@@ -105,27 +173,77 @@ class WXFS{
 			filePath: `${this.userDir}/${path}`,
 			encoding: "utf8",
 			success: (data) => {
-				callback(null,data);
+				callback(null,data.data);
 			},
 			fail: (error)=>{
 				callback(error,null);
 			}
 		})
 	}
-	write(path: string,data: any,callback: Function){
+	write(path: string,data: any,callback: Function, notWriteDepend?: boolean){
+		let dir = Util.fileDir(path);
+		this.mkDir(dir);
 		this.fs.writeFile({
 			filePath: `${this.userDir}/${path}`,
 			data: data,
 			encoding: "utf8",
 			success: () => {
 				callback(null,`${this.userDir}/${path}`);
-				this.depend[path] = 1;
-				Fs.writeCacheDpend();
+				console.log(path);
+				if(!notWriteDepend){
+					this.depend[path] = 1;
+					Fs.writeCacheDpend();
+				}
 			},
 			fail: (error)=>{
 				callback(error,null);
 			}
 		})
+	}
+	get(path,remote,callback){
+		let _this = this;
+		wx.downloadFile({
+			url:`${remote}/${path}`,
+			filePath:`${this.userDir}/${path}`,
+			success: (res) => {
+				console.log(res);
+				this.depend[path] = 1;
+				Fs.writeCacheDpend();
+				_this.read(path,(err,data)=>{
+					callback(err,data);
+				});
+			},
+			fail: (error)=>{
+				callback(error,null);
+			}
+		})
+	}
+	mkDir(dir: string){
+		dir = dir.replace(/\/$/,"");
+		if(!dir){
+			return;
+		}
+		try{
+			this.fs.statSync(`${this.userDir}/${dir}`);
+		}catch(e){
+			try{
+				this.fs.mkdirSync(`${this.userDir}/${dir}`,true);
+			}catch(err){
+				console.log(e,err);
+			}
+		}
+	}
+	createImg(path: string,data?){
+		return `${this.userDir}/${path}`;
+	}
+	/**
+	 * @description 写入缓存depend
+	 * @param callback 
+	 */
+	writeDepend(callback){
+		this.write("_.depend",JSON.stringify(this.depend),(err)=>{
+			callback(err);
+		},true);
 	}
 }
 /**
@@ -136,6 +254,7 @@ class PC{
 	constructor(){
 		this.fs = require("fs");
 	}
+	except: string[] = []
 	isReady: boolean = true
 	isLocal(path: string): boolean{
 		return true;
@@ -143,8 +262,13 @@ class PC{
 	read(path, callback){
 
 	}
-	write(path,data, callback){}
+	write(path,data, callback){
+		callback();
+	}
 	delete(path, callback){}
+	createImg(path: string,data?){
+		return path;
+	}
 }
 /**
  * @description 浏览器文件处理类
@@ -194,6 +318,7 @@ class Browser{
 			alert(err);
 		});
 	}
+	except: string[] = []
 	isReady: boolean = false
 	isLocal(path: string): boolean{
 		return !!this.depend[path];
@@ -219,7 +344,7 @@ class Browser{
 	 * @description 写入数据，如果键名存在则替换
 	 * @example
 	 */
-	write(path: string, data: any, callback) {
+	write(path: string, data: any, callback: Function, notWriteDepend: boolean) {
 		if (!this.iDB) {
 			this.db[path] = data;
 			return callback && setTimeout(callback, 0);
@@ -228,7 +353,9 @@ class Browser{
 		tx.objectStore(this.tabName).put(data, path);
 		tx.oncomplete = ()=>{
 			this.depend[path] = 1;
-			Fs.writeCacheDpend();
+			if(!notWriteDepend){
+				Fs.writeCacheDpend();
+			}
 		};
 		tx.onerror = (error)=>{
 			// callback(error);
@@ -238,7 +365,16 @@ class Browser{
 		},0)
 		
 	};
-
+	/**
+	 * @description 创建可用图片url
+	 * @param path 
+	 * @param data 
+	 */
+	createImg(path: string,data: any){
+		const suf = Util.fileSuffix(path);
+		const blob = new Blob([data], { type: Fs.BlobType[suf] });
+		return URL.createObjectURL(blob);
+	}
 	/**
 	 * @description 删除数据
 	 * @example
@@ -257,6 +393,15 @@ class Browser{
 			callback(error);
 		};
 	};
+	/**
+	 * @description 写入缓存depend
+	 * @param callback 
+	 */
+	writeDepend(callback){
+		this.write("_.depend",JSON.stringify(this.depend),(err)=>{
+			callback(err);
+		},true);
+	}
 }
 
 /**
@@ -284,38 +429,47 @@ class Depend{
 				}
 			}
 			d = p.replace(/[^\/]+$/,"");
-			if(!this.dir[d]){
-				this.dir[d] = [];
+			this.adddir(d);
+			if(d){
+				this.dir[d].push(p);
 			}
-			this.dir[d].push(p);
+		}
+	}
+	private adddir(d){
+		let ds = d.split("/"),curr = "",next = "";
+		for(let i = 0, len = ds.length; i < len; i++){
+			if(!ds[i]){
+				continue;
+			}
+			curr += `${ds[i]}/`;
+			if(!this.dir[curr]){
+				this.dir[curr] = [];
+			}
+			if(ds[i+1]){
+				next = curr + `${ds[i+1]}/`;
+				if(this.dir[curr].indexOf(next) >= 0){
+					continue;
+				}
+				this.dir[curr].push(next);
+			}
 		}
 	}
 	/**
 	 * @description 获取文件
 	 * @param arr 路径或者目录组成的数组
 	 */
-	getFiles(arr: string[]): string[]{
-		let r = [];
-		for(let i = 0, len = arr.length; i < len; i++){
-			if(this.dir[arr[i]]){
-				r = r.concat(this.dir[arr[i]]);
-			}else{
-				r.push(arr[i]);
-			}
-		}
+	getFiles(arr: string[],except: string[]): string[]{
+		let r = [],
+			dir = (_arr) => {
+				for(let i = 0, len = _arr.length; i < len; i++){
+					if(this.dir[_arr[i]]){
+						dir(this.dir[_arr[i]]);
+					}else if(except.indexOf(Util.fileSuffix(_arr[i])) < 0){
+						r.push(_arr[i]);
+					}
+				}
+			};
+		dir(arr)
 		return r;
 	}
-}
-
-class Resouse{
-	constructor(path: string,data: any,realPath?:string,error?: string){
-		this.path = path;
-		this.data = data;
-		this.realPath = realPath || path;
-		this.error = error;
-	}
-	path: string
-	data: any
-	realPath: string
-	error: string
 }

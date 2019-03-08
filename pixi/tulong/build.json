@@ -2,7 +2,7 @@
     {
         "name": "wx",
         "dist": "../dist/wx/tulong",
-        "ignore":["/README.md","/images/ui","/build.json"],
+        "ignore":["/README.md","/app/cfg","/app/ui","/images","/audio","/build.json"],
         "plugins":{
             "ts":{
                 "mod":"ts2es6"

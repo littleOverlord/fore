@@ -347,6 +347,9 @@ export default class Util {
         }
         return r;
     }
+    static fileDir(path: string): string{
+        return path.replace(/[^\/]+$/,"");
+    }
     /**
      * @description 函数调用
      * @example

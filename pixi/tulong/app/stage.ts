@@ -7,7 +7,7 @@ import TextAnimate from "../libs/ni/textani";
 import Connect from "../libs/ni/connect";
 import DB from "../libs/ni/db";
 
-import {Fighter as FighterCfg, SpineFighter} from './ui/fighter';
+import {Fighter as FighterCfg, SpineFighter} from './widget/fighter';
 import {AppEmitter} from './appEmitter';
 import {Fighter, FScene} from './fight';
 
