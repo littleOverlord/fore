@@ -23,5 +23,30 @@
             "prev":"import Fs from './libs/ni/fs';\nFs.parseDepend(\n",
             "last":"\n);"
         }
+    },
+    {
+        "name": "pc",
+        "dist": "../../../back/htdocs/static",
+        "ignore":["/README.md","/build.json"],
+        "plugins":{
+            "ts":{
+                "mod":"ts2es6"
+            },
+            "xls":{
+                "mod":"xls2json"
+            },
+            "xlsx":{
+                "mod":"xls2json"
+            },
+            "png":{
+                "mod":"pngmin",
+                "quality":60
+            }
+        },
+        "depend":{
+            "name":"depend.json",
+            "prev":"",
+            "last":""
+        }
     }
 ]

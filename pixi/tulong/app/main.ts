@@ -23,6 +23,7 @@ export default class Main {
     constructor(cfg) {
         let load = function(){
                 Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
+                    
                     AppEmitter.emit("intoMain");
                     
                 });

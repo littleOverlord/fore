@@ -139,21 +139,29 @@ class Waiter{
 	}
 	downloaded(){
 		const _this = this;
-		if(this.images.length == 0){
-			return _this.complete();
-		}
 		for(let i = 0, len = this.images.length;i < len; i++){
 			loader.add(this.images[i],Fs.fs.createImg(this.images[i],this.resource[this.images[i]]));
+			const img = wx.createImage();
+                    img.src = `${wx.env.USER_DATA_PATH}/${this.images[i]}`;
+                    img.onload = ()=>{
+                        console.log(`load ${this.images[i]} ok! `)
+                    }
+                    img.onerror = (e) => {
+                        console.log(`load ${this.images[i]} error! `,e)
+                    }
+			delete this.resource[this.images[i]];
 		}
 		loader.on("progress", ()=>{
 			_this.process();
 		})
 		.load((ld,res)=>{
+			console.log(res);
+			Loader.addResource(res);
 			_this.complete();
 		});
 	}
 	complete(){
-		if(this.images.length === 0 && this.text.length === 0){
+		if(this.loaded === this.total){
 			Loader.status = Loader.LOADSTATUS.free;
 			loader.reset();
 			Loader.distributeResource(this.resource);

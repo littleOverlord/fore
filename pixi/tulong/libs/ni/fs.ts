@@ -204,14 +204,18 @@ class WXFS{
 		let _this = this;
 		wx.downloadFile({
 			url:`${remote}/${path}`,
-			filePath:`${this.userDir}/${path}`,
+			// filePath:`${this.userDir}/${path}`,
 			success: (res) => {
 				console.log(res);
 				this.depend[path] = 1;
-				Fs.writeCacheDpend();
-				_this.read(path,(err,data)=>{
-					callback(err,data);
-				});
+				if(res.header["content-type"].indexOf("image") === 0){
+					callback(null,res);
+				}else{
+					// Fs.writeCacheDpend();
+					// _this.read(path,(err,data)=>{
+					// 	callback(err,data);
+					// });
+				}
 			},
 			fail: (error)=>{
 				callback(error,null);
