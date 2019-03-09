@@ -10,6 +10,7 @@ import './widget/button'
 import './widget/ani'
 //local use
 import  './net';
+import '../libs/ni/music';
 import Fs from '../libs/ni/fs';
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';

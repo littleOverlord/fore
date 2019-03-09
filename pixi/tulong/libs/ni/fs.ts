@@ -80,6 +80,9 @@ export default class Fs {
 						return console.log(err);
 					}
 					fileMap[p] = data;
+					if(Util.fileSuffix(p) == ".png"){
+						console.log(typeof data);
+					}
 					if(!isLocal){
 						Fs.fs.write(p,data,(_err,rp)=>{
 							if(_err){
@@ -97,11 +100,11 @@ export default class Fs {
 			if(Fs.fs.isLocal(arr[i])){
 				Fs.fs.read(arr[i],deal(arr[i],true));
 			}else{
-				if(Fs.fs.get){
-					Fs.fs.get(arr[i],Fs.remote,deal(arr[i],true));
-				}else{
-					Http.get(`${Fs.remote}/${arr[i]}`,"",Util.fileSuffix(arr[i]) == ".png"?"BIN":"",deal(arr[i],false));
-				}
+				// if(Fs.fs.get){
+				// 	Fs.fs.get(arr[i],Fs.remote,deal(arr[i],true));
+				// }else{
+					Http.get(`${Fs.remote}/${arr[i]}`,"",this.BlobType[Util.fileSuffix(arr[i])]?"BIN":"",deal(arr[i],false));
+				// }
 			}
 		}
 		return fileMap;
@@ -171,7 +174,7 @@ class WXFS{
 	read(path: string,callback: Function){
 		this.fs.readFile({
 			filePath: `${this.userDir}/${path}`,
-			encoding: "utf8",
+			encoding: Fs.BlobType[Util.fileSuffix(path)]?"binary":"utf8",
 			success: (data) => {
 				callback(null,data.data);
 			},
@@ -186,7 +189,7 @@ class WXFS{
 		this.fs.writeFile({
 			filePath: `${this.userDir}/${path}`,
 			data: data,
-			encoding: "utf8",
+			encoding: (typeof data == "string")?"utf8":"binary",
 			success: () => {
 				callback(null,`${this.userDir}/${path}`);
 				console.log(path);
@@ -210,6 +213,14 @@ class WXFS{
 				this.depend[path] = 1;
 				if(res.header["content-type"].indexOf("image") === 0){
 					callback(null,res);
+					const img = wx.createImage();
+                    img.src = res.tempFilePath;
+                    img.onload = ()=>{
+                        console.log(`load ${path} ok! `)
+                    }
+                    img.onerror = (e) => {
+                        console.log(`load ${path} error! `,e)
+                    }
 				}else{
 					// Fs.writeCacheDpend();
 					// _this.read(path,(err,data)=>{

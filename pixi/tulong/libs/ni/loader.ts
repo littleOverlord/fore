@@ -75,6 +75,7 @@ export default class Loader {
 		Loader.resListener.registCfg(res);
 		// Loader.resListener.addSpineData(res);
 		Loader.resListener.addDragonData(res);
+		Loader.resListener.registMusic(res);
 		Loader.resListener.createSpriteSheets(res);
 	}
 }
@@ -141,14 +142,7 @@ class Waiter{
 		const _this = this;
 		for(let i = 0, len = this.images.length;i < len; i++){
 			loader.add(this.images[i],Fs.fs.createImg(this.images[i],this.resource[this.images[i]]));
-			const img = wx.createImage();
-                    img.src = `${wx.env.USER_DATA_PATH}/${this.images[i]}`;
-                    img.onload = ()=>{
-                        console.log(`load ${this.images[i]} ok! `)
-                    }
-                    img.onerror = (e) => {
-                        console.log(`load ${this.images[i]} error! `,e)
-                    }
+			
 			delete this.resource[this.images[i]];
 		}
 		loader.on("progress", ()=>{
