@@ -97,7 +97,7 @@ export default class Fs {
 			};
 		for(let i = 0, len = arr.length; i < len; i++){
 			fileMap[arr[i]] = 0;
-			if(Fs.fs.isLocal(arr[i])){
+			if(Fs.fs.isLocal(arr[i]),this.depend.all[arr[i]]){
 				Fs.fs.read(arr[i],deal(arr[i],true));
 			}else{
 				// if(Fs.fs.get){
@@ -168,8 +168,8 @@ class WXFS{
 	}
 	except: string[] = [".js"]
 	isReady: boolean = false
-	isLocal(path){
-		return !!this.depend[path];
+	isLocal(path, sign: string){
+		return this.depend[path] == sign;
 	}
 	read(path: string,callback: Function){
 		this.fs.readFile({
@@ -335,8 +335,8 @@ class Browser{
 	}
 	except: string[] = []
 	isReady: boolean = false
-	isLocal(path: string): boolean{
-		return !!this.depend[path];
+	isLocal(path: string, sign: string): boolean{
+		return this.depend[path] == sign;
 	}
 	/**
 	 * @description 读取数据
