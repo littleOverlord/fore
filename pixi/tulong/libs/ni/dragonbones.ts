@@ -16,35 +16,24 @@ export default class DragonBones {
 	/**
 	 * @description 配置解析后的spine数据，直接用来创建spine动画对象
 	 */
-	static spineData = {}
+	static data = {}
 	/**
 	 * @description 添加配置
 	 */
 	static addDragonData(data){
-		let jk,rawSkeletonData,rawAtlasData,spineAtlas,spineAtlasLoader,spineJsonParser,spineData;
+		console.log(Dragon);
 		for(let k in data){
-			// Spine.cfgs[k] = data[k];
-			// if(Util.fileSuffix(k) == ".atlas"){
-			// 	jk = k.replace(".atlas",".json");
-			// 	rawSkeletonData = JSON.parse(data[jk]);
-			// 	rawAtlasData = data[k];
-			// 	spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function(line, callback) {
-			// 		callback(Loader.resources[k.replace(".atlas",".png")].texture.baseTexture);
-			// 	}); 
-			// 	spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas)
-			// 	spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
-			// 	spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
-			// 	console.log(spineData);
-			// 	Spine.spineData[k] = spineData;
-			// 	delete data[k];
-			// 	delete data[jk];
-			// }
+			if(k.indexOf("_ske.json") > 0 || k.indexOf("_tex.json") > 0){
+				DragonBones.data[k] = JSON.parse(data[k]);
+				delete data[k];
+			}
 		}
 	}
 	/**
 	 * @description 创建pine动画
 	 */
 	static create(name){
+		// let _factory = Dragon.PixiFactory.factory
 		return {};
 		// if(!Spine.spineData[name]){
 		// 	return ;

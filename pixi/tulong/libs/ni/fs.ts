@@ -97,7 +97,7 @@ export default class Fs {
 			};
 		for(let i = 0, len = arr.length; i < len; i++){
 			fileMap[arr[i]] = 0;
-			if(Fs.fs.isLocal(arr[i]),this.depend.all[arr[i]]){
+			if(Fs.fs.isLocal(arr[i],this.depend.all[arr[i]].sign)){
 				Fs.fs.read(arr[i],deal(arr[i],true));
 			}else{
 				// if(Fs.fs.get){
@@ -194,7 +194,7 @@ class WXFS{
 				callback(null,`${this.userDir}/${path}`);
 				console.log(path);
 				if(!notWriteDepend){
-					this.depend[path] = 1;
+					this.depend[path] = Fs.depend.all[path].sign;
 					Fs.writeCacheDpend();
 				}
 			},
@@ -204,28 +204,32 @@ class WXFS{
 		})
 	}
 	get(path,remote,callback){
-		let _this = this;
+		let _this = this,header = {},binary = Fs.BlobType[Util.fileSuffix(path)];
+		if(binary){
+			header["content-type"] = "application/octet-stream";
+		}
 		wx.downloadFile({
 			url:`${remote}/${path}`,
-			// filePath:`${this.userDir}/${path}`,
+			filePath:`${this.userDir}/${path}`,
+			header: header,
 			success: (res) => {
 				console.log(res);
-				this.depend[path] = 1;
-				if(res.header["content-type"].indexOf("image") === 0){
+				this.depend[path] = Fs.depend.all[path].sign;
+				if(binary){
 					callback(null,res);
-					const img = wx.createImage();
-                    img.src = res.tempFilePath;
-                    img.onload = ()=>{
-                        console.log(`load ${path} ok! `)
-                    }
-                    img.onerror = (e) => {
-                        console.log(`load ${path} error! `,e)
-                    }
+					// const img = wx.createImage();
+                    // img.src = res.filePath;
+                    // img.onload = ()=>{
+                    //     console.log(`load ${path} ok! `)
+                    // }
+                    // img.onerror = (e) => {
+                    //     console.log(`load ${path} error! `,e)
+                    // }
 				}else{
-					// Fs.writeCacheDpend();
-					// _this.read(path,(err,data)=>{
-					// 	callback(err,data);
-					// });
+					Fs.writeCacheDpend();
+					_this.read(path,(err,data)=>{
+						callback(err,data);
+					});
 				}
 			},
 			fail: (error)=>{

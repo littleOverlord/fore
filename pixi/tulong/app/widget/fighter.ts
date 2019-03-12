@@ -23,9 +23,9 @@ export class Fighter{
     }
 }
 
-export class SpineFighter{
+export class DragonbonesFighter{
     constructor(id,skin,x,y,ani,anicallback){
-        this.data.url = `images/ani/${skin}.atlas`;
+        this.data.url = `images/ani/${skin}`;
         this.data.id = id;
         this.data.x = x;
         this.data.y = y;
@@ -34,7 +34,7 @@ export class SpineFighter{
     }
     type = "spine"
     data = {
-        url:"images/ani/.atlas",
+        url:"images/ani/",
         x:0,
         y:0,
         id:'',

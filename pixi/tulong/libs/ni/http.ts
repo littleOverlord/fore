@@ -111,5 +111,8 @@ const connect = (type: string, url: string, reqData: any, reqType: string, callb
 		callback(null,xhr.response || xhr.responseText);
 	}
 	xhr.open(type, url, true);
+	// if(reqType){
+		// xhr.setRequestHeader("accept-encoding", "gzip");
+	// }
 	xhr.send(reqData);
 }
