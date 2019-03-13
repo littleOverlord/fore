@@ -7,7 +7,7 @@ import TextAnimate from "../libs/ni/textani";
 import Connect from "../libs/ni/connect";
 import DB from "../libs/ni/db";
 
-import {Fighter as FighterCfg, SpineFighter} from './widget/fighter';
+import {Fighter as FighterCfg, DragonbonesFighter} from './widget/fighter';
 import {AppEmitter} from './appEmitter';
 import {Fighter, FScene} from './fight';
 
@@ -46,7 +46,7 @@ export default class Stage {
             //测试fighter
             Stage.addOwer();
             // Stage.fight();
-            // testSpine();
+            testSpine();
         });
         
     }
@@ -257,14 +257,17 @@ const textAni = (o): boolean => {
 }
 //测试spine
 const testSpine = () => {
-    let sp = Scene.create(new SpineFighter(`fighter00`,"skeleton",256,256,"standby",((id)=>{
+    let sp = Scene.create(new DragonbonesFighter(`fighter00`,"SwordsMan","Swordsman",256,256,"steady",((id)=>{
         return (e) => {
-            console.log("spine animation ",e);
+            console.log("Dragonbones animation ",e);
         }
-    })("spine")),null,Stage.sceneNode,null);
+    })("Dragonbones")),null,Stage.sceneNode,null);
     sp.scale.x = 0.5;
     sp.scale.y = 0.5;
-    sp.state.addAnimationByName(0, 'hiphop04', true, 0);
+    setTimeout(()=>{
+        sp.animation.play("attack1");
+    },5000);
+    
 }
 //战斗事件处理器列表
 const eventHandler = {

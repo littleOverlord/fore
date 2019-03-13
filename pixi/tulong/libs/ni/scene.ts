@@ -376,12 +376,16 @@ const creater = {
 	 * @description 创建dragonbones
 	 */
 	dragonbones: (data)=>{
-		let o = DragonBones.create(data.url);
+		let o = DragonBones.create(data);
 		if(!o){
 			return console.error(`Can't find the spine data by "${data.url}".`);
 		}
 		creater.init(o,data);
-
+		if(data.ani){
+			o.animation.play(data.ani,0)
+		}else{
+			o.animation.play();
+		}
 		return o;
 	}
 }

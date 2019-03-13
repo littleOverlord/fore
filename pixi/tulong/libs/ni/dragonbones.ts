@@ -30,11 +30,19 @@ export default class DragonBones {
 		}
 	}
 	/**
-	 * @description 创建pine动画
+	 * @description 创建龙骨动画
 	 */
-	static create(name){
-		// let _factory = Dragon.PixiFactory.factory
-		return {};
+	static create(cfg){
+		let o, _factory = (Dragon as any).PixiFactory.factory,name = cfg.url,ske = name + "_ske.json",tex = name+"_tex.json", png = name+"_tex.png";
+		if(!_factory.getDragonBonesData(ske)){
+			_factory.parseDragonBonesData(DragonBones.data[ske]);
+		}
+		if(!_factory.getTextureAtlasData(tex)){
+			_factory.parseTextureAtlasData(DragonBones.data[tex], Loader.resources[png].texture);
+		}
+		o = _factory.buildArmatureDisplay(cfg.armature);
+        
+		return o;
 		// if(!Spine.spineData[name]){
 		// 	return ;
 		// }
