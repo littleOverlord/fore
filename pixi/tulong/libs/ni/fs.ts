@@ -31,16 +31,17 @@ export default class Fs {
 	 * @description 后缀名对应的Blob类型
 	 */
 	static BlobType = {
-		".png": 'image/png',
-		".jpg": 'image/jpeg',
-		".jpeg": 'image/jpeg',
-		".webp": 'image/webp',
-		".gif": 'image/gif',
-		".svg": 'image/svg+xml',
-		".ttf": 'application/x-font-ttf',
-		".otf": 'application/x-font-opentype',
-		".woff": 'application/x-font-woff',
-		".woff2": 'application/x-font-woff2'
+		".png"  : 'image/png',
+		".jpg"  : 'image/jpeg',
+		".jpeg" : 'image/jpeg',
+		".webp" : 'image/webp',
+		".gif"  : 'image/gif',
+		".svg"  : 'image/svg+xml',
+		".ttf"  : 'application/x-font-ttf',
+		".otf"  : 'application/x-font-opentype',
+		".woff" : 'application/x-font-woff',
+		".woff2": 'application/x-font-woff2',
+		".mp3"  : 'audio/mpeg3'
 	};
 	/**
 	 * @description 初始化,根据cfg匹配不同平台处理文件对象
@@ -100,11 +101,11 @@ export default class Fs {
 			if(Fs.fs.isLocal(arr[i],this.depend.all[arr[i]].sign)){
 				Fs.fs.read(arr[i],deal(arr[i],true));
 			}else{
-				// if(Fs.fs.get){
-				// 	Fs.fs.get(arr[i],Fs.remote,deal(arr[i],true));
-				// }else{
-					Http.get(`${Fs.remote}/${arr[i]}`,"",this.BlobType[Util.fileSuffix(arr[i])]?"BIN":"",deal(arr[i],false));
-				// }
+				if(Fs.fs.get && this.BlobType[Util.fileSuffix(arr[i])]){
+					Fs.fs.get(arr[i],Fs.remote,deal(arr[i],true));
+				}else{
+					Http.get(`${Fs.remote}/${arr[i]}`,"","",deal(arr[i],false));
+				}
 			}
 		}
 		return fileMap;
@@ -217,14 +218,6 @@ class WXFS{
 				this.depend[path] = Fs.depend.all[path].sign;
 				if(binary){
 					callback(null,res);
-					// const img = wx.createImage();
-                    // img.src = res.filePath;
-                    // img.onload = ()=>{
-                    //     console.log(`load ${path} ok! `)
-                    // }
-                    // img.onerror = (e) => {
-                    //     console.log(`load ${path} error! `,e)
-                    // }
 				}else{
 					Fs.writeCacheDpend();
 					_this.read(path,(err,data)=>{
