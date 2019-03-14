@@ -32,7 +32,7 @@ export default class Animate {
 		}
 		if(cf == rang[1]){
 			o.gotoAndPlay(rang[0]);
-			if(o.ni.animate.once){
+			if(o.ni.animate.times){
 				if(o.ni.anicallback){
 					o.ni.anicallback("complete");
 				}

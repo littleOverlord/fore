@@ -257,15 +257,22 @@ const textAni = (o): boolean => {
 }
 //测试spine
 const testSpine = () => {
-    let sp = Scene.create(new DragonbonesFighter(`fighter00`,"SwordsMan","Swordsman",256,256,"steady",((id)=>{
-        return (e) => {
-            console.log("Dragonbones animation ",e);
+    let sp = Scene.create(new DragonbonesFighter(`fighter00`,"SwordsMan","Swordsman",256,256,"steady",(status,ani)=>{
+        console.log(status,ani);
+        if(status == "completed"){
+            sp.ni.play("steady",0);
         }
-    })("Dragonbones")),null,Stage.sceneNode,null);
-    sp.scale.x = 0.5;
+    }),null,Stage.sceneNode,null);
+    sp.scale.x = -0.5;
     sp.scale.y = 0.5;
     setTimeout(()=>{
-        sp.animation.play("attack1");
+        sp.ni.play("attack1",1);
+        setTimeout(() => {
+            sp.ni.stop("attack1");
+            setTimeout(()=>{
+                sp.ni.play("attack1",1);
+            },2000);  
+        }, 1000);
     },5000);
     
 }

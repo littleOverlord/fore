@@ -67,6 +67,7 @@ export default class Scene {
 			Scene.FPS.loop();
 			app.render();
 			Events.loop();
+			DragonBones.update();
 		});
 		console.log(PIXI.spine);
 		return app;
@@ -130,6 +131,9 @@ export default class Scene {
 				if(this.ni.id){
 					// console.log(`Delete the node which id is ${this.ni.id} from cache!!`);
 					o.widget.elements.delete(o.ni.id);
+				}
+				if(this.ni.type === "dragonbones"){
+					DragonBones.remove(this.ni);
 				}
 			})
 			if(option.children && option.children.length){
@@ -260,6 +264,67 @@ let Application = PIXI.Application,
 		Point = PIXI.Point,
 		//当前渲染实例 new PIXI.Application()
 		app;
+class Ni{
+	private _ani = ""
+	private _times = -1
+	public z = 0
+	public id = ""
+	/**
+	 * @description 帧动画动作列表
+	 */
+	public actions = {}
+	/**
+	 * @description 画状态表
+	 */
+	public animate ={"ani":"","times":0,"speed":1} // times 0: 无限循环播放, [1~N]: 循环播放 N 次
+	/**
+	 * @description 创建应用层管理对象
+	 * @param show 显示对象
+	 * @param cfg 显示配置
+	 */
+	constructor(public show: any,cfg: any, public type: string){
+		if(cfg.z){
+			this.z = cfg.z;
+		}
+		if(cfg.id){
+			this.id = cfg.id;
+		}
+		for(let k in this.animate){
+			if(cfg[k]){
+				this.animate[k] = cfg[k];
+			}
+		}
+		if(cfg.anicallback){
+			this.anicallback = cfg.anicallback;
+		}
+	}
+	/**
+	 * @description 动画回调
+	 */
+	public anicallback(status: string,ani: string){
+
+	}
+	/**
+	 * @description 播放骨骼动画
+	 */
+	public play(ani: string = this.animate.ani,times: number = this.animate.times){
+		if(this.type !== "dragonbones"){
+			return;
+		}
+		this.animate.ani = ani;
+		this.animate.times = times;
+		DragonBones.play(this);
+	}
+	/**
+	 * @description 暂停骨骼动画
+	 */
+	public stop(ani: string = this.animate.ani){
+		if(this.type !== "dragonbones"){
+			return;
+		}
+		DragonBones.stop(ani,this);
+	}
+}
 /**
  * @description 渲染对象创建器
  */
@@ -274,11 +339,11 @@ const creater = {
 	 * 	animate: {ani:"",default:"","speed": 1, "once": false} //default为创建时设置的ani, 在每一次一次性动画结束后，自动切换到default
 	 * }
 	 */
-	init: (o,data) => {
+	init: (type,o,data) => {
 		data.width !== undefined && (o.width = data.width);
 		data.height !== undefined && (o.height = data.height);
 		o.position.set(data.x || 0, data.y || 0);
-		o.ni = {z:data.z || 0, id: data.id || ""};
+		o.ni = new Ni(o,data,type);
 		o.alpha = data.alpha || 1;
 	},
 	/**
@@ -286,7 +351,7 @@ const creater = {
 	 */
 	container: (data) => {
 		let o = new Container();
-		creater.init(o,data);
+		creater.init("container",o,data);
 		return o;
 	},
 	/**
@@ -303,7 +368,7 @@ const creater = {
 		if(t.defaultAnchor.x || t.defaultAnchor.y){
 			o.position.set((data.x || 0)-data.width*t.defaultAnchor.x,(data.y || 0) - data.height*t.defaultAnchor.y);
 		}
-		creater.init(o,data);
+		creater.init("sprite",o,data);
 		return o;
 	},
 	/**
@@ -319,7 +384,7 @@ const creater = {
 	 */
 	text: (data) => {
 		let o = new Text(data.text,data.style);
-		creater.init(o,data);
+		creater.init("text",o,data);
 		return o;
 	},
 	/**
@@ -337,17 +402,12 @@ const creater = {
 		if(!Scene.spriteSheets[data.url]){
 			return console.error(`Can't find the spriteSheet by "${data.url}".`);
 		}
-		let attr = ["ani","once","speed"],
-			m = data.url.match(/\/([^\/\.]+)\./),
+		let m = data.url.match(/\/([^\/\.]+)\./),
 			o = new AnimatedSprite(Scene.spriteSheets[data.url].animations[m[1]]);
-		creater.init(o,data);
+		creater.init("animatedSprite",o,data);
 		o.animationSpeed = data.speed;
 		o.ni.actions = Scene.spriteSheets[data.url].data.actions || {};
-		o.ni.anicallback = data.anicallback;
-		o.ni.animate = {};
-		for(let i = 0,len = attr.length; i < len; i++){
-			o.ni.animate[attr[i]] = data[attr[i]];
-		}
+		
 		if((!o.ni.actions || o.ni.actions.length == 0) && data.once){
 			o.loop = !data.once;
 		}
@@ -378,14 +438,10 @@ const creater = {
 	dragonbones: (data)=>{
 		let o = DragonBones.create(data);
 		if(!o){
-			return console.error(`Can't find the spine data by "${data.url}".`);
+			return console.error(`Can't find the dragonbones data by "${data.url}".`);
 		}
-		creater.init(o,data);
-		if(data.ani){
-			o.animation.play(data.ani,0)
-		}else{
-			o.animation.play();
-		}
+		creater.init("dragonbones",o,data);
+		o.ni.play();
 		return o;
 	}
 }

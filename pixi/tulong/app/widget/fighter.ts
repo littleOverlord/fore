@@ -16,7 +16,7 @@ export class Fighter{
         width: 356,
         height: 356,
         speed: 0.08,
-        once: false,
+        times: 0,
         ani: "standby",
         actions: {},
         anicallback: Function
@@ -41,6 +41,7 @@ export class DragonbonesFighter{
         y:0,
         id:'',
         ani: "standby",
+        times:0,
         anicallback: Function
     }
 }

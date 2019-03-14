@@ -166,7 +166,7 @@ export default class Equip {
             "height": 240,
             "speed": 0.1,
             "ani":"",
-            "once": true,
+            "times": 1,
             "anicallback": () => {
                 Equip.createEquip(type,index,level);
                 Scene.remove(o);
