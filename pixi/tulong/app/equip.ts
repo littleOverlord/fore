@@ -35,6 +35,7 @@ export default class Equip {
         //创建底部界面
         Scene.open("app-ui-mainBottom",Scene.root,Equip);
         Equip.read();
+        
     }
     
     /**

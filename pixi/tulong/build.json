@@ -30,7 +30,7 @@
         "ignore":["/README.md","/build.json"],
         "plugins":{
             "ts":{
-                "mod":"ts2es6"
+                "mod":"ts2es5"
             },
             "xls":{
                 "mod":"xls2json"

@@ -2,7 +2,7 @@
 import * as PIXI from '../pixijs/pixi';
 /****************** 导出 ******************/
 export default class Frame {
-	static list = [];
+	static list: Array<any> = []
 	/**
 	 * @description 添加帧回调
 	 * @param frameCall 帧回调函数
@@ -10,7 +10,7 @@ export default class Frame {
 	 * @param isOnce 是否一次性，是则执行一次后删除
 	 * @returns {} 帧对象，存储于帧列表，如果自身需要手动删除，则用户应该抓住它
 	 */
-	static add(frameCall,interval?,isOnce?){
+	static add(frameCall: Function,interval?: number,isOnce?: boolean){
 		let f = {
 			frameCall: frameCall,
 			interval: interval,
