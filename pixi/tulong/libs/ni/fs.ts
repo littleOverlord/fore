@@ -484,4 +484,22 @@ class Depend{
 		dir(arr)
 		return r;
 	}
+	/**
+	 * @description 寻找模块依赖
+	 */
+	findModDepend(path,_arr){
+		let arr = _arr || [],file,find = (src) => {
+			for(let i = src.length - 1;i >= 0;i--){
+				file = this.all[src[i]];
+				if(file.depends && file.depends.length){
+					find(file.depends);
+				}
+				if(arr.indexOf(src[i]) < 0){
+					arr.push(src[i]);
+				}
+			}
+		};
+		find([path]);
+		return arr;
+	}
 }

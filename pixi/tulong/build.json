@@ -2,7 +2,7 @@
     {
         "name": "wx",
         "dist": "../dist/wx/tulong",
-        "ignore":["/README.md","/app/cfg","/app/ui","/images","/audio","/build.json"],
+        "ignore":["/README.md","/app/cfg","/app/ui","/images","/audio","/build.json","/index.html","/init.js"],
         "plugins":{
             "ts":{
                 "mod":"ts2es6"
@@ -27,7 +27,7 @@
     {
         "name": "pc",
         "dist": "../../../back/htdocs/static",
-        "ignore":["/README.md","/build.json"],
+        "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json"],
         "plugins":{
             "ts":{
                 "mod":"ts2es5"

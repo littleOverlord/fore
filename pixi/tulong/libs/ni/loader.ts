@@ -82,7 +82,7 @@ export default class Loader {
 /****************** 本地 ******************/
 declare const wx;
 const loader = PIXI.loader;
-const fs = wx?wx.getFileSystemManager():()=>{};
+const fs = (window as any).wx?(window as any).wx.getFileSystemManager():()=>{};
 //图片资源后缀
 enum Image {
 	".png"=1,
