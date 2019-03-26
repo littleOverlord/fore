@@ -7,6 +7,9 @@
             "ts":{
                 "mod":"ts2es6"
             },
+            "es6":{
+                "mod":"es62es6"
+            },
             "xls":{
                 "mod":"xls2json"
             },
@@ -31,6 +34,9 @@
         "plugins":{
             "ts":{
                 "mod":"ts2es5"
+            },
+            "es6":{
+                "mod":"es62es5"
             },
             "xls":{
                 "mod":"xls2json"
