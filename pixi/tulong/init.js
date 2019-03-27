@@ -69,12 +69,6 @@ var ni_modules = {};
         return ni_modules[name];
     }
     /**
-     * @description 单模块加载完成,可以外部重载
-     */
-    commonjs.exports.success = function(name){
-
-    };
-    /**
      * @description 寻找依赖
      */
     commonjs.exports.findDepends = function(arr){

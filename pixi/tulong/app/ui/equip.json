@@ -19,8 +19,8 @@
             "data": {
                 "text": "LV.1",
                 "style": {"fontSize":30,"fill":"#ffffff","strokeThickness":2},
-                "x": 34,
-                "y": 90
+                "left": 34,
+                "top": 90
             }
         }
     ]

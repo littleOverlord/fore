@@ -35,11 +35,11 @@ export default class Main {
             height: cfg.screen.height,  
             antialias: true,
             transparent: false,
-            view: canvas,
+            view: (window as any).canvas,
             resolution: 1
         },cfg);
         Fs.init(cfg,load);
-        console.log(wx.env.USER_DATA_PATH);
+        // console.log(wx.env.USER_DATA_PATH);
     }
 }
 /****************** 本地 ******************/

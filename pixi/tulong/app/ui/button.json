@@ -5,8 +5,8 @@
         "url": "images/ui/button_store.png",
         "width": 136,
         "height": 100,
-        "x": 100,
-        "y": 770
+        "left": 100,
+        "top": 770
     },
     "children": [
         {
@@ -14,8 +14,8 @@
             "data": {
                 "text": "button",
                 "style": {"fontSize":30,"fill":"#adbbd9","strokeThickness":2},
-                "x": 34,
-                "y": 25
+                "left": 34,
+                "top": 25
             }
         }
     ]

@@ -104,7 +104,7 @@ export default class Fs {
 				if(Fs.fs.get && this.BlobType[Util.fileSuffix(arr[i])]){
 					Fs.fs.get(arr[i],Fs.remote,deal(arr[i],true));
 				}else{
-					Http.get(`${Fs.remote}/${arr[i]}`,"","",deal(arr[i],false));
+					Http.get(`${Fs.remote}/${arr[i]}`,"",this.BlobType[Util.fileSuffix(arr[i])]?"BIN":"",deal(arr[i],false));
 				}
 			}
 		}
@@ -322,7 +322,7 @@ class Browser{
 		_this.init(()=>{
 			setTimeout(() => {
 				_this.read("_.depend",(err,data)=>{
-					_this.depend = err?{}:JSON.parse(data);
+					_this.depend = (err || !data)?{}:JSON.parse(data);
 					callback && callback();
 				})
 			}, 0);

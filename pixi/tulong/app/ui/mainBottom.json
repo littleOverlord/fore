@@ -2,8 +2,8 @@
     "type":"container",
     "data": {
         "id": "bottom",
-        "x":0,
-        "y":424,
+        "left":0,
+        "top":424,
         "width": 750,
         "height": 920
     },
@@ -15,8 +15,8 @@
                 "url": "images/ui/bag_bg.png",
                 "width": 750,
                 "height": 920,
-                "x": 0,
-                "y": -8
+                "left": 0,
+                "top": -8
             }
         },
         {
@@ -27,8 +27,8 @@
                 "url": "images/ui/button_store.png",
                 "width": 136,
                 "height": 100,
-                "x": 100,
-                "y": 770,
+                "left": 100,
+                "top": 770,
                 "text": "商店",
                 "size":30,
                 "color":"#adbbd9"
@@ -43,8 +43,8 @@
                 "id": "button_sale",
                 "width": 136,
                 "height": 100,
-                "x": 524,
-                "y": 770
+                "left": 524,
+                "top": 770
             },
             "children":[
                 {
@@ -54,8 +54,8 @@
                         "url": "images/ui/button_sale.png",
                         "width": 136,
                         "height": 100,
-                        "x": 0,
-                        "y": 0,
+                        "left": 0,
+                        "top": 0,
                         "text": "出售",
                         "size":30,
                         "color":"#d9c6ad"
@@ -69,8 +69,8 @@
                 "id": "equipBG",
                 "width": 660,
                 "height": 660,
-                "x": 65,
-                "y": 145
+                "left": 65,
+                "top": 145
             }
         },
         {
@@ -83,8 +83,8 @@
             "type" : "animatedSprite",
             "data" : {
                 "url":"images/ua/equip_light.json",
-                "x":2000,
-                "y":0,
+                "left":2000,
+                "top":0,
                 "id":"equipLight",
                 "width": 240,
                 "height": 240,

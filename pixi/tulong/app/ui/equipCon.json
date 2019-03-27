@@ -4,8 +4,8 @@
         "id": "equipCon",
         "width": 660,
         "height": 660,
-        "x": 65,
-        "y": 145
+        "left": 65,
+        "top": 145
     },
     "children": [
         

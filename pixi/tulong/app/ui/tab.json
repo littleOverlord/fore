@@ -7,8 +7,8 @@
             "data": {
                 "width": 250,
                 "height": 114,
-                "x": 250,
-                "y": 50
+                "left": 250,
+                "top": 50
             },
             "children": [
                 {
@@ -19,8 +19,8 @@
                         "url": "images/ui/bag_tab_bg.png",
                         "width": 114,
                         "height": 114,
-                        "x": 0,
-                        "y": 0
+                        "left": 0,
+                        "top": 0
                     },
                     "children": [
                         {
@@ -29,8 +29,8 @@
                                 "url": "images/ui/bag_tab_attack.png",
                                 "width": 70,
                                 "height": 70,
-                                "x": 22,
-                                "y": 22
+                                "left": 22,
+                                "top": 22
                             }
                         }
                     ]
@@ -43,8 +43,8 @@
                         "url": "images/ui/bag_tab_bg.png",
                         "width": 114,
                         "height": 114,
-                        "x": 136,
-                        "y": 0
+                        "left": 136,
+                        "top": 0
                     },
                     "children": [
                         {
@@ -53,8 +53,8 @@
                                 "url": "images/ui/bag_tab_armors.png",
                                 "width": 70,
                                 "height": 70,
-                                "x": 22,
-                                "y": 22
+                                "left": 22,
+                                "top": 22
                             }
                         }
                     ]

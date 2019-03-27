@@ -2,8 +2,8 @@
     "type" : "animatedSprite",
     "data" : {
         "url":"",
-        "x":0,
-        "y":0,
+        "left":0,
+        "top":0,
         "id":"",
         "width": 356,
         "height": 356,

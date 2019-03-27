@@ -2,8 +2,8 @@
     "type":"container",
     "data": {
         "id": "top",
-        "x":0,
-        "y":0,
+        "left":0,
+        "top":0,
         "width": 750,
         "height": 424
     },
@@ -13,8 +13,8 @@
             "data": {
                 "width": 750,
                 "height": 424,
-                "x": 0,
-                "y": 0
+                "left": 0,
+                "top": 0
             },
             "children":[
                 {
@@ -24,8 +24,8 @@
                         "url": "images/ui/scene.png",
                         "width": 982,
                         "height": 424,
-                        "x": 0,
-                        "y": 0
+                        "left": 0,
+                        "top": 0
                     },
                     "children": [
                         {
@@ -34,8 +34,8 @@
                                 "url": "images/ui/scene.png",
                                 "width": 982,
                                 "height": 424,
-                                "x": 982,
-                                "y": 0
+                                "left": 982,
+                                "top": 0
                             }
                         }
                     ]
@@ -46,8 +46,8 @@
                         "id": "fightScene",
                         "width": 750,
                         "height": 424,
-                        "x": 0,
-                        "y": 0
+                        "left": 0,
+                        "top": 0
                     }
                 }
             ]
@@ -58,8 +58,8 @@
                 "url": "images/ui/stage_level_bg.png",
                 "width": 208,
                 "height": 76,
-                "x": 271,
-                "y": 0
+                "left": 271,
+                "top": 0
             },
             "children": [
                 {
@@ -67,8 +67,8 @@
                     "data": {
                         "id": "stage_level",
                         "text": "02-01",
-                        "x": 64,
-                        "y": 5,
+                        "left": 64,
+                        "top": 5,
                         "style": {
                             "fontFamily" : "Arial", "fontSize": 28, "fill" : "#653013", "align" : "center","lineHeight": 36,"wordWrap":true,"letterSpacing":2,"wordWrapWidth": 208
                         }
@@ -82,8 +82,8 @@
                 "url": "images/ui/token_bg.png",
                 "width": 134,
                 "height": 36,
-                "x": 35,
-                "y": 15
+                "left": 35,
+                "top": 15
             },
             "children": [
                 {
@@ -92,8 +92,8 @@
                         "url": "images/ui/token_attack.png",
                         "width": 46,
                         "height": 46,
-                        "x": -22,
-                        "y": -5
+                        "left": -22,
+                        "top": -5
                     }
                 },
                 {
@@ -101,8 +101,8 @@
                     "data": {
                         "id": "token_attack",
                         "text": "0",
-                        "x": 34,
-                        "y": 5,
+                        "left": 34,
+                        "top": 5,
                         "style": {
                             "fontFamily" : "Arial", "fontSize": 22, "fill" : "#653013", "align" : "left","lineHeight": 36
                         }
@@ -116,8 +116,8 @@
                 "url": "images/ui/token_bg.png",
                 "width": 134,
                 "height": 36,
-                "x": 35,
-                "y": 65
+                "left": 35,
+                "top": 65
             },
             "children": [
                 {
@@ -126,8 +126,8 @@
                         "url": "images/ui/token_hp.png",
                         "width": 46,
                         "height": 46,
-                        "x": -22,
-                        "y": -5
+                        "left": -22,
+                        "top": -5
                     }
                 },
                 {
@@ -135,8 +135,8 @@
                     "data": {
                         "id": "token_hp",
                         "text": "0",
-                        "x": 34,
-                        "y": 5,
+                        "left": 34,
+                        "top": 5,
                         "style": {
                             "fontFamily" : "Arial", "fontSize": 22, "fill" : "#653013", "align" : "left","lineHeight": 36
                         }
@@ -150,8 +150,8 @@
                 "url": "images/ui/token_bg.png",
                 "width": 134,
                 "height": 36,
-                "x": 584,
-                "y": 15
+                "left": 584,
+                "top": 15
             },
             "children": [
                 {
@@ -160,8 +160,8 @@
                         "url": "images/ui/token_money.png",
                         "width": 46,
                         "height": 46,
-                        "x": -22,
-                        "y": -5
+                        "left": -22,
+                        "top": -5
                     }
                 },
                 {
@@ -169,8 +169,8 @@
                     "data": {
                         "id": "token_money",
                         "text": "0",
-                        "x": 34,
-                        "y": 5,
+                        "left": 34,
+                        "top": 5,
                         "style": {
                             "fontFamily" : "Arial", "fontSize": 22, "fill" : "#653013", "align" : "left","lineHeight": 36
                         }
@@ -184,8 +184,8 @@
                 "url": "images/ui/token_bg.png",
                 "width": 134,
                 "height": 36,
-                "x": 584,
-                "y": 65
+                "left": 584,
+                "top": 65
             },
             "children": [
                 {
@@ -194,8 +194,8 @@
                         "url": "images/ui/token_diamond.png",
                         "width": 46,
                         "height": 46,
-                        "x": -22,
-                        "y": -5
+                        "left": -22,
+                        "top": -5
                     }
                 },
                 {
@@ -203,8 +203,8 @@
                     "data": {
                         "id": "token_diamond",
                         "text": "0",
-                        "x": 34,
-                        "y": 5,
+                        "left": 34,
+                        "top": 5,
                         "style": {
                             "fontFamily" : "Arial", "fontSize": 22, "fill" : "#653013", "align" : "left","lineHeight": 36
                         }

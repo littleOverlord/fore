@@ -124,6 +124,7 @@ export default class Scene {
 			parent.addChild(o);
 			Scene.addCache(o);
 			Events.bindEvent(o,option);
+			o.ni.resize();
 			o.on("removed",function(pr){
 				if(this.ni.animate){
 					this.stop();
@@ -265,8 +266,15 @@ let Application = PIXI.Application,
 		//当前渲染实例 new PIXI.Application()
 		app;
 class Ni{
-	private _ani = ""
-	private _times = -1
+	//resize的定时器,连续改变，将会只更新一次
+	private rsTimer
+
+	public _width
+	public _height
+	public _left
+	public _top
+	public _bottom
+	public _right
 	public z = 0
 	public id = ""
 	/**
@@ -289,6 +297,12 @@ class Ni{
 		if(cfg.id){
 			this.id = cfg.id;
 		}
+		this._width = cfg.width;
+		this._height = cfg.height;
+		this._left = cfg.left;
+		this._top = cfg.top;
+		this._bottom = cfg.bottom;
+		this._right = cfg.right;
 		for(let k in this.animate){
 			if(cfg[k]){
 				this.animate[k] = cfg[k];
@@ -297,6 +311,31 @@ class Ni{
 		if(cfg.anicallback){
 			this.anicallback = cfg.anicallback;
 		}
+	}
+	/**
+	 * @description 延迟resize执行
+	 */
+	private delayRS(){
+		let _this = this;
+		if(this.rsTimer){
+			return;
+		}
+		this.rsTimer = setTimeout(() => {
+			_this.resize();
+			this.rsTimer = null;
+		}, 0);
+	}
+	/**
+	 * 
+	 * @param status 
+	 * @param ani 
+	 */
+	private setBound(key: string,val: any){
+		if(this[key] == val){
+			return;
+		}
+		this[key] = val;
+		this.delayRS();
 	}
 	/**
 	 * @description 动画回调
@@ -324,6 +363,98 @@ class Ni{
 		}
 		DragonBones.stop(ani,this);
 	}
+	/**
+	 * @description 重新计算位置大小
+	 */
+	public resize(){
+		let x,y,w,h,l,r,t,b,
+			parseNumber = (s: any):number=>{
+				if(typeof s === "string"){
+					s = s.replace("%","");
+					s = Number(s);
+				}
+				return s;
+			};
+		l = parseNumber(this._left);
+		r = parseNumber(this._right);
+		t = parseNumber(this._top);
+		b = parseNumber(this._bottom);
+		if(l !== undefined){
+			if(typeof this._left === "string"){
+				x = this.show.parent.width * (l / 100);
+			}else{
+				x = l;
+			}
+		}
+		if(r !== undefined){
+			if(typeof this._right === "string"){
+				r = this.show.parent.width * (r / 100);
+			}
+			if(x !== undefined){
+				w = this.show.parent.width - x - r;
+			}else{
+				x = this.show.parent.width - this.show.width - r;
+			}
+		}
+		if(t !== undefined){
+			if(typeof this._top === "string"){
+				y = this.show.parent.height * (t / 100);
+			}else{
+				y = t;
+			}
+		}
+		if(b !== undefined){
+			if(typeof this._right === "string"){
+				b = this.show.parent.height * (b / 100);
+			}
+			if(y !== undefined){
+				h = this.show.parent.height - y - b;
+			}else{
+				y = this.show.parent.height - this.show.height - b;
+			}
+		}
+		w = w !== undefined?w:this._width;
+		h = h !== undefined?h:this._height;
+		w !== undefined && (this.show.width = w);
+		h !== undefined && (this.show.height = h);
+		this.show.position.set(x || 0, y || 0);
+	}
+	get top(){
+		return this._top;
+	}
+	set top(val){
+		this.setBound("_top",val);
+	}
+	get left(){
+		return this._left;
+	}
+	set left(val){
+		this.setBound("_left",val);
+	}
+	get right(){
+		return this._right;
+	}
+	set right(val){
+		this.setBound("_right",val);
+	}
+	get bottom(){
+		return this._bottom;
+	}
+	set bottom(val){
+		this.setBound("_bottom",val);
+	}
+	get width(){
+		return this._width;
+	}
+	set width(val){
+		this.setBound("_width",val);
+	}
+	get height(){
+		return this._height;
+	}
+	set height(val){
+		this.setBound("_height",val);
+	}
 }
 /**
  * @description 渲染对象创建器
@@ -340,9 +471,6 @@ const creater = {
 	 * }
 	 */
 	init: (type,o,data) => {
-		data.width !== undefined && (o.width = data.width);
-		data.height !== undefined && (o.height = data.height);
-		o.position.set(data.x || 0, data.y || 0);
 		o.ni = new Ni(o,data,type);
 		o.alpha = data.alpha || 1;
 	},
