@@ -54,10 +54,8 @@ export default class Loader {
 	 * @description 更新图片资源
 	 * @param res 
 	 */
-	static addResource(res){
-		for(let k in res){
-			Loader.resources[k] = res[k];
-		}
+	static addResource(k,res){
+		Loader.resources[k] = res;
 	}
 	/**
 	 * @description 设置资源监听
@@ -139,20 +137,20 @@ class Waiter{
 		}
 	}
 	downloaded(){
-		const _this = this;
 		for(let i = 0, len = this.images.length;i < len; i++){
-			loader.add(this.images[i],Fs.fs.createImg(this.images[i],this.resource[this.images[i]]));
-			
+			// loader.add(this.images[i],Fs.fs.createImg(this.images[i],this.resource[this.images[i]]));
+			Loader.addResource(this.images[i],{name:this.images[i],texture:PIXI.Texture.fromImage(Fs.fs.createImg(this.images[i],this.resource[this.images[i]]))});
 			delete this.resource[this.images[i]];
+			this.process();
 		}
-		loader.on("progress", ()=>{
-			_this.process();
-		})
-		.load((ld,res)=>{
-			console.log(res);
-			Loader.addResource(res);
-			_this.complete();
-		});
+		// loader.on("progress", ()=>{
+		// 	_this.process();
+		// })
+		// .load((ld,res)=>{
+		// 	console.log(res);
+		// 	Loader.addResource(res);
+		this.complete();
+		// });
 	}
 	complete(){
 		if(this.loaded === this.total){

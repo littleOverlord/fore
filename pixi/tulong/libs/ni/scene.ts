@@ -43,6 +43,7 @@ export default class Scene {
 	 * @description create scene
 	 */
 	static Application(option,cfg){
+		initCanvas(option);
 		app = new Application(option);
 		//映射pixi坐标
 		app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
@@ -277,6 +278,8 @@ class Ni{
 	public _right
 	public z = 0
 	public id = ""
+	//显示对象
+	public show
 	/**
 	 * @description 帧动画动作列表
 	 */
@@ -290,7 +293,7 @@ class Ni{
 	 * @param show 显示对象
 	 * @param cfg 显示配置
 	 */
-	constructor(public show: any,cfg: any, public type: string){
+	constructor(show: any,cfg: any, public type: string){
 		if(cfg.z){
 			this.z = cfg.z;
 		}
@@ -311,6 +314,7 @@ class Ni{
 		if(cfg.anicallback){
 			this.anicallback = cfg.anicallback;
 		}
+		this.show = show;
 	}
 	/**
 	 * @description 延迟resize执行
@@ -571,6 +575,21 @@ const creater = {
 		creater.init("dragonbones",o,data);
 		o.ni.play();
 		return o;
+	}
+}
+/**
+ * @description 初始化canvas
+ * @param option 
+ */
+const initCanvas = (option) => {
+	if(option.view){
+		return;
+	}
+	option.view = document.createElement("canvas");
+	option.view.setAttribute("style","position:absolute;left:0;top:0;");
+	document.body.appendChild(option.view);
+	window.onresize = () => {
+		
 	}
 }
 /****************** 立即执行 ******************/

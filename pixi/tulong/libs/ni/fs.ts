@@ -364,8 +364,8 @@ class Browser{
 		var tx = this.db.transaction(this.tabName, "readwrite");
 		tx.objectStore(this.tabName).put(data, path);
 		tx.oncomplete = ()=>{
-			this.depend[path] = 1;
 			if(!notWriteDepend){
+				this.depend[path] = Fs.depend.all[path].sign;
 				Fs.writeCacheDpend();
 			}
 		};
