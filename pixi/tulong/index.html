@@ -122,7 +122,7 @@ winit.cfg = (function(){
 	var cfg = {
 		platForm : "browser",
 		name : "tulong",
-		remote : winit.remote,
+		remote : winit.domains[0],
 		screen : {
 			_width: 750,
 			_height: 1334,
@@ -164,7 +164,7 @@ winit.next = function(){
 	var mods = ["libs/ni/util","libs/ni/http","libs/ni/fs"];
 	ni_modules.commonjs.exports.domain = winit.domains[0];
 	mods = ni_modules.commonjs.exports.load(mods,function(){
-		ni_modules["libs/ni/http"].exports.default.get(`${winit.cfg.remote}/depend.json`,"","",(err,data)=>{
+		ni_modules["libs/ni/http"].exports.default.get(`${winit.domains[0]}/depend.json`,"","",(err,data)=>{
 			if(err){
 				return console.log(err)
 			}
