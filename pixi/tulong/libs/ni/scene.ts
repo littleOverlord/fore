@@ -43,7 +43,7 @@ export default class Scene {
 	 * @description create scene
 	 */
 	static Application(option,cfg){
-		initCanvas(option);
+		initCanvas(option,cfg);
 		app = new Application(option);
 		//映射pixi坐标
 		app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
@@ -581,15 +581,15 @@ const creater = {
  * @description 初始化canvas
  * @param option 
  */
-const initCanvas = (option) => {
+const initCanvas = (option,cfg) => {
 	if(option.view){
 		return;
 	}
 	option.view = document.createElement("canvas");
-	option.view.setAttribute("style","position:absolute;left:0;top:0;");
+	option.view.setAttribute("style",`position:absolute;left:50%;top:50%;margin-left:-${cfg.screen.width/2}px;margin-top:-${cfg.screen.height/2}px;-webkit-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});-moz-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});-ms-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});`);
 	document.body.appendChild(option.view);
 	window.onresize = () => {
-		
+		app.renderer.resize()
 	}
 }
 /****************** 立即执行 ******************/
