@@ -1,5 +1,5 @@
 /****************** 导入 ******************/
-import * as PIXI from '../pixijs/pixi';
+
 /****************** 导出 ******************/
 export default class Frame {
 	static list: Array<any> = []
@@ -55,11 +55,14 @@ export default class Frame {
 	}
 }
 /****************** 本地 ******************/
-const ticker = new PIXI.ticker.Ticker();
-let t = 0;
-/****************** 立即执行 ******************/
-ticker.stop();
-ticker.add((deltaTime) => {
+const requestFrameImpl = (window as any).requestAnimationFrame || (window as any).mozRequestAnimationFrame || (window as any).webkitRequestAnimationFrame || (window as any).msRequestAnimationFrame || function (callback) { return setTimeout(callback, (0.5 + (1000 / 60)) << 0); };
+
+// 获取raf取消函数，处理兼容性
+const cancelFrameImpl = (window as any).cancelAnimationFrame || (window as any).mozCancelAnimationFrame || (window as any).webkitCancelAnimationFrame || (window as any).msCancelAnimationFrame || clearTimeout;
+
+const ticker = ()=>{
+	requestFrameImpl(ticker);
 	Frame.loop();
-});
-ticker.start();
+};
+/****************** 立即执行 ******************/
+requestFrameImpl(ticker);
