@@ -12,6 +12,9 @@ Http.get(`${cfg.remote}/depend.json`,"","",(err,data)=>{
     }
     let depend = JSON.parse(data);
     Fs.parseDepend(depend);
-    new Main(cfg);
+    Fs.init(cfg,()=>{
+        new Main(cfg);
+    })
+    
 })
 

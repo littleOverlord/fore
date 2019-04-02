@@ -32,20 +32,37 @@ var ni_modules = {};
      * @param {Array}arr  ["app/game",...]
      */
     commonjs.exports.load = function(arr,callback){
-        var arr = commonjs.exports.findDepends(arr),building = [],name;
-        for(var i = 0,len = arr.length; i < len; i++){
-            name = arr[i].replace(".js","");
-            if(ni_modules[name]){
-                continue;
-            }
-            building.push(name);
-            commonjs.exports.create(name);
-            commonjs.exports.loadJs(`${commonjs.exports.domain}/${arr[i]}`,function(){});
-        }
-        wait.push({
-            mods:building,
-            count: building.length,
-            callback:callback
+        var arr = commonjs.exports.findDepends(arr),building = [],name,fileMap = {},
+            rpath = function(path){
+                let data = fileMap[path];
+                if(data){
+                    var blob = new Blob([data], { type: "application/javascript" });
+		            return URL.createObjectURL(blob);
+                }
+                return `${commonjs.exports.domain}/${path}`;
+            },start = function(){
+                for(var i = 0,len = arr.length; i < len; i++){
+                    name = arr[i].replace(".js","");
+                    if(ni_modules[name]){
+                        continue;
+                    }
+                    building.push(name);
+                    commonjs.exports.create(name);
+                    commonjs.exports.loadJs(rpath(arr[i]),function(){});
+                }
+                wait.push({
+                    mods:building,
+                    count: building.length,
+                    callback:callback
+                })
+            };
+        commonjs.exports.useFs(function(fs){
+            fs.exports.default.read(arr,function(map){
+                fileMap = map;
+                start();
+            })
+        },function(){
+            start();
         })
         return arr;
     }
@@ -72,13 +89,13 @@ var ni_modules = {};
      * @description 寻找依赖
      */
     commonjs.exports.findDepends = function(arr){
-        var fs = ni_modules["libs/ni/fs"], r = [];
+        var r = [];
         for(var i = 0, len = arr.length; i < len; i++){
-            if(fs && fs.loaded){
+            commonjs.exports.useFs(function(fs){
                 fs.exports.default.depend.findModDepend(arr[i]+".js",r);
-            }else{
+            },function(){
                 r.push(arr[i]+".js");
-            }
+            })
         }
         return r;
     }
@@ -86,12 +103,12 @@ var ni_modules = {};
      * @description 构建模块，按照依赖顺序构建
      */
     commonjs.exports.defineMod = function(mod){
-        let name;
-        for(let i = wait.length - 1; i >= 0; i--){
+        var name;
+        for(var i = wait.length - 1; i >= 0; i--){
             if(wait[i].mods.indexOf(mod.name) >= 0){
                 wait[i].count -= 1;
                 if(wait[i].count === 0){
-                    for(let ii = 0, leng = wait[i].mods.length; ii < leng; ii++){
+                    for(var ii = 0, leng = wait[i].mods.length; ii < leng; ii++){
                         name = wait[i].mods[ii];
                         ni_modules[name].func(commonjs.exports.require,ni_modules[name].exports,ni_modules[name])
                         delete ni_modules[name].func;
@@ -100,6 +117,17 @@ var ni_modules = {};
                     wait.splice(i,1);
                 }
             }
+        }
+    }
+    /**
+     * @description 使用fs模块
+     */
+    commonjs.exports.useFs = function(hasCallback,noCallback){
+        var fs = ni_modules["libs/ni/fs"];
+        if(fs && fs.loaded){
+            hasCallback(fs);
+        }else{
+            noCallback();
         }
     }
     ni_modules.commonjs = commonjs;

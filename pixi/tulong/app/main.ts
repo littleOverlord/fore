@@ -22,13 +22,6 @@ import {AppEmitter} from './appEmitter';
  */
 export default class Main {
     constructor(cfg) {
-        let load = function(){
-                Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
-                    
-                    AppEmitter.emit("intoMain");
-                    
-                });
-            };
         console.log(cfg);
         let app = Scene.Application({
             width: cfg.screen.width,
@@ -38,7 +31,11 @@ export default class Main {
             view: (window as any).canvas,
             resolution: 1
         },cfg);
-        Fs.init(cfg,load);
+        Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
+                    
+            AppEmitter.emit("intoMain");
+            
+        });
         // console.log(wx.env.USER_DATA_PATH);
     }
 }

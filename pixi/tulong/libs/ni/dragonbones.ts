@@ -18,14 +18,30 @@ export default class DragonBones {
 	 */
 	static data = {}
 	/**
+	 * @description 龙骨动画管理对象
+	 */
+	static factory
+	/**
 	 * @description 添加配置
 	 */
 	static addDragonData(data){
 		console.log(Dragon);
+		let name,tex;
+		if(!DragonBones.factory){
+			DragonBones.factory = (Dragon as any).PixiFactory.factory;
+		}
 		for(let k in data){
-			if(k.indexOf("_ske.json") > 0 || k.indexOf("_tex.json") > 0){
-				DragonBones.data[k] = JSON.parse(data[k]);
+			if(k.indexOf("_ske.json") > 0){
+				name = k.match(/\/([^\/]+)_ske\.json$/)[1];
+				if(!DragonBones.factory.getDragonBonesData(name)){
+					DragonBones.factory.parseDragonBonesData(JSON.parse(data[k]));
+				}
+				if(!DragonBones.factory.getTextureAtlasData(name)){
+					tex = k.replace("_ske.json","_tex.json");
+					DragonBones.factory.parseTextureAtlasData(JSON.parse(data[tex]), Loader.resources[k.replace("_ske.json","_tex.png")].texture);
+				}
 				delete data[k];
+				delete data[tex];
 			}
 		}
 	}
@@ -33,20 +49,10 @@ export default class DragonBones {
 	 * @description 创建龙骨动画
 	 */
 	static create(cfg){
-		let o, _factory = (Dragon as any).PixiFactory.factory,name = cfg.url,ske = name + "_ske.json",tex = name+"_tex.json", png = name+"_tex.png";
-		if(!_factory.getDragonBonesData(ske)){
-			_factory.parseDragonBonesData(DragonBones.data[ske]);
-		}
-		if(!_factory.getTextureAtlasData(tex)){
-			_factory.parseTextureAtlasData(DragonBones.data[tex], Loader.resources[png].texture);
-		}
-		o = _factory.buildArmatureDisplay(cfg.armature);
+		let o;
+		o = DragonBones.factory.buildArmatureDisplay(cfg.armature);
         
 		return o;
-		// if(!Spine.spineData[name]){
-		// 	return ;
-		// }
-		// return new PIXI.spine.Spine(Spine.spineData[name]);
 	}
 	/**
 	 * @description 更新动画
