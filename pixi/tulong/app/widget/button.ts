@@ -27,7 +27,7 @@ class Button extends Widget{
     */
     setProps(props){
         super.setProps(props);
-        const cfg = this.cfg,text = cfg.children[0].data,tl = Util.characterSize(props.text),dk = ["id","url","width","height","x","y"];
+        const cfg = this.cfg,text = cfg.children[0].data,dk = ["id","url","width","height","left","top"];
         for(let i = 0, len = dk.length; i < len; i++){
             cfg.data[dk[i]] = props[dk[i]];
         }
@@ -47,10 +47,10 @@ class Button extends Widget{
         let node = this.elements.get(this.props.id),
             text = this.elements.get(this.props.id).children[0];
         node.anchor.set(0.5,0.5);
-        node.x = this.props.x + this.props.width/2;
-        node.y = this.props.y + this.props.height/2;
-        text.x = (this.props.width - text.width)/2 - this.props.width/2;
-        text.y = (this.props.height - text.height)/2 - this.props.height/2;
+        node.ni.left = this.props.left + this.props.width/2;
+        node.ni.top = this.props.top + this.props.height/2;
+        text.ni.left = (this.props.width - text.width)/2 - this.props.width/2;
+        text.ni.top = (this.props.height - text.height)/2 - this.props.height/2;
         console.log(text.width,text.height);
     }
     tapStart(){

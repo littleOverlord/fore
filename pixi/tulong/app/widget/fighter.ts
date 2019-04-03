@@ -2,16 +2,16 @@ export class Fighter{
     constructor(id,skin,x,y,ani,anicallback){
         this.data.url = `images/ani/${skin}.json`;
         this.data.id = id;
-        this.data.x = x;
-        this.data.y = y;
+        this.data.left = x;
+        this.data.top = y;
         this.data.ani = ani;
         this.data.anicallback = anicallback;
     }
     type = "animatedSprite"
     data = {
         url:"images/ani/B_S_005.json",
-        x:0,
-        y:0,
+        left:0,
+        top:0,
         id:'',
         width: 356,
         height: 356,
@@ -27,8 +27,8 @@ export class DragonbonesFighter{
     constructor(id,skin,armature,x,y,ani,anicallback){
         this.data.url = `images/ani/${skin}`;
         this.data.id = id;
-        this.data.x = x;
-        this.data.y = y;
+        this.data.left = x;
+        this.data.top = y;
         this.data.armature = armature;
         this.data.ani = ani;
         this.data.anicallback = anicallback;
@@ -37,8 +37,8 @@ export class DragonbonesFighter{
     data = {
         url:"images/ani/",
         armature: "",
-        x:0,
-        y:0,
+        left:0,
+        top:0,
         id:'',
         ani: "standby",
         times:0,

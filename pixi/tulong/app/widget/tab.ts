@@ -22,7 +22,7 @@ class Tab extends Widget{
                 tabs[i].data.url = `images/ui/${props.bg_c}.png`;
             }else{
                 tabs[i].data.url = `images/ui/${props.bg_n}.png`;
-                this.cfg.children[i+1].data.x = 2000;
+                this.cfg.children[i+1].data.left = 2000;
             }
             this.cfg.children[i+1].children[0].type = props.items[i].con;
             this.cfg.children[i+1].children[0].props = {index:i};
@@ -37,10 +37,10 @@ class Tab extends Widget{
             let t = `tab_${i}`,c = `content_${i}`;
             if(i == pos){
                 Scene.modifyTexture(this.elements.get(t),`images/ui/${this.props.bg_c}.png`);
-                this.elements.get(c).x = 0;
+                this.elements.get(c).ni.left = 0;
             }else if(i == index){
                 Scene.modifyTexture(this.elements.get(t),`images/ui/${this.props.bg_n}.png`);
-                this.elements.get(c).x = 2000;
+                this.elements.get(c).ni.left = 2000;
             }
         }
         index = pos;

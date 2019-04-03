@@ -161,8 +161,8 @@ export default class Equip {
         t = Math.floor(index/4),
         o = Scene.open("app-ui-ani",Equip.bottomNode,null,{
             "url":"images/ua/equip_light.json",
-            "x":l * 120 + (l+1) * 30 + 65 - 60,
-            "y":t * 120 + (t+1) * 30 + 145 - 60,
+            "left":l * 120 + (l+1) * 30 + 65 - 60,
+            "top":t * 120 + (t+1) * 30 + 145 - 60,
             "width": 240,
             "height": 240,
             "speed": 0.1,
@@ -230,37 +230,37 @@ class WEquip extends Widget{
         this.cfg.on.drag.arg[0] = this.cfg.on.end.arg[0] = props.index;
         l = props.index % 4;
         t = Math.floor(props.index/4);
-        this.cfg.data.x = l * 120 + (l+1) * 30;
-        this.cfg.data.y = t * 120 + (t+1) * 30;
+        this.cfg.data.left = l * 120 + (l+1) * 30;
+        this.cfg.data.top = t * 120 + (t+1) * 30;
         this.cfg.children[0].data.url = `images/${props.type}/${cfg["icon"+(props.type == "arms"?1:2)]}.png`;
         this.cfg.children[1].data.text = `LV ${props.level}`;
         tl = this.cfg.children[1].data.text.length;
-        this.cfg.children[1].data.x = 120 - tl * (this.cfg.children[1].data.style.fontSize / 2);
+        this.cfg.children[1].data.left = 120 - tl * (this.cfg.children[1].data.style.fontSize / 2);
     }
     drag(index,e,target){
         // console.log("drag",index,target,e);
         let dx = e.data.global.x - e.start.x,
             dy = e.data.global.y - e.start.y;
-        target.x = this.cfg.data.x + dx;
-        target.y = this.cfg.data.y + dy;
+        target.ni.left = this.cfg.data.left + dx;
+        target.ni.top = this.cfg.data.top + dy;
     }
     dragEnd(index,e,target){
         // console.log("dragend",index,target,e);
         if(Equip.dragEquip(index,this.props.type) || Equip.sale(index,this.props.type)){
             return;
         }
-        target.x = this.cfg.data.x;
-        target.y = this.cfg.data.y;
+        target.ni.left = this.cfg.data.left;
+        target.ni.top = this.cfg.data.top;
     }
 }
 //适配背包背景
 const matchBg = (bg) => {
     if(Scene.screen.left){
-        bg.width += Scene.screen.left * 2;
-        bg.x -= Scene.screen.left;
+        bg.ni.width += Scene.screen.left * 2;
+        bg.ni.left -= Scene.screen.left;
     }
     if(Scene.screen.top){
-        bg.height += Scene.screen.top * 2;
+        bg.ni.height += Scene.screen.top * 2;
     }
 }
 //创建装备背景
@@ -270,8 +270,8 @@ const createEquipBg = (node) => {
         o = Scene.open("app-ui-equipBg",node,null,{url:"images/ui/bag_border.png"});
         l = i % 4;
         t = Math.floor(i/4);
-        o.x = l * 120 + (l+1) * 30;
-        o.y = t * 120 + (t+1) * 30;
+        o.ni.left = l * 120 + (l+1) * 30;
+        o.ni.top = t * 120 + (t+1) * 30;
     }
 }
 //初始化读取数据
