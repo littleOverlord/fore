@@ -267,7 +267,7 @@ class PC{
 	private path
 	private resPath = ""
 	constructor(debug: boolean){
-		let rp = debug?"src":"resources\\app\\src";
+		let rp = debug?"src":"resources\\app.asar\\src";
 		this.fs = require("fs");
 		this.path = require("path");
 		this.resPath = this.path.join(process.cwd(),rp);
