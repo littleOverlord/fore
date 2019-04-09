@@ -54,7 +54,7 @@ export default class Fs {
 				callback();
 			});
 		}else if(cfg.platForm == "pc"){
-			Fs.fs = new PC();
+			Fs.fs = new PC(cfg.debug);
 			callback && callback();
 		}else if(cfg.platForm == "browser"){
 			Fs.fs = new Browser(cfg,callback);
@@ -154,6 +154,7 @@ export default class Fs {
  */
 declare const wx;
 declare const require;
+declare const process;
 class WXFS{
 	private fs: any
 	private userDir: string
@@ -263,8 +264,13 @@ class WXFS{
  */
 class PC{
 	private fs
-	constructor(){
+	private path
+	private resPath = ""
+	constructor(debug: boolean){
+		let rp = debug?"src":"resources\\app\\src";
 		this.fs = require("fs");
+		this.path = require("path");
+		this.resPath = this.path.join(process.cwd(),rp);
 	}
 	except: string[] = []
 	isReady: boolean = true
@@ -272,14 +278,15 @@ class PC{
 		return true;
 	}
 	read(path, callback){
-
+		console.log(path);
+		this.fs.readFile(this.path.join(this.resPath,path),{encoding:"utf8"},callback);
 	}
 	write(path,data, callback){
 		callback();
 	}
 	delete(path, callback){}
 	createImg(path: string,data?){
-		return path;
+		return this.path.join(this.resPath,path);
 	}
 }
 /**

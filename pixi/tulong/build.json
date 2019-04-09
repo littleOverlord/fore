@@ -2,7 +2,7 @@
     {
         "name": "wx",
         "dist": "../dist/wx/tulong",
-        "ignore":["/README.md","/app/cfg","/app/ui","/images","/audio","/build.json","/index.html","/init.js"],
+        "ignore":["/README.md","/app/cfg","/app/ui","/images","/audio","/build.json","/index.html","/init.js","/pc.html","pc.js"],
         "plugins":{
             "ts":{
                 "mod":"ts2es6"
@@ -28,15 +28,43 @@
         }
     },
     {
-        "name": "pc",
+        "name": "browser",
         "dist": "../../../back/htdocs/static",
-        "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json"],
+        "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/pc.html","pc.js"],
         "plugins":{
             "ts":{
                 "mod":"ts2es5"
             },
             "es6":{
                 "mod":"es62es5"
+            },
+            "xls":{
+                "mod":"xls2json"
+            },
+            "xlsx":{
+                "mod":"xls2json"
+            },
+            "png":{
+                "mod":"pngmin",
+                "quality":60
+            }
+        },
+        "depend":{
+            "name":"depend.json",
+            "prev":"",
+            "last":""
+        }
+    },
+    {
+        "name": "pc",
+        "dist": "../../../pack-pc/src",
+        "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/index.html","/init.js"],
+        "plugins":{
+            "ts":{
+                "mod":"ts2pc"
+            },
+            "es6":{
+                "mod":"es62pc"
             },
             "xls":{
                 "mod":"xls2json"
