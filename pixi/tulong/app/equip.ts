@@ -199,7 +199,7 @@ export default class Equip {
 class UiMainBottom extends Widget{
     added(){
         console.log("UiMainBottom added!!");
-        matchBg(this.elements.get("bagBG"));
+        // matchBg(this.elements.get("bagBG"));
         createEquipBg(this.elements.get("equipBG"));
         Equip.bottomNode = this.elements.get("bottom");
         Equip.saleNode = this.elements.get("button_sale");

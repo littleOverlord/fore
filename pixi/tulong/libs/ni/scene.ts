@@ -47,16 +47,17 @@ export default class Scene {
 		app = new Application(option);
 		//映射pixi坐标
 		app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
-				point.x = x * cfg.screen.scale;
-				point.y = y * cfg.screen.scale;
+			point.x = x * cfg.screen.scale - cfg.screen.left;
+			point.y = y * cfg.screen.scale - cfg.screen.top;
 		}
 		//创建根节点
 		this.root = new Container();
-		this.root.width = cfg.screen._width;
-		this.root.height = cfg.screen._height;
-		this.root.position.set(cfg.screen.left,cfg.screen.top);
+		this.root.width = cfg.screen.width;
+		this.root.height = cfg.screen.height;
+		// this.root.position.set(cfg.screen.left,cfg.screen.top);
 		Events.bindGlobal(this.root);
 		app.stage.addChild(this.root);
+		this.root.calculateBounds();
 		//FPS
 		this.FPS.node = new Text("FPS 0",{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010,strokeThickness:2});
 		this.FPS.node.position.set(15,115);
@@ -119,7 +120,7 @@ export default class Scene {
 			o = Scene.create(null,w,parent,logic);
 			w.added(o);
 		}else{
-			o = creater[option.type](option.data);
+			o = creater[option.type](option.data,parent);
 			o.widget = w;
 			o.logic = logic;
 			parent.addChild(o);
@@ -293,7 +294,7 @@ class Ni{
 	 * @param show 显示对象
 	 * @param cfg 显示配置
 	 */
-	constructor(show: any,cfg: any, public type: string){
+	constructor(show: any,cfg: any, public type: string, parent: any){
 		if(cfg.z){
 			this.z = cfg.z;
 		}
@@ -315,6 +316,7 @@ class Ni{
 			this.anicallback = cfg.anicallback;
 		}
 		this.show = show;
+		this.resize(parent);
 	}
 	/**
 	 * @description 延迟resize执行
@@ -370,51 +372,57 @@ class Ni{
 	/**
 	 * @description 重新计算位置大小
 	 */
-	public resize(){
+	public resize(parent?: any){
 		let x,y,w,h,l,r,t,b,
-			parseNumber = (s: any):number=>{
+			parseNumber = (s: any,b?: number):number=>{
 				if(typeof s === "string"){
 					s = s.replace("%","");
 					s = Number(s);
+					if(b){
+						s = b*(s/100);
+					}
 				}
 				return s;
 			};
-		l = parseNumber(this._left);
-		r = parseNumber(this._right);
-		t = parseNumber(this._top);
-		b = parseNumber(this._bottom);
+		parent = parent || this.show.parent;
+		w = parseNumber(this._width,parent._width);
+		h = parseNumber(this._height,parent._height);
+		l = parseNumber(this._left,parent._width);
+		r = parseNumber(this._right,parent._width);
+		t = parseNumber(this._top,parent._height);
+		b = parseNumber(this._bottom,parent._height);
 		if(l !== undefined){
-			if(typeof this._left === "string"){
-				x = this.show.parent.width * (l / 100);
-			}else{
+			if(typeof this._left !== "string"){
+			// 	x = this.show.parent.width * (l / 100);
+			// }else{
 				x = l;
 			}
 		}
 		if(r !== undefined){
-			if(typeof this._right === "string"){
-				r = this.show.parent.width * (r / 100);
-			}
+			// if(typeof this._right === "string"){
+			// 	r = this.show.parent.width * (r / 100);
+			// }
 			if(x !== undefined){
-				w = this.show.parent.width - x - r;
+				w = parent._width - x - r;
 			}else{
-				x = this.show.parent.width - this.show.width - r;
+				x = parent._width - this.show.width - r;
 			}
 		}
 		if(t !== undefined){
-			if(typeof this._top === "string"){
-				y = this.show.parent.height * (t / 100);
-			}else{
+			if(typeof this._top !== "string"){
+			// 	y = this.show.parent.height * (t / 100);
+			// }else{
 				y = t;
 			}
 		}
 		if(b !== undefined){
-			if(typeof this._right === "string"){
-				b = this.show.parent.height * (b / 100);
-			}
+			// if(typeof this._right === "string"){
+			// 	b = this.show.parent.height * (b / 100);
+			// }
 			if(y !== undefined){
-				h = this.show.parent.height - y - b;
+				h = parent._height - y - b;
 			}else{
-				y = this.show.parent.height - this.show.height - b;
+				y = parent._height - this.show._height - b;
 			}
 		}
 		w = w !== undefined?w:this._width;
@@ -474,22 +482,22 @@ const creater = {
 	 * 	animate: {ani:"",default:"","speed": 1, "once": false} //default为创建时设置的ani, 在每一次一次性动画结束后，自动切换到default
 	 * }
 	 */
-	init: (type,o,data) => {
-		o.ni = new Ni(o,data,type);
+	init: (type: string,o: any,data: any,parent: any) => {
+		o.ni = new Ni(o,data,type,parent);
 		o.alpha = data.alpha || 1;
 	},
 	/**
 	 * @description 创建 PIXI.Container
 	 */
-	container: (data) => {
+	container: (data: any, parent: any) => {
 		let o = new Container();
-		creater.init("container",o,data);
+		creater.init("container",o,data,parent);
 		return o;
 	},
 	/**
 	 * @description 创建 PIXI.Sprite
 	 */
-	sprite: (data) => {
+	sprite: (data: any, parent: any) => {
 		let t = Scene.getTextureFromSpritesheet(data.url),o;
 		if(!t){
 			throw `Can't create the sprite by "${data.url}"`;
@@ -500,7 +508,7 @@ const creater = {
 		if(t.defaultAnchor.x || t.defaultAnchor.y){
 			o.position.set((data.x || 0)-data.width*t.defaultAnchor.x,(data.y || 0) - data.height*t.defaultAnchor.y);
 		}
-		creater.init("sprite",o,data);
+		creater.init("sprite",o,data,parent);
 		return o;
 	},
 	/**
@@ -514,9 +522,9 @@ const creater = {
 	 * }
 	 * PIXI.TextStyle http://pixijs.download/release/docs/PIXI.TextStyle.html
 	 */
-	text: (data) => {
+	text: (data: any, parent: any) => {
 		let o = new Text(data.text,data.style);
-		creater.init("text",o,data);
+		creater.init("text",o,data, parent);
 		return o;
 	},
 	/**
@@ -530,13 +538,13 @@ const creater = {
 	 * 		anicallback: function(e){} //e string "complete" 
 	 * 	}
 	 */
-	animatedSprite: (data) => {
+	animatedSprite: (data: any, parent: any) => {
 		if(!Scene.spriteSheets[data.url]){
 			return console.error(`Can't find the spriteSheet by "${data.url}".`);
 		}
 		let m = data.url.match(/\/([^\/\.]+)\./),
 			o = new AnimatedSprite(Scene.spriteSheets[data.url].animations[m[1]]);
-		creater.init("animatedSprite",o,data);
+		creater.init("animatedSprite",o,data,parent);
 		o.animationSpeed = data.speed;
 		o.ni.actions = Scene.spriteSheets[data.url].data.actions || {};
 		
@@ -567,12 +575,12 @@ const creater = {
 	/**
 	 * @description 创建dragonbones
 	 */
-	dragonbones: (data)=>{
+	dragonbones: (data: any, parent: any)=>{
 		let o = DragonBones.create(data);
 		if(!o){
 			return console.error(`Can't find the dragonbones data by "${data.url}".`);
 		}
-		creater.init("dragonbones",o,data);
+		creater.init("dragonbones",o,data,parent);
 		o.ni.play();
 		return o;
 	}
@@ -582,8 +590,20 @@ const creater = {
  * @param option 
  */
 const initCanvas = (option,cfg) => {
+	let maxTime = 1.5, curr;
 	if(option.view){
 		return;
+	}
+	if(cfg.screen.width / cfg.screen._width > maxTime){
+		curr = maxTime * cfg.screen._width;
+		cfg.screen.left = (cfg.screen.width - curr)/2;
+		cfg.screen.width = option.width = curr;
+		
+	}
+	if(cfg.screen.height / cfg.screen._height > maxTime){
+		curr = maxTime * cfg.screen._height;
+		cfg.screen.top = (cfg.screen.height - curr)/2;
+		cfg.screen.height = option.height = curr;
 	}
 	option.view = document.createElement("canvas");
 	option.view.setAttribute("style",`position:absolute;left:50%;top:50%;margin-left:-${cfg.screen.width/2}px;margin-top:-${cfg.screen.height/2}px;-webkit-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});-moz-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});-ms-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});`);

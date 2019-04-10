@@ -22,21 +22,14 @@ var cfg = {
 const resetcfg = () => {
     let pcCfg = ipcRenderer.sendSync("request","getCfg");
 	var windowWidth = document.documentElement.clientWidth ||  document.body.clientWidth, windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-	let w,h,l = 0,t = 0,
+	let w,h,
 		sw = cfg.screen._width/windowWidth,
 		sh = cfg.screen._height/windowHeight,
 		s = Math.max(sw,sh);
 	w = windowWidth * s;
 	h = windowHeight * s;
-	if(sw < s){
-		l = Math.floor((w - cfg.screen._width)/2);
-	}else if(sh < s){
-		t = Math.floor((h - cfg.screen._height)/2);
-	}
 	cfg.screen.width = w;
 	cfg.screen.height = h;
-	cfg.screen.left = l;
-	cfg.screen.top = t;
     cfg.screen.scale = s;
     cfg.debug = pcCfg.debug;
 };
