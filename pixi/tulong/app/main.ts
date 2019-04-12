@@ -1,15 +1,16 @@
 /****************** 导入 ******************/
 //mod
-import './player'
-import './stage'
-import './equip'
-import './store'
-//ui
-import './widget/tab'
-import './widget/button'
-import './widget/ani'
-//local use
+import './player';
+import './stage';
+import './equip';
+import './store';
 import  './net';
+//ui
+import './widget/tab';
+import './widget/button';
+import './widget/ani';
+//local use
+import User from './user';
 import '../libs/ni/music';
 import Fs from '../libs/ni/fs';
 import Scene from '../libs/ni/scene';
