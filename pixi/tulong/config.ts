@@ -13,7 +13,7 @@ export default class Config{
     }
     platForm = "wx"
     name = "tulong"
-    remote = "http://192.168.31.62:8018"
+    remote = "https://tulong.xianquyouxi.com"
     screen = {
         _width: 750,
         _height: 1334,

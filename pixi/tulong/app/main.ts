@@ -33,8 +33,11 @@ export default class Main {
             resolution: 1
         },cfg);
         Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
-                    
-            AppEmitter.emit("intoMain");
+            User.init(()=>{
+                User.login(()=>{
+                    AppEmitter.emit("intoMain");
+                });
+            });
             
         });
         // console.log(wx.env.USER_DATA_PATH);
