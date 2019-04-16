@@ -11,6 +11,7 @@ import './widget/button';
 import './widget/ani';
 //local use
 import User from './user';
+import Connect from "../libs/ni/connect";
 import '../libs/ni/music';
 import Fs from '../libs/ni/fs';
 import Scene from '../libs/ni/scene';
@@ -33,12 +34,13 @@ export default class Main {
             resolution: 1
         },cfg);
         Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
-            User.init(()=>{
-                User.login(()=>{
-                    AppEmitter.emit("intoMain");
+            Connect.open(cfg,()=>{
+                User.init(()=>{
+                    User.login(()=>{
+                        AppEmitter.emit("intoMain");
+                    });
                 });
             });
-            
         });
         // console.log(wx.env.USER_DATA_PATH);
     }

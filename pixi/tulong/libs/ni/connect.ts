@@ -1,4 +1,10 @@
 /**
+ * @description 前台通讯模块，暂时以http作为通讯协议
+ */
+/****************** 导入 ******************/
+import Http from "./http";
+/****************** 导出 ******************/
+/**
  * @description 前台通讯模块
  */
 export default class Connect {
@@ -6,6 +12,19 @@ export default class Connect {
      * @description 测试接口，供前端测试使用
      */
     static testHandlers = {}
+    /**
+     * @description 通讯地址
+     */
+    static url = ""
+    /**
+     * @description 打开链接
+     */
+    static open(cfg,callback){
+        Connect.url = cfg.remote;
+        setTimeout(() => {
+            callback && callback();
+        }, 0);
+    }
     /**
      * @description 向后台发送请求
      * @param param {type:"",arg:{}}
@@ -15,12 +34,17 @@ export default class Connect {
         if(Connect.runTest(param,callback)){
             return ;
         }
+        Http.request(blendArg(param),param.arg,(err,data)=>{
+            callback(err,data);
+        })
     }
     /**
      * @description 向后台发送消息
      * @param param {type:"",arg:{}}
      */
-    static send(param: NetParam){}
+    static send(param: NetParam){
+        
+    }
     /**
      * @description 添加模拟后台数据接口
      * @param type ""
@@ -46,8 +70,14 @@ export default class Connect {
         return true;
     }
 };
+/****************** 本地 ******************/
 //通讯接口参数
 interface NetParam {
     type: string
     arg: {}
+}
+const blendArg = (param: NetParam): string => {
+    let str = "",dir = param.type.split("@");
+    str = `${Connect.url}/${dir[0]}?${dir[1]?"@="+dir[1]:""}`;
+    return str;
 }

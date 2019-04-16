@@ -66,7 +66,7 @@ const paramPaser = (url: string,param: any): string[] => {
 	let s = "";
 	if(param && typeof param === "object"){
 		for(let k in param){
-			s += `${s?"&":""}${k}=${param[k]}`;
+			s += `${s?"&":""}${k}=${typeof param[k] == "object"?JSON.stringify(param[k]):param[k]}`;
 		}
 	}else{
 		s = param || "";
