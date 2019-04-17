@@ -35,7 +35,12 @@ export default class Connect {
             return ;
         }
         Http.request(blendArg(param),param.arg,(err,data)=>{
-            callback(err,data);
+            if(err){
+                callback({err});
+            }else{
+                callback(JSON.parse(data));
+            }
+            
         })
     }
     /**
@@ -43,7 +48,7 @@ export default class Connect {
      * @param param {type:"",arg:{}}
      */
     static send(param: NetParam){
-        
+
     }
     /**
      * @description 添加模拟后台数据接口
