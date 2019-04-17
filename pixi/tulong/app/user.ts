@@ -4,6 +4,7 @@ import Widget from '../libs/ni/widget';
 import CfgMgr from '../libs/ni/cfgmrg';
 import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
+import Music from '../libs/ni/music';
 
 /****************** 导出 ******************/
 export default class User{
@@ -79,6 +80,7 @@ const ptFrom = {
         createButton = () => {
             var button = wx.createUserInfoButton({type: 'text',text: '点击进入游戏',style:{left: wx.getSystemInfoSync().windowWidth/2-70,bottom: wx.getSystemInfoSync().windowHeight/2,width: 140,height: 40,lineHeight: 40,backgroundColor: '#ff0000',color: '#ffffff',textAlign: 'center',fontSize: 16,borderRadius: 4}})
             button.onTap((res) =>{
+                Music.play("audio/boom.mp3");
                 if(res.errMsg=="getUserInfo:ok"){
                     console.log("授权用户信息")//获取到用户信息
                     User.info = res;

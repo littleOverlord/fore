@@ -5,8 +5,10 @@ import Fs from "./fs";
 /****************** 导出 ******************/
 
 export default class Music {
-  //配置资源目录
+  //音乐缓存表
   static table = {}
+  //背景音乐
+  static bgm = ""
   /**
    * @description 初始化配置表
    * @param data 配置数据{"audio/xx":decodeAudioData}
@@ -22,21 +24,22 @@ export default class Music {
   /**
    * @description 播放音乐
    */
-  static play(path: string,isLoop?: boolean){
-
+  static play(path: string,loop?: boolean){
+    let m = Music.table[path];
+    if(loop){
+      m.loop = loop;
+      Music.bgm = path;
+    }
+    m.start();
   }
   /**
    * @description 暂停音乐
    */
   static stop(path: string){
-
+    Music.table[path].stop(0);
   }
 }
 /****************** 本地 ******************/
-/**
- * @description 播放缓存
- */
-const caches = {};
 /**
  * @description 兼容微信
  */
@@ -56,7 +59,7 @@ class Source{
       return;
     }
     this._buffer = val;
-    this.audio = val;
+    this.audio.src = val;
   }
   get loop(){
     return this._loop;
@@ -70,16 +73,6 @@ class Source{
       this.audio.autoplay = true;
       this.audio.loop = true;
     }
-  }
-  get src(){
-    return this._src;
-  }
-  set src(val){
-    if(this._src === val){
-      return;
-    }
-    this._src = val;
-    this.audio._src = val;
   }
   start(){
     this.audio.play();
@@ -111,7 +104,9 @@ const autioCtx = new ((window as any).AudioContext || (window as any).webkitAudi
  */
 const decodeAudioData = (k: string, data: ArrayBuffer): void => {
   autioCtx.decodeAudioData(data, (buff)=>{
-    Music.table[k] = buff || Fs.fs.createImg(k);
+    let a = autioCtx.createBufferSource();
+    a.buffer = buff || Fs.fs.createImg(k);
+    Music.table[k] = a;
   })
 }
 
