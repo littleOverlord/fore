@@ -17,6 +17,10 @@ export default class Connect {
      */
     static url = ""
     /**
+     * @description 和后台唯一通讯标识
+     */
+    static sessionKey = ""
+    /**
      * @description 打开链接
      */
     static open(cfg,callback){
@@ -34,11 +38,19 @@ export default class Connect {
         if(Connect.runTest(param,callback)){
             return ;
         }
+        let d;
+        if(Connect.sessionKey){
+            param.arg.sessionKey = Connect.sessionKey;
+        }
         Http.request(blendArg(param),param.arg,(err,data)=>{
             if(err){
                 callback({err});
             }else{
-                callback(JSON.parse(data));
+                d = JSON.parse(data);
+                if(d[""]){
+                    Connect.sessionKey = d[""];
+                }
+                callback(d);
             }
             
         })
@@ -79,7 +91,7 @@ export default class Connect {
 //通讯接口参数
 interface NetParam {
     type: string
-    arg: {}
+    arg: any
 }
 const blendArg = (param: NetParam): string => {
     let str = "",dir = param.type.split("@");
