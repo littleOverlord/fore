@@ -392,11 +392,11 @@ class Ni{
 		t = parseNumber(this._top,parent._height);
 		b = parseNumber(this._bottom,parent._height);
 		if(l !== undefined){
-			if(typeof this._left !== "string"){
+			// if(typeof this._left !== "string"){
 			// 	x = this.show.parent.width * (l / 100);
 			// }else{
 				x = l;
-			}
+			// }
 		}
 		if(r !== undefined){
 			// if(typeof this._right === "string"){
@@ -409,11 +409,11 @@ class Ni{
 			}
 		}
 		if(t !== undefined){
-			if(typeof this._top !== "string"){
+			// if(typeof this._top !== "string"){
 			// 	y = this.show.parent.height * (t / 100);
 			// }else{
 				y = t;
-			}
+			// }
 		}
 		if(b !== undefined){
 			// if(typeof this._right === "string"){
