@@ -80,7 +80,8 @@ const ptFrom = {
                     button.destroy();
                     User.login_wx(loginCallback);
                 }else{
-                    loginCallback("wx authorize fail");
+                    console.log("wx authorize fail");
+                    initLocal(loginCallback);
                 }
             })
         };
