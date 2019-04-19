@@ -35,11 +35,7 @@ export default class Main {
         },cfg);
         Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
             Connect.open(cfg,()=>{
-                User.init(()=>{
-                    User.login(()=>{
-                        AppEmitter.emit("intoMain");
-                    });
-                });
+                User.init();
             });
         });
         // console.log(wx.env.USER_DATA_PATH);
