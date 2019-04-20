@@ -1,0 +1,45 @@
+{
+    "type": "sprite",
+    "on":{"tap":{"func":"fastBuy"}},
+    "data": {
+        "id": "fast_buy",
+        "url": "images/ui/button_buy.png",
+        "width": 214,
+        "height": 100,
+        "left": 275,
+        "top": 770
+    },
+    "children": [
+        {
+            "type": "text",
+            "data": {
+                "id": "fast_buy_level",
+                "text": "LV.8",
+                "style": {"fontSize":26,"fill":"#adbbd9","strokeThickness":2},
+                "left": 54,
+                "top": 15
+            }
+        },
+        {
+            "type": "sprite",
+            "data": {
+                "id": "button_buy",
+                "url": "images/ui/token_money.png",
+                "width": 26,
+                "height": 26,
+                "left": 30,
+                "top": 50
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "id": "fast_buy_money",
+                "text": "265555",
+                "style": {"fontSize":26,"fill":"#e4b349","strokeThickness":2},
+                "left": 60,
+                "top": 45
+            }
+        }
+    ]
+}

@@ -7,7 +7,7 @@ import Main from './app/main';
 var cfg = {
     platForm : "pc",
     name : "tulong",
-    remote : "https://tulong.xianquyouxi.com",
+    remote : "https://mgame.xianquyouxi.com",
     screen : {
         _width: 750,
         _height: 1334,
@@ -34,7 +34,7 @@ const resetcfg = () => {
     cfg.debug = pcCfg.debug;
 };
 window.onload = () => {
-    Http.get(`${cfg.remote}/depend.json`,"","",(err,data)=>{
+    Http.get(`${cfg.remote}/${cfg.name}/depend.json`,"","",(err,data)=>{
         if(err){
             return console.log(err)
         }

@@ -29,7 +29,7 @@
     },
     {
         "name": "browser",
-        "dist": "../../../back/htdocs/static",
+        "dist": "../../../back/htdocs/static/tulong",
         "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/pc.html","pc.js"],
         "plugins":{
             "ts":{
@@ -57,7 +57,7 @@
     },
     {
         "name": "pc",
-        "dist": "../../../pack-pc/src",
+        "dist": "../../../pack-pc/src/tulong",
         "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/index.html","/init.js"],
         "plugins":{
             "ts":{

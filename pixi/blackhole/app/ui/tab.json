@@ -1,0 +1,87 @@
+{   
+    "type": "container",
+    "data": {},
+    "children": [
+        {
+            "type": "container",
+            "data": {
+                "width": 250,
+                "height": 114,
+                "left": 250,
+                "top": 50
+            },
+            "children": [
+                {
+                    "type": "sprite",
+                    "on":{"tap":{"func":"tab","arg":[0]}},
+                    "data": {
+                        "id": "tab_0",
+                        "url": "images/ui/bag_tab_bg.png",
+                        "width": 114,
+                        "height": 114,
+                        "left": 0,
+                        "top": 0
+                    },
+                    "children": [
+                        {
+                            "type": "sprite",
+                            "data": {
+                                "url": "images/ui/bag_tab_attack.png",
+                                "width": 70,
+                                "height": 70,
+                                "left": 22,
+                                "top": 22
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "sprite",
+                    "on":{"tap":{"func":"tab","arg":[1]}},
+                    "data": {
+                        "id": "tab_1",
+                        "url": "images/ui/bag_tab_bg.png",
+                        "width": 114,
+                        "height": 114,
+                        "left": 136,
+                        "top": 0
+                    },
+                    "children": [
+                        {
+                            "type": "sprite",
+                            "data": {
+                                "url": "images/ui/bag_tab_armors.png",
+                                "width": 70,
+                                "height": 70,
+                                "left": 22,
+                                "top": 22
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "container",
+            "data": {
+                "id": "content_0"
+            },
+            "children":[
+                {
+                    "type":"widget-name"
+                }
+            ]
+        },
+        {
+            "type": "container",
+            "data": {
+                "id": "content_1"
+            },
+            "children":[
+                {
+                    "type":"widget-name"
+                }
+            ]
+        }
+    ]
+}

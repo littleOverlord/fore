@@ -1,0 +1,100 @@
+{
+    "type":"container",
+    "data": {
+        "id": "bottom",
+        "left":0,
+        "top":424,
+        "bottom":0,
+        "width": "100%",
+        "height": 920
+    },
+    "children": [
+        {
+            "type": "sprite",
+            "data": {
+                "id": "bagBG",
+                "url": "images/ui/bag_bg.png",
+                "width": 750,
+                "height": 920,
+                "left": 0,
+                "top": -8,
+                "right": 0,
+                "bottom": 0
+            }
+        },
+        {
+            "type":"app-ui-button",
+            "props":{
+                "on":{"tap":{"func":"openStore"}},
+                "id":"button_store",
+                "url": "images/ui/button_store.png",
+                "width": 136,
+                "height": 100,
+                "left": 100,
+                "top": 770,
+                "text": "商店",
+                "size":30,
+                "color":"#adbbd9"
+            }
+        },
+        {
+            "type": "app-ui-fastBuy"
+        },
+        {
+            "type": "container",
+            "data": {
+                "id": "button_sale",
+                "width": 136,
+                "height": 100,
+                "left": 524,
+                "top": 770
+            },
+            "children":[
+                {
+                    "type":"app-ui-button",
+                    "props":{
+                        "id":"button_sale",
+                        "url": "images/ui/button_sale.png",
+                        "width": 136,
+                        "height": 100,
+                        "left": 0,
+                        "top": 0,
+                        "text": "出售",
+                        "size":30,
+                        "color":"#d9c6ad"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "container",
+            "data": {
+                "id": "equipBG",
+                "width": 660,
+                "height": 660,
+                "left": 65,
+                "top": 145
+            }
+        },
+        {
+            "type": "app-ui-tab",
+            "props": {"curr":0,"bg_n":"bag_tab_bg","bg_c":"bag_tab_curr","items":[
+                {"icon":"bag_tab_attack","con":"app-ui-equipCon"},{"icon":"bag_tab_armors","con":"app-ui-equipCon"}
+            ]}
+        },
+        {
+            "type" : "animatedSprite",
+            "data" : {
+                "url":"images/ua/equip_light.json",
+                "left":2000,
+                "top":0,
+                "id":"equipLight",
+                "width": 240,
+                "height": 240,
+                "speed": 0.1,
+                "ani":"",
+                "once": true
+            }
+        }
+    ]
+}

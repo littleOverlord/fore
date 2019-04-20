@@ -1,0 +1,16 @@
+{
+    "type" : "animatedSprite",
+    "data" : {
+        "url":"",
+        "left":0,
+        "top":0,
+        "id":"",
+        "width": 356,
+        "height": 356,
+        "speed": 0.12,
+        "once": false,
+        "ani": "",
+        "actions": {},
+        "anicallback": null
+    }
+}

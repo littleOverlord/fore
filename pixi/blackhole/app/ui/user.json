@@ -1,0 +1,26 @@
+{   
+    "type": "container",
+    "data": {
+        "width": 214,
+        "height": 100,
+        "left": "50%",
+        "top": "50%"
+    },
+    "children": [
+        {
+            "type":"app-ui-button",
+            "props":{
+                "on":{"tap":{"func":"login"}},
+                "id":"button_login",
+                "url": "images/ui/button_buy.png",
+                "width": 214,
+                "height": 100,
+                "left": -107,
+                "top": -50,
+                "text": "进入游戏",
+                "size":30,
+                "color":"#d9c6ad"
+            }
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "type": "sprite",
+    "data": {
+        "id": "button_store",
+        "url": "images/ui/button_store.png",
+        "width": 136,
+        "height": 100,
+        "left": 100,
+        "top": 770
+    },
+    "children": [
+        {
+            "type": "text",
+            "data": {
+                "text": "button",
+                "style": {"fontSize":30,"fill":"#adbbd9","strokeThickness":2},
+                "left": 34,
+                "top": 25
+            }
+        }
+    ]
+}

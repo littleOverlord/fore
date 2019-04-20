@@ -1,0 +1,13 @@
+{   
+    "type": "container",
+    "data": {
+        "id": "equipCon",
+        "width": 660,
+        "height": 660,
+        "left": 65,
+        "top": 145
+    },
+    "children": [
+        
+    ]
+}

@@ -91,7 +91,7 @@
 })();
 var winit = {};
 winit.main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/,"$2");
-winit.remote = (document.domain != winit.main || /^\w+\.\w+$/.test(document.domain)) ? "tulong.":"";
+winit.remote = (document.domain != winit.main || /^\w+\.\w+$/.test(document.domain)) ? "mgame.":"";
 winit.remoteDomain = location.protocol+"//"+winit.remote+winit.main;
 //winit.domains = [location.protocol+"//"+(winit.remote ? "c"+winit.remote:"")+winit.main, winit.remoteDomain];
 winit.domains = [winit.remoteDomain+(location.port ? ":"+location.port:"")];
@@ -145,8 +145,9 @@ winit.cfg = (function(){
 	cfg.screen.scale = s;
 	return cfg;
 })();	
+winit.path = `${winit.domains[0]}/${winit.cfg.name}`;
 winit.start = function() {
-	winit.loadJS(winit.domains, "/init.js?" + Math.random(), "utf8", function(url,err){
+	winit.loadJS([winit.path], "/init.js?" + Math.random(), "utf8", function(url,err){
 		if(err){
 			return alert(err);
 		}
@@ -155,9 +156,9 @@ winit.start = function() {
 };
 winit.next = function(){
 	var mods = ["libs/ni/util","libs/ni/http","libs/ni/fs"];
-	ni_modules.commonjs.exports.domain = winit.domains[0];
+	ni_modules.commonjs.exports.domain = winit.path;
 	ni_modules.commonjs.exports.load(mods,function(){
-	ni_modules["libs/ni/http"].exports.default.get(`${winit.domains[0]}/depend.json?${Math.random()}`,"","",(err,data)=>{
+	ni_modules["libs/ni/http"].exports.default.get(`${winit.path}/depend.json?${Math.random()}`,"","",(err,data)=>{
 			if(err){
 				return console.log(err)
 			}
