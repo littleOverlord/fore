@@ -23,6 +23,6 @@ export default class Stage {
 DB.init("stage",{level:1,fightCount:0,lastFightTime:0});
 
 //注册页面打开事件
-AppEmitter.add("openTop",(node)=>{
+AppEmitter.add("intoMain",(node)=>{
     
 });

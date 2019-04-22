@@ -1,7 +1,6 @@
 /****************** 导入 ******************/
 import Scene from '../libs/ni/scene';
 import Widget from '../libs/ni/widget';
-import CfgMgr from '../libs/ni/cfgmrg';
 import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
 import Music from '../libs/ni/music';
