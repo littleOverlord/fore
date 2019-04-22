@@ -310,7 +310,7 @@ class Ni{
 		this._bottom = cfg.bottom;
 		this._right = cfg.right;
 		for(let k in this.animate){
-			if(cfg[k]){
+			if(cfg[k] != undefined){
 				this.animate[k] = cfg[k];
 				isAni = true;
 			}
@@ -592,26 +592,66 @@ const creater = {
  * @param option 
  */
 const initCanvas = (option,cfg) => {
-	let maxTime = 1.5, curr;
 	if(option.view){
 		return;
 	}
-	if(cfg.screen.width / cfg.screen._width > maxTime){
-		curr = maxTime * cfg.screen._width;
-		cfg.screen.left = (cfg.screen.width - curr)/2;
-		cfg.screen.width = option.width = curr;
+	let timer,cacl = () => {
+		let maxTime = 1.5, curr;
 		
-	}
-	if(cfg.screen.height / cfg.screen._height > maxTime){
-		curr = maxTime * cfg.screen._height;
-		cfg.screen.top = (cfg.screen.height - curr)/2;
-		cfg.screen.height = option.height = curr;
-	}
+		if(cfg.screen.width / cfg.screen._width > maxTime){
+			curr = maxTime * cfg.screen._width;
+			cfg.screen.left = (cfg.screen.width - curr)/2;
+			cfg.screen.width = option.width = curr;
+			
+		}
+		if(cfg.screen.height / cfg.screen._height > maxTime){
+			curr = maxTime * cfg.screen._height;
+			cfg.screen.top = (cfg.screen.height - curr)/2;
+			cfg.screen.height = option.height = curr;
+		}
+		option.view.setAttribute("style",`position:absolute;left:50%;top:50%;margin-left:-${cfg.screen.width/2}px;margin-top:-${cfg.screen.height/2}px;-webkit-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});-moz-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});-ms-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});`);
+	};
 	option.view = document.createElement("canvas");
-	option.view.setAttribute("style",`position:absolute;left:50%;top:50%;margin-left:-${cfg.screen.width/2}px;margin-top:-${cfg.screen.height/2}px;-webkit-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});-moz-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});-ms-transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});transform:scale(${1/cfg.screen.scale},${1/cfg.screen.scale});`);
+	cacl();
 	document.body.appendChild(option.view);
 	window.onresize = () => {
-		app.renderer.resize()
+		if(timer){
+			return;
+		}
+		timer = setTimeout(() => {
+			timer = null;
+			let windowWidth = document.documentElement.clientWidth ||  document.body.clientWidth, windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+			let w,h,
+				sw = cfg.screen._width/windowWidth,
+				sh = cfg.screen._height/windowHeight,
+				s = Math.max(sw,sh);
+			w = windowWidth * s;
+			h = windowHeight * s;
+			cfg.screen.width = w;
+			cfg.screen.height = h;
+			cfg.screen.scale = s;
+			cacl();
+			app.renderer.resize(cfg.screen.width, cfg.screen.height);
+			Scene.root.width = cfg.screen.width;
+			Scene.root.height = cfg.screen.height;
+			Scene.root.position.set(0,0);
+			resizeNode(Scene.root);
+		}, 100);
+	} 
+}
+/**
+ * @description resize all render
+ * @param node render node
+ */
+const resizeNode = (node) => {
+	let children = node.children;
+	for(let i = 0,len = children.length;i < len; i++){
+		if(children[i].ni){
+			children[i].ni.resize();
+		}
+		if(children[i].children){
+			resizeNode(children[i]);
+		}
 	}
 }
 /****************** 立即执行 ******************/

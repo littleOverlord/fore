@@ -37,8 +37,6 @@ export class Events {
     static mobile: boolean
     //绑定函数
     static bindFunc: Function
-    //同一节点两次点击最短时间间隔
-    static tapDurTime = 300
     /**
      * @description 初始化设备数据
      */
@@ -134,8 +132,7 @@ export class Events {
         if(Events.status.eventType && Events.status.eventType != Events.eventsType.start){
             return Events.findEvent(Events.eventsType.end);
         }
-        if(on && (!on.prev || Date.now() - on.prev > Events.tapDurTime)){
-            on.prev = Date.now();
+        if(on){
             Events.responseEvent(o,e,arg,func,Events.eventsType.tap);
         }
         return {o:null,on:null,func:null,arg:null};

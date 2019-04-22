@@ -134,7 +134,7 @@ winit.cfg = (function(){
 		}
 	};
 	var windowWidth = document.documentElement.clientWidth ||  document.body.clientWidth, windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-	let w,h,
+	var w,h,
 		sw = cfg.screen._width/windowWidth,
 		sh = cfg.screen._height/windowHeight,
 		s = Math.max(sw,sh);
@@ -162,7 +162,7 @@ winit.next = function(){
 			if(err){
 				return console.log(err)
 			}
-			let depend = JSON.parse(data);
+			var depend = JSON.parse(data);
 			ni_modules["libs/ni/fs"].exports.default.parseDepend(depend);
 			ni_modules["libs/ni/fs"].exports.default.init(winit.cfg,function(){
 				ni_modules.commonjs.exports.load(["app/main"],function(){

@@ -56,10 +56,12 @@ class Button extends Widget{
     tapStart(){
         let btn = this.elements.get(this.props.id);
         btn.scale.x = btn.scale.y = 0.8;
+        console.log("tapStart");
     }
     buttonTap(){
         let btn = this.elements.get(this.props.id);
         btn.scale.x = btn.scale.y = 1;
+        console.log("buttonTap");
         return HandlerResult.OK;
     }
 }
