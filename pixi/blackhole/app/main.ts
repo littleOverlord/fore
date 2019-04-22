@@ -1,22 +1,17 @@
 /****************** 导入 ******************/
 //mod
-import './player';
 import './stage';
-import './equip';
-import './store';
 import  './net';
 //ui
-import './widget/tab';
 import './widget/button';
 import './widget/ani';
 //local use
 import User from './user';
+import Process from './process';
 import Connect from "../libs/ni/connect";
 import '../libs/ni/music';
-import Fs from '../libs/ni/fs';
 import Scene from '../libs/ni/scene';
 import Loader from '../libs/ni/loader';
-import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/
 /**
@@ -36,8 +31,9 @@ export default class Main {
         Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
             Connect.open(cfg,()=>{
                 User.init();
+                Process.clear();
             });
-        });
+        },Process.add());
         // console.log(wx.env.USER_DATA_PATH);
     }
 }

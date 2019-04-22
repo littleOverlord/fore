@@ -124,6 +124,7 @@ const regist = (account: string, password: string, callback: Function) => {
         DB.data.user.uid = data.ok.uid;
         DB.data.user.from = User.pt;
         DB.data.user.username = data.ok.username;
+        localStorage.setItem("userInfo",`{"account":"${account}","encryPassword":"${password}"}`);
         callback();
     })
 }
@@ -198,7 +199,7 @@ const initLocal = (callback) => {
         symbol = " `~!@#$%^&*()_+-={}|[]\\:\";'<>?,./";//密码可用的附加字符
         userInfomation.account = getStr(str,len);//生成账号
         userInfomation.encryPassword = encryptPassword( getStr(str+symbol,len) );//密码加密
-        localStorage.setItem("userInfo",JSON.stringify(userInfomation));
+        
         regist(userInfomation.account,userInfomation.encryPassword,callback);
     }
 }

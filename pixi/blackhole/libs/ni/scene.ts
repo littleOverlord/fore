@@ -486,14 +486,28 @@ const creater = {
 		creater.init("container",o,data,parent);
 		return o;
 	},
+	/**
+	 * @description
+	 * @param data {
+	 * 	width:0
+	 * 	height:0
+	 * 	x:0
+	 * 	y:0
+	 * 	border-color:0xFF3300
+	 * 	border-width:0
+	 * 	border-alpha:1
+	 * 	border-align:0.5
+	 * 	background-color:0x66CCFF
+	 * 	background-alpha:1
+	 * }
+	 */
 	rect: (data: any, parent: any) => {
 		let rectangle = new Graphics();
-		rectangle.lineStyle(4, 0xFF3300, 1);
-		rectangle.beginFill(0x66CCFF);
-		rectangle.drawRect(0, 0, 64, 64);
+		creater.init("rect",rectangle,data,parent);
+		rectangle.lineStyle(data["border-width"]||0, data["border-color"]||0, data["border-alpha"]||1, data["border-align"]||0.5);
+		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||1);
+		rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
 		rectangle.endFill();
-		rectangle.x = 170;
-		rectangle.y = 170;
 		return rectangle;
 	},
 	/**
