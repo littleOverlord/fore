@@ -55,6 +55,9 @@ class Stage {
             Stage.move(Stage.shaps[i]);
             if(AppUtil.Rectangle(Stage.self,Stage.shaps[i])){
                 Stage.effect(Stage.shaps[i],Stage.self);
+                if(Stage.result()){
+                    return;
+                }
             }
         }
     }
@@ -101,6 +104,7 @@ class Stage {
         let r = Stage.self.x <= 0 || Stage.self.x >= (Stage.width - Stage.self.width) || Stage.self.hp <= 0;
         if(r){
             Stage.pause = 1;
+            Stage.events.push({type:"over",result:r});
         }
         return r;
     }
@@ -160,6 +164,7 @@ class WStage extends Widget{
     }
 }
 class Show{
+    static table = {}
     /**
      * @description 分发事件
      * @param evs 事件列表
@@ -169,6 +174,11 @@ class Show{
             Show[evs[i].type] && Show[evs[i].type](evs[i]);
         }
     }   
+    static insert(ev){
+        if(ev.shap.camp){
+
+        }
+    }
 }
 /**
  * @description 打开关卡界面
@@ -195,6 +205,8 @@ const insertSelf = () => {
     });
     Stage.insert(s);
 }
+
+
 /****************** 立即执行 ******************/
 //初始化关卡数据库表
 DB.init("stage",{level:1,fightCount:0,lastFightTime:0});
