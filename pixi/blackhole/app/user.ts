@@ -191,7 +191,13 @@ const initLocal = (callback) => {
     let userInfomation = JSON.parse(localStorage.getItem("userInfo")),len = 12;//账号和密码的长度
     
     if(userInfomation ){      
-        login(userInfomation.account,userInfomation.encryPassword,callback);      
+        login(userInfomation.account,userInfomation.encryPassword,(err)=>{
+            if(err){
+                localStorage.setItem("userInfo","0");
+                return initLocal(callback);
+            }
+            callback();
+        });      
     }else{
         userInfomation = {};
         let str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789",//账号密码可用字符

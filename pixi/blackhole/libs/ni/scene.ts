@@ -44,6 +44,7 @@ export default class Scene {
 	 */
 	static Application(option,cfg){
 		initCanvas(option,cfg);
+		option.sharedTicker = true;
 		app = new Application(option);
 		//映射pixi坐标
 		app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
@@ -67,9 +68,9 @@ export default class Scene {
 		//添加主循环
 		Frame.add(function(){
 			Scene.FPS.loop();
-			app.render();
+			// app.render();
 			Events.loop();
-			DragonBones.update();
+			// DragonBones.update();
 		});
 		console.log(PIXI.spine);
 		return app;
@@ -505,7 +506,7 @@ const creater = {
 		let rectangle = new Graphics();
 		creater.init("rect",rectangle,data,parent);
 		rectangle.lineStyle(data["border-width"]||0, data["border-color"]||0, data["border-alpha"]||1, data["border-align"]||0.5);
-		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||1);
+		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.001));
 		rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
 		rectangle.endFill();
 		return rectangle;

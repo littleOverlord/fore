@@ -1,11 +1,34 @@
 {   
-    "type": "sprite",
+    "type": "container",
+    "on":{"start":{"func":"start"},"end":{"func":"end"}},
     "data": {
-        "on":{"start":{"func":"start"},"drag":{"func":"drag"},"end":{"func":"end"}},
-        "url":"images/ui/bag_bg.png",
         "width": "100%",
         "height": "100%",
         "left": 0,
         "top": 0
-    }
+    },
+    "children":[
+        {
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/bag_bg.png",
+                "width": "100%",
+                "height": "100%",
+                "left": 0,
+                "top": 0
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "id":"score",
+                "text":"0",
+                "left":50,
+                "top": 50,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        }
+    ]
 }

@@ -129,12 +129,13 @@ export class Events {
      */
     static tap(e){
         let {o,on,func,arg} = Events.findEvent(Events.eventsType.tap);
-        if(Events.status.eventType && Events.status.eventType != Events.eventsType.start){
-            return Events.findEvent(Events.eventsType.end);
-        }
         if(on){
             Events.responseEvent(o,e,arg,func,Events.eventsType.tap);
+        }else{
+        // if(Events.status.eventType && Events.status.eventType != Events.eventsType.start){
+            return Events.findEvent(Events.eventsType.end);
         }
+        
         return {o:null,on:null,func:null,arg:null};
     }
     /**

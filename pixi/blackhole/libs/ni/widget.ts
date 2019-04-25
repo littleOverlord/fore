@@ -60,6 +60,13 @@ export default class Widget {
         }
     }
     /**
+     * @description 查找组件配置
+     * @param name 组件名字("app-ui-player")
+     */
+    static findWC(name: string): any{
+       return Util.copy(Widget.cfgCache.get(name));
+    }
+    /**
      * @description 创建组件
      * @param name 组件名
      */
