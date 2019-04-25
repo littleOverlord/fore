@@ -187,7 +187,7 @@ class WShap extends Widget{
         this.cfg.data.height = props.height;
         this.cfg.data.left = props.x;
         this.cfg.data.top = props.y;
-        this.cfg.children[0].data.url = props.type == "player"?`images/ui/token_money.png`:`images/armors/${props.type}.png`;
+        this.cfg.children[0].data.url = props.type == "player"?`images/ui/token_money.png`:`images/shap/${props.type}_${Math.floor(Math.random()*5)}.png`;
         if(props.effect == "score"){
             this.cfg.children[1].data.text = props.value.toString();
         }
@@ -301,7 +301,7 @@ const insertSelf = () => {
 /**
  * @description 随机一个形状
  */
-const shapArray = ["1204001","1204002","1204003","1204004","1204005","1204006","1204007","1204008","1204009","1204010"];
+const shapArray = ["diamond","fivestar","hexagon","triangle"];
 const insertShap = () => {
     if(Stage.insertTimer && Date.now() < Stage.insertTimer){
         return;

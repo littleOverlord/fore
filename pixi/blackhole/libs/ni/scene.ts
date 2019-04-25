@@ -230,7 +230,7 @@ export default class Scene {
 	 * @param path like "app/images/arms/1222.png"
 	 */
 	static getTextureFromSpritesheet(path){
-		let m = path.match(/(\/[^\/\.]+)\.png/),
+		let m = path.match(/(\/[^\/\.]+)\.(png|jpg)/),
 			name,
 			t;
 		if(!m){
