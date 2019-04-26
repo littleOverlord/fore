@@ -6,7 +6,7 @@ import Main from './app/main';
 
 var cfg = {
     platForm : "pc",
-    name : "blackhole",
+    name : "yldj",
     remote : "https://mgame.xianquyouxi.com",
     screen : {
         _width: 750,

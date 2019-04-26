@@ -1,7 +1,7 @@
 [
     {
         "name": "wx",
-        "dist": "../dist/wx/blackhole",
+        "dist": "../dist/wx/yldj",
         "ignore":["/README.md","/app/cfg","/app/ui","/images","/audio","/build.json","/index.html","/init.js","/pc.html","pc.js"],
         "plugins":{
             "ts":{
@@ -29,7 +29,7 @@
     },
     {
         "name": "browser",
-        "dist": "../../../back/htdocs/static/blackhole",
+        "dist": "../../../back/htdocs/static/yldj",
         "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/pc.html","pc.js"],
         "plugins":{
             "ts":{
@@ -57,7 +57,7 @@
     },
     {
         "name": "pc",
-        "dist": "../../../pack-pc/src/blackhole",
+        "dist": "../../../pack-pc/src/yldj",
         "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/index.html","/init.js"],
         "plugins":{
             "ts":{

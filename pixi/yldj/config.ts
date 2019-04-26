@@ -12,7 +12,7 @@ export default class Config{
         this.screen.scale = s;
     }
     platForm = "wx"
-    name = "blackhole"
+    name = "yldj"
     remote = "https://mgame.xianquyouxi.com"
     screen = {
         _width: 750,

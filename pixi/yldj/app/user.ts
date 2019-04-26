@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 import Scene from '../libs/ni/scene';
 import Widget from '../libs/ni/widget';
+import Fs from '../libs/ni/fs';
 import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
 import Music from '../libs/ni/music';
@@ -48,6 +49,7 @@ export default class User{
         Connect.request({type:"app/wx@login",arg:{
             "code":User.code,
             "encrypted": encodeURIComponent(User.info.encryptedData),
+            "gamename": Fs.appName,
             "iv":User.info.iv
         }},(data) => {
             if(data.err){
@@ -116,7 +118,7 @@ class WUser extends Widget{
  * @param callback 登录回调
  */
 const regist = (account: string, password: string, callback: Function) => {
-    Connect.request({type:"app/user@regist",arg:{name: account, psw: password, from: User.pt}},(data) => {
+    Connect.request({type:"app/user@regist",arg:{name: account, psw: password, from: User.pt, gamename: Fs.appName}},(data) => {
         if(data.err){
             return callback(data.err.reson);
         }

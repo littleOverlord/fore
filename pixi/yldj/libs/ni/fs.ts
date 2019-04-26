@@ -10,6 +10,7 @@ import Util from "./util";
 /****************** 导出 ******************/
 export default class Fs {
 	static remote = ""
+	static appName = ""
 	/**
 	 * @description 文件处理具体模块，根据不同平台匹配
 	 */
@@ -47,6 +48,7 @@ export default class Fs {
 	 * @description 初始化,根据cfg匹配不同平台处理文件对象
 	 */
 	static init(cfg,callback){
+		Fs.appName = cfg.name;
 		Fs.remote = cfg.remote+"/"+cfg.name;
 		if(cfg.platForm == "wx"){
 			Fs.fs = new WXFS(cfg,()=>{
