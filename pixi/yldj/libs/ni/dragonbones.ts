@@ -1,7 +1,5 @@
 /****************** 导入 ******************/
-import * as PIXI from '../pixijs/pixi';
 import * as Dragon from '../pixijs/dragonBones';
-import Util from "./util"
 import Loader from "./loader";
 /****************** 导出 ******************/
 export default class DragonBones {

@@ -1,8 +1,5 @@
 /****************** 导入 ******************/
-import Scene from '../../libs/ni/scene';
 import Widget from '../../libs/ni/widget';
-import { Events, HandlerResult } from '../../libs/ni/events';
-import Util from '../../libs/ni/util';
 
 /****************** 导出 ******************/
 /****************** 本地 ******************/

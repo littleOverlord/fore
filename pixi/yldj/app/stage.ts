@@ -1,10 +1,6 @@
 /****************** 导入 ******************/
 import Scene from '../libs/ni/scene';
 import Frame from '../libs/ni/frame';
-import Util from '../libs/ni/util';
-import CfgMgr from '../libs/ni/cfgmrg';
-import TextAnimate from "../libs/ni/textani";
-import Connect from "../libs/ni/connect";
 import DB from "../libs/ni/db";
 import Widget from '../libs/ni/widget';
 

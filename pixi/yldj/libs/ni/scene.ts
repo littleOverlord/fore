@@ -44,7 +44,8 @@ export default class Scene {
 	 */
 	static Application(option,cfg){
 		initCanvas(option,cfg);
-		option.sharedTicker = true;
+		option.sharedTicker = false;
+		option.sharedLoader	= false;
 		app = new Application(option);
 		//映射pixi坐标
 		app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
