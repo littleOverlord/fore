@@ -23,7 +23,7 @@ class Stage {
      */
     static self: Shap
     //自己的默认移动速度
-    static svx = -14
+    static svx = -10
     /**
      * @description 非自己
      */
@@ -176,23 +176,25 @@ class WStage extends Widget{
 class WShap extends Widget{
     setProps(props){
         super.setProps(props);
-        let sc = props.width/this.cfg.data.width,
-            ss = this.cfg.children[1].data.style.fontSize * sc;
-            ss = ss < 24?24:ss;
+        let sc = props.width/this.cfg.data.width;
+            // ss = this.cfg.children[1].data.style.fontSize * sc;
+            // ss = ss < 24?24:ss;
             this.cfg.data.width = props.width;
         this.cfg.data.height = props.height;
         this.cfg.data.left = props.x;
         this.cfg.data.top = props.y;
         this.cfg.children[0].data.url = props.type == "player"?`images/ui/token_money.png`:`images/shap/${props.type}_${Math.floor(Math.random()*5)}.png`;
+        this.cfg.children[0].data.left = props.width/2;
+        this.cfg.children[0].data.top = props.height/2;
         if(props.effect == "score"){
-            this.cfg.children[1].data.text = props.value.toString();
+            // this.cfg.children[1].data.text = props.value.toString();
         }
-        this.cfg.children[1].data.style.fontSize = ss;
+        // this.cfg.children[1].data.style.fontSize = ss;
     }
     added(shap){
-        let text = shap.children[1];
-        text.ni.left = (shap._width - text.width)/2;
-        text.ni.top = (shap._height - text.height)/2;
+        // let text = shap.children[1];
+        // text.ni.left = (shap._width - text.width)/2;
+        // text.ni.top = (shap._height - text.height)/2;
     }
 }
 /**
@@ -243,6 +245,9 @@ class Show{
         let shap;
         // shap = Scene.open(ev.shap.camp?"app-ui-player":"app-ui-shap",stageNode,null,ev.shap);
         shap = Scene.open("app-ui-shap",stageNode,null,ev.shap);
+        if(!ev.shap.camp){
+            ShapAni.init(shap);
+        }
         Show.table[ev.shap.id] = shap;
     }
     static move(ev){
@@ -306,7 +311,7 @@ const insertShap = () => {
     let index = Math.floor(Math.random()*shapArray.length),
         size = 50 + Math.floor(Math.random()*200),
         x = Math.floor(Math.random()*(Stage.width - size)),
-        vy = 6 + Math.floor(Math.random()*6),
+        vy = 3 + Math.floor(Math.random()*3),
         s = new Shap({
             type: shapArray[index],
             camp: 0,
@@ -330,17 +335,92 @@ const resetPV = ()=>{
     }
    let dt = Stage.up - Stage.down; 
    if(dt > 0){
-        Stage.self.vx -= 2;
+        Stage.self.vx -= 10;
         if(Stage.self.vx < -10){
             Stage.self.vx = -10;
         }
    }else if(dt < 0){
-        Stage.self.vx += 2;
-        if(Stage.self.vx > 14){
-            Stage.self.vx = 14;
+        Stage.self.vx += 10;
+        if(Stage.self.vx > 10){
+            Stage.self.vx = 10;
         }
    }
    console.log(Stage.self.vx);
+}
+/**
+ * @description 形状动画
+ */
+class ShapAni{
+    constructor(o: any){
+        this.show = o;
+        this.v = this.vt = ShapAni.rdV();
+        this.time = ShapAni.rdTime();
+        o.sa = this;
+    }
+    //显示对象
+    show
+    //旋转速度
+    v
+    //改变到新的速度
+    vt
+    //下次改变旋转速度的时间
+    time
+
+    //每帧速度改变的幅度
+    static vs = Math.PI / 200
+    /**
+     * @description 初始化形状动画数据
+     * @param o 
+     */
+    static init(o){
+        new ShapAni(o);
+    }
+    /**
+     * @description 动画循环
+     */
+    static run(){
+        let table = Show.table,o;
+        for(let k in table){
+            o = table[k];
+            if(!o.sa){
+                continue;
+            }
+            ShapAni.syncSpeed(o.sa);
+            o.children[0].rotation += o.sa.v;
+            if(o.children[0].rotation >= Math.PI * 2){
+                o.children[0].rotation -= (Math.PI * 2);
+            }
+        }
+    }
+    /**
+     * @description 同步速度
+     * @param sa 
+     */
+    static syncSpeed(sa){
+        let d,ds;
+        if(sa.vt == sa.v){
+            if(Date.now() >= sa.time){
+                sa.time = ShapAni.rdTime();
+                sa.vt = ShapAni.rdV();
+            }
+            return;
+        }
+        d = sa.vt - sa.v;
+        ds = Math.abs(d);
+        if(ds > ShapAni.vs){
+            sa.v += (ShapAni.vs * (d/ds));
+        }else{
+            sa.v = sa.vt;
+        }
+    }
+    //随机时间
+    static rdTime(){
+        return Date.now() + Math.random() * 3000;
+    }
+    //随机速度
+    static rdV(){
+        return ShapAni.vs*(0.5+2*Math.random()) * (Math.random()>0.5?-1:1);
+    }
 }
 /****************** 立即执行 ******************/
 //初始化关卡数据库表
@@ -360,6 +440,7 @@ Frame.add(()=>{
     }
     Show.distribute(Stage.loop());
     resetPV();
+    ShapAni.run();
 });
 //注册页面打开事件
 AppEmitter.add("intoMain",(node)=>{

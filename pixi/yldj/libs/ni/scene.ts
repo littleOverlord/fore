@@ -468,17 +468,15 @@ class Ni{
 const creater = {
 	/**
 	 * @description 初始化默认属性
-	 * o.ni = {
-	 * 	z: number, //控制显示层级
-	 * 	id: number || string //用户设置的id ，作为索引值存在Widget.elements中
-	 * 	// AnimatedSprite 特有
-	 *  actions: ["anctionName":[0,10],...] //动作帧段，配置在spriteSheet json中
-	 * 	animate: {ani:"",default:"","speed": 1, "once": false} //default为创建时设置的ani, 在每一次一次性动画结束后，自动切换到default
-	 * }
 	 */
 	init: (type: string,o: any,data: any,parent: any) => {
 		o.ni = new Ni(o,data,type,parent);
 		o.alpha = data.alpha || 1;
+		if(data.anchor != undefined){
+			o.anchor.x = data.anchor[0];
+			o.anchor.y = data.anchor[1];
+		}
+		data.rotation != undefined && (o.rotation = data.rotation);
 	},
 	/**
 	 * @description 创建 PIXI.Container
@@ -507,7 +505,7 @@ const creater = {
 		let rectangle = new Graphics();
 		creater.init("rect",rectangle,data,parent);
 		rectangle.lineStyle(data["border-width"]||0, data["border-color"]||0, data["border-alpha"]||1, data["border-align"]||0.5);
-		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.001));
+		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.0001));
 		rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
 		rectangle.endFill();
 		return rectangle;
