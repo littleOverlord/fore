@@ -23,7 +23,7 @@ class Stage {
      */
     static self: Shap
     //自己的默认移动速度
-    static svx = -10
+    static svx = -7
     /**
      * @description 非自己
      */
@@ -277,7 +277,7 @@ const open = () => {
     stageNode = Scene.open("app-ui-stage",Scene.root);
     Stage.width = stageNode._width;
     Stage.height = stageNode._height;
-    console.log(Stage.width,Stage.height);
+    // console.log(Stage.width,Stage.height);
 }
 const openStart = () => {
     startNode = Scene.open("app-ui-start",Scene.root);
@@ -335,17 +335,17 @@ const resetPV = ()=>{
     }
    let dt = Stage.up - Stage.down; 
    if(dt > 0){
-        Stage.self.vx -= 10;
-        if(Stage.self.vx < -10){
-            Stage.self.vx = -10;
+        Stage.self.vx -= 7;
+        if(Stage.self.vx < -7){
+            Stage.self.vx = -7;
         }
    }else if(dt < 0){
-        Stage.self.vx += 10;
-        if(Stage.self.vx > 10){
-            Stage.self.vx = 10;
+        Stage.self.vx += 7;
+        if(Stage.self.vx > 14){
+            Stage.self.vx = 14;
         }
    }
-   console.log(Stage.self.vx);
+//    console.log(Stage.self.vx);
 }
 /**
  * @description 形状动画
