@@ -68,7 +68,7 @@ const barData = {
                 {
                     "type": "text",
                     "data": {
-                        "text": "00%",
+                        "text": "000.0%",
                         "style": {"fontSize":24,"fill":"#ffffff"},
                         "right": 0,
                         "top": 25
@@ -109,7 +109,7 @@ const updateBar = () => {
     }
     console.log(_process);
     Process.node.children[0].children[0].scale.x = _process || 0.0001;
-    Process.node.children[0].children[2].text = (_process*100).toString();
+    Process.node.children[0].children[2].text = (_process*100).toFixed(1);
 }
 
 /****************** 立即执行 ******************/

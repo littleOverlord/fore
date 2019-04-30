@@ -225,6 +225,7 @@ class WStart extends Widget{
         Scene.remove(startNode);
         startNode = null;
         Stage.pause = 0;
+        scoreNode.text = "0";
     }
 }
 /**

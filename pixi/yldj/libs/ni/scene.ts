@@ -47,7 +47,7 @@ export default class Scene {
 		// option.sharedTicker = false;
 		// option.sharedLoader	= false;
 		app = new Application(option);
-		// app.ticker = null;
+		app.ticker = null;
 		//映射pixi坐标
 		app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
 			point.x = x * cfg.screen.scale - cfg.screen.left;
@@ -70,9 +70,9 @@ export default class Scene {
 		//添加主循环
 		Frame.add(function(){
 			Scene.FPS.loop();
-			// app.render();
+			app.render();
 			Events.loop();
-			// DragonBones.update();
+			DragonBones.update();
 		});
 		console.log(PIXI.spine);
 		return app;

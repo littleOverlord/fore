@@ -1,8 +1,16 @@
 {"frames": {
 
+"black.jpg":
+{
+	"frame": {"x":297,"y":1337,"w":10,"h":10},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":10,"h":10},
+	"sourceSize": {"w":10,"h":10}
+},
 "button_buy.png":
 {
-	"frame": {"x":80,"y":0,"w":214,"h":100},
+	"frame": {"x":1,"y":1337,"w":214,"h":100},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":214,"h":100},
@@ -10,7 +18,7 @@
 },
 "stage.jpg":
 {
-	"frame": {"x":0,"y":100,"w":750,"h":1334},
+	"frame": {"x":1,"y":1,"w":750,"h":1334},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":750,"h":1334},
@@ -18,10 +26,10 @@
 },
 "token_money.png":
 {
-	"frame": {"x":0,"y":0,"w":80,"h":80},
+	"frame": {"x":217,"y":1337,"w":78,"h":78},
 	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":78,"h":78},
 	"sourceSize": {"w":80,"h":80}
 }},
 "meta": {
@@ -29,8 +37,8 @@
 	"version": "1.0",
 	"image": "ui.png",
 	"format": "RGBA8888",
-	"size": {"w":750,"h":1434},
+	"size": {"w":752,"h":1438},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:0d23a3804e56ccb79e5f2ffa057b2f4b:fe7357ae722d814286e1ba70cd9db307:5b04aa198265472a3c5f56958d78e97b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:70196b419b2fa11052073ce7743880b6:2c07932dcd144a7c7ff4b0e87f04a4c0:5b04aa198265472a3c5f56958d78e97b$"
 }
 }

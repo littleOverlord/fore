@@ -47,6 +47,10 @@
             "png":{
                 "mod":"pngmin",
                 "quality":60
+            },
+            "jpg":{
+                "mod":"jpgmin",
+                "quality":60
             }
         },
         "depend":{
@@ -74,6 +78,10 @@
             },
             "png":{
                 "mod":"pngmin",
+                "quality":60
+            },
+            "jpg":{
+                "mod":"jpgmin",
                 "quality":60
             }
         },
