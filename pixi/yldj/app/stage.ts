@@ -140,9 +140,9 @@ class Shap{
     id = 0
     //阵营 1：己方 0：敌方
     camp = 1
-    //形状类型
+    //形状类型 boom
     type = ""
-    //碰撞之后的触发效果类型 "score" "boom"
+    //碰撞之后的触发效果类型 "score" ""
     effect = ""
     //触发效果的值 根据效果类型，值的类型都不一样
     value: any = 0
@@ -420,7 +420,7 @@ class ShapAni{
     }
     //随机速度
     static rdV(){
-        return ShapAni.vs*(0.5+2*Math.random()) * (Math.random()>0.5?-1:1);
+        return ShapAni.vs*(0.1+1*Math.random()) * (Math.random()>0.5?-1:1);
     }
 }
 /****************** 立即执行 ******************/
