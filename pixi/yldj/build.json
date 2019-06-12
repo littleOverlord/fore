@@ -29,7 +29,7 @@
     },
     {
         "name": "browser",
-        "dist": "../../../back/htdocs/static/yldj",
+        "dist": "../../../go/htdocs/yldj",
         "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/pc.html","pc.js"],
         "plugins":{
             "ts":{
