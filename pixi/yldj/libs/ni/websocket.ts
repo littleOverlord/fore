@@ -11,12 +11,18 @@ export default class Socket {
         this.listener = listener;
         this.open();
     }
+    private timeOut = 3000
     private socket: WebSocket
     private url: string
     private listener: Function
     private open(){
         let _this = this;
         this.socket = new WebSocket(this.url);
+        setTimeout(()=>{
+            if(_this.socket.readyState == WebSocket.CONNECTING){
+                _this.listener("open",event);
+            }
+        },this.timeOut)
         this.socket.addEventListener('open', function (event: Event) {
             _this.listener("open",event);
         });
