@@ -2,6 +2,11 @@
  * @description websocket mod
  */
 /****************** 导出 ******************/
+export class NetError{
+    constructor(public code: number,public reson: string){
+
+    }
+}
 /**
  * @description 前台通讯模块
  */
@@ -20,11 +25,11 @@ export default class Socket {
         this.socket = new WebSocket(this.url);
         setTimeout(()=>{
             if(_this.socket.readyState == WebSocket.CONNECTING){
-                _this.listener("open",event);
+                _this.listener("open",new NetError(-69,"time out"));
             }
         },this.timeOut)
         this.socket.addEventListener('open', function (event: Event) {
-            _this.listener("open",event);
+            _this.listener("open",null);
         });
         this.socket.addEventListener('error', function (event: ErrorEvent) {
             _this.listener("error",event);

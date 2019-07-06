@@ -3,6 +3,7 @@
  */
 /****************** 导入 ******************/
 import Http from "./http";
+import Socket from "./websocket";
 /****************** 导出 ******************/
 /**
  * @description 前台通讯模块
@@ -21,17 +22,29 @@ export default class Connect {
      */
     static sessionKey = ""
     /**
+     * @description 通讯id
+     */
+    static mid = 1
+    /**
+     * @description socket连接
+     */
+    static socket: Socket
+    static openBack: Function
+    /**
+     * @description 通讯回调等待列表
+     */
+    static waitBack = {}
+    /**
      * @description 打开链接
      */
     static open(cfg,callback){
         Connect.url = cfg.remote;
-        setTimeout(() => {
-            callback && callback();
-        }, 0);
+        Connect.openBack = callback;
+        Connect.socket = new Socket(Connect.url,Connect.listener);
     }
     /**
      * @description 向后台发送请求
-     * @param param {type:"",arg:{}}
+     * @param param {type:"",arg:{},mid:1}
      * @param callback 请求回调
      */
     static request(param: NetParam,callback: Function): void{
@@ -42,6 +55,8 @@ export default class Connect {
         if(Connect.sessionKey){
             param.arg.sessionKey = Connect.sessionKey;
         }
+        param.mid = Connect.mid ++;
+        Connect.waitBack[param.mid] = callback;
         Http.request(blendArg(param),param.arg,(err,data)=>{
             if(err){
                 callback({err});
@@ -86,12 +101,26 @@ export default class Connect {
         }
         return true;
     }
+    static listener(type,event){
+        switch (type){
+            case "open":
+                if(event){
+                    return Connect.socket.reopen();
+                }
+                Connect.openBack();
+                break;
+            case "message":
+
+                break;
+        }
+    }
 };
 /****************** 本地 ******************/
 //通讯接口参数
 interface NetParam {
     type: string
     arg: any
+    mid: number
 }
 const blendArg = (param: NetParam): string => {
     let str = "",dir = param.type.split("@");
