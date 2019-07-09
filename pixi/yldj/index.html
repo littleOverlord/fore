@@ -123,6 +123,7 @@ winit.cfg = (function(){
 		platForm : "browser",
 		name : "yldj",
 		remote : winit.domains[0],
+		ws: location.protocol == "https:"?"wss://"+winit.remote+winit.main+":10102":"ws://"+winit.remote+winit.main+":10101",
 		screen : {
 			_width: 750,
 			_height: 1334,

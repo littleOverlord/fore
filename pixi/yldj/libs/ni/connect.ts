@@ -38,7 +38,7 @@ export default class Connect {
      * @description 打开链接
      */
     static open(cfg,callback){
-        Connect.url = cfg.remote;
+        Connect.url = cfg.ws;
         Connect.openBack = callback;
         Connect.socket = new Socket(Connect.url,Connect.listener);
     }
