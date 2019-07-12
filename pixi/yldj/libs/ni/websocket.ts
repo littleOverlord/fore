@@ -55,6 +55,7 @@ export default class Socket {
      *  https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/send
      */
     public send(data:any){
+        console.log(data);
         this.socket.send(data);
     }
     /**

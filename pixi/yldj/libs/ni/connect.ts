@@ -4,6 +4,7 @@
 /****************** 导入 ******************/
 import Http from "./http";
 import Socket from "./websocket";
+import Emitter from "./emitter";
 /****************** 导出 ******************/
 /**
  * @description 前台通讯模块
@@ -26,6 +27,10 @@ export default class Connect {
      */
     static mid = 1
     /**
+     * @description 重连定时器
+     */
+    static reopenTimer = null
+    /**
      * @description socket连接
      */
     static socket: Socket
@@ -34,6 +39,12 @@ export default class Connect {
      * @description 通讯回调等待列表
      */
     static waitBack = {}
+    /**
+     * @description 后台消息推送监听
+     * @param cfg 
+     * @param callback 
+     */
+    static notify = new Emitter()
     /**
      * @description 打开链接
      */
@@ -51,31 +62,28 @@ export default class Connect {
         if(Connect.runTest(param,callback)){
             return ;
         }
-        let d;
-        if(Connect.sessionKey){
-            param.arg.sessionKey = Connect.sessionKey;
-        }
         param.mid = Connect.mid ++;
         Connect.waitBack[param.mid] = callback;
-        Http.request(blendArg(param),param.arg,(err,data)=>{
-            if(err){
-                callback({err});
-            }else{
-                d = JSON.parse(data);
-                if(d[""]){
-                    Connect.sessionKey = d[""];
-                }
-                callback(d);
-            }
+        Connect.socket.send(blendArg(param));
+        // Http.request(blendArg(param),param.arg,(err,data)=>{
+        //     if(err){
+        //         callback({err});
+        //     }else{
+        //         d = JSON.parse(data);
+        //         if(d[""]){
+        //             Connect.sessionKey = d[""];
+        //         }
+        //         callback(d);
+        //     }
             
-        })
+        // })
     }
     /**
      * @description 向后台发送消息
      * @param param {type:"",arg:{}}
      */
     static send(param: NetParam){
-
+        Connect.socket.send(blendArg(param));
     }
     /**
      * @description 添加模拟后台数据接口
@@ -101,16 +109,27 @@ export default class Connect {
         }
         return true;
     }
+    /**
+     * @description 监听websocket
+     * @param type open || message || close || error
+     * @param event 
+     */
     static listener(type,event){
         switch (type){
             case "open":
                 if(event){
-                    return Connect.socket.reopen();
+                    return reopen();
                 }
                 Connect.openBack();
+                console.log("websocket opened!");
                 break;
             case "message":
-
+                let msg = JSON.parse(event.data);
+                matchHandler(msg);
+                break;
+            case "close":
+                console.error(event);
+                reopen();
                 break;
         }
     }
@@ -123,7 +142,29 @@ interface NetParam {
     mid: number
 }
 const blendArg = (param: NetParam): string => {
-    let str = "",dir = param.type.split("@");
-    str = `${Connect.url}/${dir[0]}?${dir[1]?"@="+dir[1]:""}`;
-    return str;
+    // let str = `{"type":"${param.type}","mid":${param.mid},"data":"${JSON.stringify(param.arg).replace(/\{/g,"_(").replace(/\}/g,")_")}"}`;
+    // let str = "",dir = param.type.split("@");
+    // str = `${Connect.url}/${dir[0]}?${dir[1]?"@="+dir[1]:""}`;
+    return JSON.stringify(param);
+}
+const matchHandler = (msg) => {
+    let mid = msg.mid,handler;
+    if(mid == 0){
+        return Connect.notify.emit(msg.type,msg);
+    }
+    handler = Connect.waitBack[mid];
+    if(!handler){
+        return console.error("invalid message which mid is ", mid);
+    }
+    console.log(msg);
+    handler(msg.data);
+}
+const reopen = ()  => {
+    if(Connect.reopenTimer){
+        return;
+    }
+    Connect.reopenTimer = setTimeout(()=>{
+        Connect.socket.reopen();
+        Connect.reopenTimer = null;
+    },10000)
 }
