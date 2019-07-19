@@ -139,7 +139,7 @@ export default class Connect {
 interface NetParam {
     type: string
     arg: any
-    mid: number
+    mid?: number
 }
 const blendArg = (param: NetParam): string => {
     // let str = `{"type":"${param.type}","mid":${param.mid},"data":"${JSON.stringify(param.arg).replace(/\{/g,"_(").replace(/\}/g,")_")}"}`;

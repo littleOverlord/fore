@@ -6,6 +6,7 @@ import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
 import Music from '../libs/ni/music';
 import Hash from "../libs/ni/sha512";
+import Base64 from "../libs/ni/base64";
 import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/
@@ -136,7 +137,7 @@ const regist = (account: string, password: string, callback: Function) => {
  * @param callback 登录回调
  */
 const login = (account: string, password: string, callback: Function) => {
-    Connect.request({type:"app/user@login",arg:{name: account, psw: password}},(data) => {
+    Connect.request({type:"app/user@login",arg:{name: account, psw: password, gamename: Fs.appName}},(data) => {
         if(data.err){
             return callback(data.err.reson);
         }
