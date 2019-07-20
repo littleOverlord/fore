@@ -6,7 +6,6 @@ import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
 import Music from '../libs/ni/music';
 import Hash from "../libs/ni/sha512";
-import Base64 from "../libs/ni/base64";
 import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/

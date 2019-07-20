@@ -5,6 +5,7 @@
 import Http from "./http";
 import Socket from "./websocket";
 import Emitter from "./emitter";
+import {Base64} from "./base64";
 /****************** 导出 ******************/
 /**
  * @description 前台通讯模块
@@ -142,10 +143,10 @@ interface NetParam {
     mid?: number
 }
 const blendArg = (param: NetParam): string => {
-    // let str = `{"type":"${param.type}","mid":${param.mid},"data":"${JSON.stringify(param.arg).replace(/\{/g,"_(").replace(/\}/g,")_")}"}`;
+    let str = `{"type":"${param.type}","mid":${param.mid},"arg":"${Base64.encode(JSON.stringify(param.arg))}"}`;
     // let str = "",dir = param.type.split("@");
     // str = `${Connect.url}/${dir[0]}?${dir[1]?"@="+dir[1]:""}`;
-    return JSON.stringify(param);
+    return str;
 }
 const matchHandler = (msg) => {
     let mid = msg.mid,handler;
