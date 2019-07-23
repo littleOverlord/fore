@@ -35,11 +35,11 @@ export default class Loader {
 	 * @param arr ["url","images/xxx.png",....]
 	 * @param successCallback 下载完成的回调
 	 */
-	static add(arr,successCallback){
+	static add(arr: Array<string>,successCallback: Function, process: Function){
 		if(Loader.status === Loader.LOADSTATUS.loading){
-			return Loader.wait.push(new Waiter(arr,successCallback));
+			return Loader.wait.push(new Waiter(arr,successCallback,process));
 		}
-		(new Waiter(arr,successCallback)).start();
+		(new Waiter(arr,successCallback,process)).start();
 	}
 	/**
 	 * @description 下载下一批资源

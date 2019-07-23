@@ -73,10 +73,14 @@ const addGetterSetter = (o: any,k: string,v: any) => {
  * @param old 老的数据
  */
 const addCache = (path: Array<string>,old) => {
-    let p;
+    let p,k;
     for(let i = 0, len = path.length; i < len; i++){
         p = path.slice(0,i+1);
-        cache[p.join(".")] = old;
+        k = p.join(".");
+        if(!DB.emitter.list[k]){
+            continue;
+        }
+        cache[k] = old;
     }
 }
 const loop = () => {

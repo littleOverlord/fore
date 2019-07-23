@@ -44,7 +44,10 @@ export default class Scene {
 	 */
 	static Application(option,cfg){
 		initCanvas(option,cfg);
+		// option.sharedTicker = false;
+		// option.sharedLoader	= false;
 		app = new Application(option);
+		app.ticker = null;
 		//映射pixi坐标
 		app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
 			point.x = x * cfg.screen.scale - cfg.screen.left;
@@ -229,7 +232,7 @@ export default class Scene {
 	 * @param path like "app/images/arms/1222.png"
 	 */
 	static getTextureFromSpritesheet(path){
-		let m = path.match(/(\/[^\/\.]+)\.png/),
+		let m = path.match(/(\/[^\/\.]+)\.(png|jpg)/),
 			name,
 			t;
 		if(!m){
@@ -466,17 +469,15 @@ class Ni{
 const creater = {
 	/**
 	 * @description 初始化默认属性
-	 * o.ni = {
-	 * 	z: number, //控制显示层级
-	 * 	id: number || string //用户设置的id ，作为索引值存在Widget.elements中
-	 * 	// AnimatedSprite 特有
-	 *  actions: ["anctionName":[0,10],...] //动作帧段，配置在spriteSheet json中
-	 * 	animate: {ani:"",default:"","speed": 1, "once": false} //default为创建时设置的ani, 在每一次一次性动画结束后，自动切换到default
-	 * }
 	 */
 	init: (type: string,o: any,data: any,parent: any) => {
 		o.ni = new Ni(o,data,type,parent);
 		o.alpha = data.alpha || 1;
+		if(data.anchor != undefined){
+			o.anchor.x = data.anchor[0];
+			o.anchor.y = data.anchor[1];
+		}
+		data.rotation != undefined && (o.rotation = data.rotation);
 	},
 	/**
 	 * @description 创建 PIXI.Container
@@ -486,14 +487,28 @@ const creater = {
 		creater.init("container",o,data,parent);
 		return o;
 	},
+	/**
+	 * @description
+	 * @param data {
+	 * 	width:0
+	 * 	height:0
+	 * 	x:0
+	 * 	y:0
+	 * 	border-color:0xFF3300
+	 * 	border-width:0
+	 * 	border-alpha:1
+	 * 	border-align:0.5
+	 * 	background-color:0x66CCFF
+	 * 	background-alpha:1
+	 * }
+	 */
 	rect: (data: any, parent: any) => {
 		let rectangle = new Graphics();
-		rectangle.lineStyle(4, 0xFF3300, 1);
-		rectangle.beginFill(0x66CCFF);
-		rectangle.drawRect(0, 0, 64, 64);
+		creater.init("rect",rectangle,data,parent);
+		rectangle.lineStyle(data["border-width"]||0, data["border-color"]||0, data["border-alpha"]||1, data["border-align"]||0.5);
+		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.0001));
+		rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
 		rectangle.endFill();
-		rectangle.x = 170;
-		rectangle.y = 170;
 		return rectangle;
 	},
 	/**
