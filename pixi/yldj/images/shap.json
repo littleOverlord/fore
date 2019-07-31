@@ -1,8 +1,16 @@
 {"frames": {
 
+"boom.png":
+{
+	"frame": {"x":0,"y":0,"w":170,"h":170},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":170,"h":170},
+	"sourceSize": {"w":170,"h":170}
+},
 "diamond.png":
 {
-	"frame": {"x":0,"y":0,"w":169,"h":182},
+	"frame": {"x":0,"y":170,"w":169,"h":182},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":169,"h":182},
@@ -10,7 +18,7 @@
 },
 "hexagon.png":
 {
-	"frame": {"x":169,"y":0,"w":169,"h":182},
+	"frame": {"x":0,"y":352,"w":169,"h":182},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":169,"h":182},
@@ -18,7 +26,7 @@
 },
 "rectangle.png":
 {
-	"frame": {"x":338,"y":0,"w":169,"h":182},
+	"frame": {"x":0,"y":534,"w":169,"h":182},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":169,"h":182},
@@ -26,7 +34,7 @@
 },
 "triangle.png":
 {
-	"frame": {"x":507,"y":0,"w":169,"h":182},
+	"frame": {"x":0,"y":716,"w":169,"h":182},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":169,"h":182},
@@ -37,8 +45,8 @@
 	"version": "1.0",
 	"image": "shap.png",
 	"format": "RGBA8888",
-	"size": {"w":676,"h":182},
+	"size": {"w":170,"h":898},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:745fd4f75977b35bca962b73b9e07270:427d0fd26015e839939873322920d9c8:b213b1811861c490c4c164fb28df9751$"
+	"smartupdate": "$TexturePacker:SmartUpdate:4b566f6a0146af491a718d6d0fecc06e:2bb229627171e614e399ebe51966df64:b213b1811861c490c4c164fb28df9751$"
 }
 }

@@ -10,6 +10,9 @@
             "es6":{
                 "mod":"es62es6"
             },
+            "es5":{
+                "mod":"es52es6"
+            },
             "xls":{
                 "mod":"xls2json"
             },

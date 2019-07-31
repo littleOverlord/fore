@@ -48,7 +48,7 @@ export default class User{
         }
         Connect.request({type:"app/wx@login",arg:{
             "code":User.code,
-            "encrypted": encodeURIComponent(User.info.encryptedData),
+            "encrypted": User.info.encryptedData,
             "gamename": Fs.appName,
             "iv":User.info.iv
         }},(data) => {

@@ -10,7 +10,7 @@
 },
 "button_buy.png":
 {
-	"frame": {"x":0,"y":88,"w":214,"h":100},
+	"frame": {"x":214,"y":0,"w":214,"h":100},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":214,"h":100},
@@ -18,7 +18,7 @@
 },
 "circular.png":
 {
-	"frame": {"x":688,"y":0,"w":88,"h":88},
+	"frame": {"x":10,"y":0,"w":88,"h":88},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":88,"h":88},
@@ -26,15 +26,23 @@
 },
 "line.png":
 {
-	"frame": {"x":10,"y":0,"w":678,"h":30},
+	"frame": {"x":0,"y":136,"w":678,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":678,"h":30},
 	"sourceSize": {"w":678,"h":30}
 },
+"magnet.png":
+{
+	"frame": {"x":98,"y":0,"w":116,"h":136},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":116,"h":136},
+	"sourceSize": {"w":116,"h":136}
+},
 "stage.png":
 {
-	"frame": {"x":214,"y":88,"w":750,"h":1334},
+	"frame": {"x":0,"y":166,"w":750,"h":1334},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":750,"h":1334},
@@ -45,8 +53,8 @@
 	"version": "1.0",
 	"image": "ui.png",
 	"format": "RGBA8888",
-	"size": {"w":964,"h":1422},
+	"size": {"w":750,"h":1500},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:ee8451a6b4982487e964a6e8c3741b11:302c0bd289edb4e5c58c77671703dc8c:5b04aa198265472a3c5f56958d78e97b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:cd519e018e2d6f4c1da50d2171f86c63:6ebe73a04c873c1ad888e228ea8da689:5b04aa198265472a3c5f56958d78e97b$"
 }
 }
