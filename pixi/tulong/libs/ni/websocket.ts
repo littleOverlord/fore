@@ -28,18 +28,18 @@ export default class Socket {
                 _this.listener("open",new NetError(-69,"time out"));
             }
         },this.timeOut)
-        this.socket.addEventListener('open', function (event: Event) {
+        this.socket.onopen = function (event: Event) {
             _this.listener("open",null);
-        });
-        this.socket.addEventListener('error', function (event: ErrorEvent) {
+        }
+        this.socket.onerror = function (event: ErrorEvent) {
             _this.listener("error",event);
-        });
-        this.socket.addEventListener('message', function (event: MessageEvent) {
+        }
+        this.socket.onmessage = function (event: MessageEvent) {
             _this.listener("message",event);
-        });
-        this.socket.addEventListener('close', function (event: CloseEvent) {
+        }
+        this.socket.onclose = function (event: CloseEvent) {
             _this.listener("close",event);
-        });
+        }
     }
     /**
      * @description 关闭连接
