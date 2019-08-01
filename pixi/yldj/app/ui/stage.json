@@ -40,6 +40,29 @@
                 "left": 0,
                 "bottom": 245
             }
+        },
+        {
+            "type": "sprite",
+            "data": {
+                "id":"magnet0",
+                "url":"images/ui/magnet.png",
+                "width": 116,
+                "height": 136,
+                "left": 0,
+                "bottom": 192
+            }
+        },
+        {
+            "type": "sprite",
+            "data": {
+                "id":"magnet1",
+                "url":"images/ui/magnet.png",
+                "width": 116,
+                "height": 136,
+                "right": -116,
+                "bottom": 192,
+                "alpha": 0.3
+            }
         }
     ]
 }

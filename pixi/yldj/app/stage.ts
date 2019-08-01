@@ -13,6 +13,7 @@ import { AppUtil } from "./util";
 /****************** 本地 ******************/
 let stageNode, // 关卡渲染节点
     scoreNode, // 积分节点
+    magnet, // 磁铁
     startNode; // 开始游戏界面
 
 class Stage {
@@ -168,6 +169,24 @@ class WStage extends Widget{
     }
     added(node){
         scoreNode = this.elements.get("score");
+        magnet = new Magnet(this.elements);
+    }
+}
+class Magnet{
+    constructor(elements){
+        this.list[0] = elements.get("magnet0");
+        this.list[1] = elements.get("magnet1");
+        this.list[1].scale.x = -1;
+    }
+    list = []
+    curr = 0
+    nearTime = 0
+    init(){
+        this.nearTime = Date.now();
+        let another = Math.abs(1-this.curr);
+    }
+    change(){
+
     }
 }
 /**
