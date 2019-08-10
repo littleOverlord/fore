@@ -9,9 +9,11 @@
 		"autoAudits": false
 	},
 	"compileType": "game",
-	"libVersion": "2.6.6",
+	"libVersion": "2.8.0",
 	"appid": "wx72c4894e567fd04d",
 	"projectname": "引力对决",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,

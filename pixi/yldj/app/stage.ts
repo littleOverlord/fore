@@ -186,12 +186,17 @@ class Magnet{
     nearTime = 0
     during = 10000
     init(){
-        this.nearTime = Date.now() + this.during + Math.floor(this.during * Math.random()*2);
+        this.nearTime = this.caclTime();
+        this.change(0);
     }
-    change(){
-        this.list[this.curr].alpha = 0.3;
-        this.curr = 1-this.curr;
-        this.list[this.curr].alpha = 1;
+    caclTime(){
+        return Date.now() + this.during + Math.floor(this.during * Math.random()*2);
+    }
+    change(curr){
+        console.log(curr);
+        this.curr = curr;
+        this.list[1-curr].alpha = 0.3;
+        this.list[curr].alpha = 1;
     }
     update(){
         if(Stage.pause){
@@ -201,8 +206,8 @@ class Magnet{
         if(this.cutDown.children[1].text == "0" && this.cutDown.alpha == 1){
             this.cutDown.alpha = 0;
             this.cutDown.children[1].text = "5";
-            this.init();
-            this.change();
+            this.nearTime = this.caclTime();
+            this.change(1-this.curr);
             return;
         }
         v = Math.ceil(diff/1000);
