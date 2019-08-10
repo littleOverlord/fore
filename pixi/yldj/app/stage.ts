@@ -178,7 +178,6 @@ class Magnet{
         this.list[0] = elements.get("magnet0");
         this.list[1] = elements.get("magnet1");
         this.list[1].scale.x = -1;
-        this.init();
         this.cutDown = Scene.open("app-ui-magnet_tip",Scene.root);
     }
     cutDown = null
@@ -195,6 +194,9 @@ class Magnet{
         this.list[this.curr].alpha = 1;
     }
     update(){
+        if(Stage.pause){
+            return;
+        }
         let diff = this.nearTime - Date.now(),v;
         if(this.cutDown.children[1].text == "0" && this.cutDown.alpha == 1){
             this.cutDown.alpha = 0;
@@ -270,6 +272,7 @@ class WStart extends Widget{
         startNode = null;
         Stage.pause = 0;
         scoreNode.text = "0";
+        magnet.init();
     }
 }
 /**
