@@ -1,0 +1,34 @@
+{   
+    "type": "container",
+    "data": {
+        "width": 0,
+        "height": 0,
+        "left": "50%",
+        "top":  "50%",
+        "alpha":0
+    },
+    "children":[
+        {
+            "type": "text",
+            "data": {
+                "text":"磁场转换",
+                "left":-160,
+                "top": -80,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "0xff0000", "align" : "center"
+                }
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "text":"5",
+                "left":-40,
+                "top": 0,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "0xff0000", "align" : "center"
+                }
+            }
+        }
+    ]
+}

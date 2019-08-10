@@ -15,7 +15,10 @@ let stageNode, // 关卡渲染节点
     scoreNode, // 积分节点
     magnet, // 磁铁
     startNode; // 开始游戏界面
-
+const BASE_V = {
+    player:7,
+    shap:3
+}
 class Stage {
     static width = 0
     static height = 0
@@ -23,8 +26,6 @@ class Stage {
      * @description 自己
      */
     static self: Shap
-    //自己的默认移动速度
-    static svx = -7
     /**
      * @description 非自己
      */
@@ -177,16 +178,40 @@ class Magnet{
         this.list[0] = elements.get("magnet0");
         this.list[1] = elements.get("magnet1");
         this.list[1].scale.x = -1;
+        this.init();
+        this.cutDown = Scene.open("app-ui-magnet_tip",Scene.root);
     }
+    cutDown = null
     list = []
     curr = 0
     nearTime = 0
+    during = 10000
     init(){
-        this.nearTime = Date.now();
-        let another = Math.abs(1-this.curr);
+        this.nearTime = Date.now() + this.during + Math.floor(this.during * Math.random()*2);
     }
     change(){
-
+        this.list[this.curr].alpha = 0.3;
+        this.curr = 1-this.curr;
+        this.list[this.curr].alpha = 1;
+    }
+    update(){
+        let diff = this.nearTime - Date.now(),v;
+        if(this.cutDown.children[1].text == "0" && this.cutDown.alpha == 1){
+            this.cutDown.alpha = 0;
+            this.cutDown.children[1].text = "5";
+            this.init();
+            this.change();
+            return;
+        }
+        v = Math.ceil(diff/1000);
+        if(v < 0){
+            v = 0;
+        }
+        if(v > 5){
+            return;
+        }
+        this.cutDown.alpha = 1;
+        this.cutDown.children[1].text = v+"";
     }
 }
 /**
@@ -294,10 +319,17 @@ class Show{
  * @description 打开关卡界面
  */
 const open = () => {
+    let diff;
     stageNode = Scene.open("app-ui-stage",Scene.root);
     Stage.width = stageNode._width;
     Stage.height = stageNode._height;
-    // console.log(Stage.width,Stage.height);
+    if(Stage.width > Scene.screen._width){
+        BASE_V.player = Math.floor((BASE_V.player/Scene.screen._width)*Stage.width);
+    }
+    if(Stage.height > Scene.screen._height){
+        BASE_V.shap = Math.floor((BASE_V.shap/Scene.screen._height)*Stage.height);
+    }
+    console.log(Stage.width,Stage.height);
 }
 const openStart = () => {
     startNode = Scene.open("app-ui-start",Scene.root);
@@ -315,7 +347,7 @@ const insertSelf = () => {
         y: Stage.height - 300,
         effect: "hp",
         value: -1,
-        vx: Stage.svx
+        vx: -BASE_V.player
     });
     Stage.insert(s);
 }
@@ -331,7 +363,7 @@ const insertShap = () => {
     let index = Math.floor(Math.random()*shapArray.length),
         size = 50 + Math.floor(Math.random()*200),
         x = Math.floor(Math.random()*(Stage.width - size)),
-        vy = 3 + Math.floor(Math.random()*3),
+        vy = BASE_V.shap + Math.floor(Math.random()*BASE_V.shap),
         s = new Shap({
             type: shapArray[index],
             camp: 0,
@@ -355,15 +387,9 @@ const resetPV = ()=>{
     }
    let dt = Stage.up - Stage.down; 
    if(dt > 0){
-        Stage.self.vx -= 7;
-        if(Stage.self.vx < -7){
-            Stage.self.vx = -7;
-        }
+        Stage.self.vx = magnet.curr? BASE_V.player:-BASE_V.player;
    }else if(dt < 0){
-        Stage.self.vx += 7;
-        if(Stage.self.vx > 14){
-            Stage.self.vx = 14;
-        }
+        Stage.self.vx = magnet.curr? -BASE_V.player * 2:BASE_V.player*2;
    }
 //    console.log(Stage.self.vx);
 }
@@ -455,10 +481,14 @@ Widget.registW("app-ui-start",WStart);
     
 // },50);
 Frame.add(()=>{
+    if(!stageNode){
+        return;
+    }
     if(!Stage.pause){
         insertShap();
     }
     Show.distribute(Stage.loop());
+    magnet.update();
     resetPV();
     ShapAni.run();
 });

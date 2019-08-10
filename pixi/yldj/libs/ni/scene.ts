@@ -472,7 +472,9 @@ const creater = {
 	 */
 	init: (type: string,o: any,data: any,parent: any) => {
 		o.ni = new Ni(o,data,type,parent);
-		o.alpha = data.alpha || 1;
+		if(typeof data.alpha == "number"){
+			o.alpha = data.alpha;
+		}
 		if(data.anchor != undefined){
 			o.anchor.x = data.anchor[0];
 			o.anchor.y = data.anchor[1];
