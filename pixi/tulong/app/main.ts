@@ -37,6 +37,8 @@ export default class Main {
             Connect.open(cfg,()=>{
                 User.init();
             });
+        },()=>{
+            
         });
         // console.log(wx.env.USER_DATA_PATH);
     }
