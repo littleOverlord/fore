@@ -57,6 +57,7 @@ export default class Scene {
 		this.root = new Container();
 		this.root.width = cfg.screen.width;
 		this.root.height = cfg.screen.height;
+		this.root.ni = {z:0};
 		// this.root.position.set(cfg.screen.left,cfg.screen.top);
 		Events.bindGlobal(this.root);
 		app.stage.addChild(this.root);
@@ -64,6 +65,7 @@ export default class Scene {
 		//FPS
 		this.FPS.node = new Text("FPS 0",{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010,strokeThickness:2});
 		this.FPS.node.position.set(15,115);
+		this.FPS.node.ni = {z:1};
 		app.stage.addChild(this.FPS.node);
 
 		this.screen = cfg.screen;
@@ -300,7 +302,7 @@ class Ni{
 	 */
 	constructor(show: any,cfg: any, public type: string, parent: any){
 		let isAni = false;
-		if(cfg.z){
+		if(cfg.z != undefined){
 			this.z = cfg.z;
 		}
 		if(cfg.id){
@@ -382,24 +384,31 @@ class Ni{
 	 * @description 重新计算位置大小
 	 */
 	public resize(parent?: any){
+		let bound = Ni.caclBound(this,parent);
+		
+		bound.w !== undefined && (this.show.width = bound.w);
+		bound.h !== undefined && (this.show.height = bound.h);
+		this.show.position.set(bound.x, bound.y);
+	}
+	static caclBound(o:Ni,parent?: any){
 		let x,y,w,h,l,r,t,b,
-			parseNumber = (s: any,b?: number):number=>{
-				if(typeof s === "string"){
-					s = s.replace("%","");
-					s = Number(s);
-					if(b){
-						s = b*(s/100);
-					}
+		parseNumber = (s: any,b?: number):number=>{
+			if(typeof s === "string"){
+				s = s.replace("%","");
+				s = Number(s);
+				if(b){
+					s = b*(s/100);
 				}
-				return s;
-			};
-		parent = parent || this.show.parent;
-		w = parseNumber(this._width,parent._width);
-		h = parseNumber(this._height,parent._height);
-		l = parseNumber(this._left,parent._width);
-		r = parseNumber(this._right,parent._width);
-		t = parseNumber(this._top,parent._height);
-		b = parseNumber(this._bottom,parent._height);
+			}
+			return s;
+		};
+		parent = parent || o.show.parent;
+		w = parseNumber(o._width,parent._width);
+		h = parseNumber(o._height,parent._height);
+		l = parseNumber(o._left,parent._width);
+		r = parseNumber(o._right,parent._width);
+		t = parseNumber(o._top,parent._height);
+		b = parseNumber(o._bottom,parent._height);
 		if(l !== undefined){
 			x = l;
 		}
@@ -407,7 +416,7 @@ class Ni{
 			if(x !== undefined){
 				w = parent._width - x - r;
 			}else{
-				x = parent._width - this.show.width - r;
+				x = parent._width - o.show.width - r;
 			}
 		}
 		if(t !== undefined){
@@ -417,14 +426,15 @@ class Ni{
 			if(y !== undefined){
 				h = parent._height - y - b;
 			}else{
-				y = parent._height - this.show._height - b;
+				y = parent._height - o.show._height - b;
 			}
 		}
-		w = w !== undefined?w:this._width;
-		h = h !== undefined?h:this._height;
-		w !== undefined && (this.show.width = w);
-		h !== undefined && (this.show.height = h);
-		this.show.position.set(x || 0, y || 0);
+		w = w !== undefined?w:o._width;
+		h = h !== undefined?h:o._height;
+		return {x:x||0,y:y||0,w:w,h:h};
+		// w !== undefined && (this.show.width = w);
+		// h !== undefined && (this.show.height = h);
+		// this.show.position.set(x || 0, y || 0);
 	}
 	get top(){
 		return this._top;
@@ -505,13 +515,16 @@ const creater = {
 	 * }
 	 */
 	rect: (data: any, parent: any) => {
-		let rectangle = new Graphics();
+		let rectangle = new Graphics(),rectTexture,o;
 		creater.init("rect",rectangle,data,parent);
 		rectangle.lineStyle(data["border-width"]||0, data["border-color"]||0, data["border-alpha"]||1, data["border-align"]||0.5);
 		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.0001));
 		rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
 		rectangle.endFill();
-		return rectangle;
+		rectTexture = rectangle.generateTexture();
+		o = new Sprite(rectTexture);
+		creater.init("rect",o,data,parent);
+		return o;
 	},
 	/**
 	 * @description 创建 PIXI.Sprite
@@ -519,7 +532,7 @@ const creater = {
 	sprite: (data: any, parent: any) => {
 		let t = Scene.getTextureFromSpritesheet(data.url),o;
 		if(!t){
-			throw `Can't create the sprite by "${data.url}"`;
+			return console.error(`Can't create the sprite by "${data.url}"`);
 		}
 		
 		o = new Sprite(t);

@@ -5,7 +5,8 @@
         "width": "100%",
         "height": "100%",
         "left": 0,
-        "top": 0
+        "top": 0,
+        "z":1
     },
     "children":[
         {
@@ -15,7 +16,8 @@
                 "width": "100%",
                 "height": "100%",
                 "left": 0,
-                "top": 0
+                "top": 0,
+                "z":1
             }
         },
         {
@@ -25,6 +27,7 @@
                 "text":"0",
                 "left":50,
                 "top": 50,
+                "z":5,
                 "style":{
                     "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
                 }
@@ -38,7 +41,8 @@
                 "width": "100%",
                 "height": 30,
                 "left": 0,
-                "bottom": 245
+                "bottom": 140,
+                "z":10
             }
         },
         {
@@ -49,7 +53,9 @@
                 "width": 116,
                 "height": 136,
                 "left": 0,
-                "bottom": 192
+                "bottom": 87,
+                "alpha": 0,
+                "z":15
             }
         },
         {
@@ -60,8 +66,20 @@
                 "width": 116,
                 "height": 136,
                 "right": -116,
-                "bottom": 192,
-                "alpha": 0.3
+                "bottom": 87,
+                "alpha": 0,
+                "z":20
+            }
+        },
+        {
+            "type":"container",
+            "data":{
+                "id":"stageBox",
+                "width":"100%",
+                "height":"100%",
+                "left":0,
+                "top":0,
+                "z":25
             }
         }
     ]

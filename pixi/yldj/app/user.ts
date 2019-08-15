@@ -36,6 +36,7 @@ export default class User{
                 break;
             }
         }
+        AppEmitter.emit("intoMain");
         User.show = Scene.open("app-ui-user",Scene.root);
     }
     /**
@@ -72,7 +73,8 @@ const ptFrom = {
     wx: () => {
         let wx = (window as any).wx,
         createButton = () => {
-            var button = wx.createUserInfoButton({type: 'text',text: '微信登录',style:{left: wx.getSystemInfoSync().windowWidth/2-70,bottom: wx.getSystemInfoSync().windowHeight/2,width: 140,height: 40,lineHeight: 40,backgroundColor: '#ff0000',color: '#ffffff',textAlign: 'center',fontSize: 16,borderRadius: 4}})
+            var scale = Scene.screen.scale, w = Math.floor(386/scale), h = Math.floor(140/scale);
+            var button = wx.createUserInfoButton({type: 'image',image:"images/btn.png",style:{left: wx.getSystemInfoSync().windowWidth/2-w/2,bottom: 200/scale,width: w,height: h}})
             button.onTap((res) =>{
                 Music.play("audio/boom.mp3");
                 if(res.errMsg=="getUserInfo:ok"){
@@ -107,6 +109,13 @@ const ptFrom = {
  * @description 用户组件
  */
 class WUser extends Widget{
+    added(){
+        let btn = this.elements.get("button_login");
+        let wx = (window as any).wx;
+        if(wx){
+            btn.alpha = 0;
+        }
+    }
     login(){
         initLocal(loginCallback);
     }
@@ -154,7 +163,7 @@ const loginCallback = (err) => {
     if(err){
         return console.log(err);
     }
-    AppEmitter.emit("intoMain");
+    AppEmitter.emit("gameStart");
     Scene.remove(User.show);
     User.show = null;
 }

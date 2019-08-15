@@ -1,26 +1,67 @@
 {   
     "type": "container",
     "data": {
-        "width": 214,
-        "height": 100,
-        "left": "50%",
-        "top": "50%"
+        "width": "100%",
+        "height": "100%",
+        "left": 0,
+        "top": 0,
+        "z":2
     },
     "children": [
         {
-            "type":"app-ui-button",
-            "props":{
-                "on":{"tap":{"func":"login"}},
-                "id":"button_login",
-                "url": "images/ui/button_buy.png",
-                "width": 214,
-                "height": 100,
-                "left": -107,
-                "top": -50,
-                "text": "进入游戏",
-                "size":30,
-                "color":"#d9c6ad"
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/black.jpg",
+                "width": "100%",
+                "height": "100%",
+                "left": 0,
+                "top": 0,
+                "alpha":0.5
             }
+        },
+        {   
+            "type": "container",
+            "data": {
+                "width": 471,
+                "height": 193,
+                "left": "50%",
+                "top": 105
+            },
+            "children": [
+                {
+                    "type": "sprite",
+                    "data": {
+                        "url":"images/logo/logo.png",
+                        "width": 471,
+                        "height": 193,
+                        "left": -235,
+                        "top":0
+                    }
+                }
+            ]
+        },
+        {   
+            "type": "container",
+            "data": {
+                "width": 386,
+                "height": 140,
+                "left": "50%",
+                "bottom": 396
+            },
+            "children": [
+                {
+                    "type": "sprite",
+                    "data": {
+                        "on":{"tap":{"func":"login"}},
+                        "id":"button_login",
+                        "url":"images/btn/start.png",
+                        "width": 386,
+                        "height": 140,
+                        "left": -193,
+                        "bottom":0
+                    }
+                }
+            ]
         }
     ]
 }

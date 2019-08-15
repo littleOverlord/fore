@@ -14,6 +14,7 @@ import { AppUtil } from "./util";
 let stageNode, // 关卡渲染节点
     scoreNode, // 积分节点
     magnet, // 磁铁
+    stageBox, // 游戏主容器
     startNode; // 开始游戏界面
 const BASE_V = {
     player:7,
@@ -170,6 +171,7 @@ class WStage extends Widget{
     }
     added(node){
         scoreNode = this.elements.get("score");
+        stageBox = this.elements.get("stageBox");
         magnet = new Magnet(this.elements);
     }
 }
@@ -204,8 +206,7 @@ class Magnet{
         }
         let diff = this.nearTime - Date.now(),v;
         if(this.cutDown.children[1].text == "0" && this.cutDown.alpha == 1){
-            this.cutDown.alpha = 0;
-            this.cutDown.children[1].text = "5";
+            this.reset();
             this.nearTime = this.caclTime();
             this.change(1-this.curr);
             return;
@@ -219,6 +220,10 @@ class Magnet{
         }
         this.cutDown.alpha = 1;
         this.cutDown.children[1].text = v+"";
+    }
+    reset(){
+        this.cutDown.alpha = 0;
+        this.cutDown.children[1].text = "5";
     }
 }
 /**
@@ -265,19 +270,7 @@ class WPlayer extends Widget{
  */
 class WStart extends Widget{
     startGame(){
-        if(!Stage.self){
-            
-            for(let key in Show.table){
-                Scene.remove(Show.table[key]);
-                delete Show.table[key];
-            }
-            insertSelf();
-        }
-        Scene.remove(startNode);
-        startNode = null;
-        Stage.pause = 0;
-        scoreNode.text = "0";
-        magnet.init();
+        startGame();
     }
 }
 /**
@@ -297,7 +290,7 @@ class Show{
     static insert(ev){
         let shap;
         // shap = Scene.open(ev.shap.camp?"app-ui-player":"app-ui-shap",stageNode,null,ev.shap);
-        shap = Scene.open("app-ui-shap",stageNode,null,ev.shap);
+        shap = Scene.open("app-ui-shap",stageBox,null,ev.shap);
         if(!ev.shap.camp){
             ShapAni.init(shap);
         }
@@ -321,6 +314,7 @@ class Show{
     static over(){
         openStart();
         Stage.clear();
+        magnet.reset();
     }
 }
 /**
@@ -339,8 +333,31 @@ const open = () => {
     }
     console.log(Stage.width,Stage.height);
 }
+/**
+ * @description 打开重新开始界面
+ */
 const openStart = () => {
     startNode = Scene.open("app-ui-start",Scene.root);
+}
+/**
+ * @description 开始游戏
+ */
+const startGame = () => {
+    if(!Stage.self){
+            
+        for(let key in Show.table){
+            Scene.remove(Show.table[key]);
+            delete Show.table[key];
+        }
+        insertSelf();
+    }
+    if(startNode){
+        Scene.remove(startNode);
+        startNode = null;
+    }
+    Stage.pause = 0;
+    scoreNode.text = "0";
+    magnet.init();
 }
 /**
  * @description 插入自己
@@ -352,7 +369,7 @@ const insertSelf = () => {
         width: 80,
         height: 80,
         x: Stage.width-80,
-        y: Stage.height - 300,
+        y: Stage.height - 195,
         effect: "hp",
         value: -1,
         vx: -BASE_V.player
@@ -494,9 +511,9 @@ Frame.add(()=>{
     }
     if(!Stage.pause){
         insertShap();
+        Show.distribute(Stage.loop());
+        magnet.update();
     }
-    Show.distribute(Stage.loop());
-    magnet.update();
     resetPV();
     ShapAni.run();
 });
@@ -504,5 +521,7 @@ Frame.add(()=>{
 AppEmitter.add("intoMain",(node)=>{
     open();
     insertSelf();
-    openStart();
+});
+AppEmitter.add("gameStart",(node)=>{
+    startGame();
 });
