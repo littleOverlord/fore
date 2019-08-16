@@ -269,6 +269,15 @@ class WPlayer extends Widget{
  * @description 开始游戏界面
  */
 class WStart extends Widget{
+    setProps(props){
+        super.setProps(props);
+        this.cfg.children[2].data.text = scoreNode.text;
+    }
+    added(){
+        let title = this.elements.get("lastScoreTitle"),lastScore = this.elements.get("lastScore");
+        title.ni.left = (Stage.width- title.width)/2;
+        lastScore.ni.left = (Stage.width- lastScore.width)/2;
+    }
     startGame(){
         startGame();
     }

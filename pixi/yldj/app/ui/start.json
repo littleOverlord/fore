@@ -16,8 +16,71 @@
                 "height": "100%",
                 "left": 0,
                 "top": 0,
-                "alpha":0.5
+                "alpha":0.9
             }
+        },
+        {
+            "type":"text",
+            "data":{
+                "id":"lastScoreTitle",
+                "text":"本次得分",
+                "top": 102,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        },
+        {
+            "type":"text",
+            "data":{
+                "id":"lastScore",
+                "text":"0",
+                "top": 170,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        },
+        {   
+            "type": "container",
+            "data": {
+                "left": "50%",
+                "top": 315
+            },
+            "children": [
+                {
+                    "type": "sprite",
+                    "data": {
+                        "url":"images/rank/bg.png",
+                        "width": 718,
+                        "height": 547,
+                        "left": -359,
+                        "top":0
+                    },
+                    "children":[
+                        {
+                            "type":"app-ui-rank_top",
+                            "props":{
+                                "width":645,
+                                "height":268,
+                                "top":170,
+                                "left":23
+                            }
+                        },
+                        {
+                            "type":"text",
+                            "data":{
+                                "text":"排行榜：每周一凌晨刷新",
+                                "left":45,
+                                "bottom": 45,
+                                "style":{
+                                    "fontFamily" : "Arial", "fontSize": 24, "fill" : "0xffffff", "align" : "center"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
         },
         {   
             "type": "container",

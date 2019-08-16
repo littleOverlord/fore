@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 //mod
 import './stage';
+import './rank';
 import  './net';
 //ui
 import './widget/button';

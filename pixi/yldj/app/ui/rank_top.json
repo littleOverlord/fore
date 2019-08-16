@@ -1,0 +1,18 @@
+{
+    "type":"container",
+    "data":{
+    },
+    "children":[
+        {
+            "type": "text",
+            "data": {
+                "text":"暂无排行，请稍后再试",
+                "left":150,
+                "top": 110,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        }
+    ]
+}
