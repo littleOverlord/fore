@@ -1,0 +1,20 @@
+{
+    "type":"container",
+    "data":{
+        "left":"50%",
+        "top":"50%",
+        "alpha":0,
+        "z":100
+    },
+    "children":[
+        {
+            "type": "text",
+            "data": {
+                "text":"通讯连接中。。",
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        }
+    ]
+}

@@ -3,9 +3,11 @@ import Scene from '../libs/ni/scene';
 import Frame from '../libs/ni/frame';
 import DB from "../libs/ni/db";
 import Widget from '../libs/ni/widget';
+import Music from '../libs/ni/music';
 
 import {AppEmitter} from './appEmitter';
 import { AppUtil } from "./util";
+import Connect from '../libs/ni/connect';
 
 
 /****************** 导出 ******************/
@@ -43,6 +45,8 @@ class Stage {
     //shap id
     static id = 1
     static pause = 1
+    //insert boom time
+    static boomTime = 0
     // 获取shap id
     static getId(){
         return Stage.id++;
@@ -64,6 +68,9 @@ class Stage {
             if(AppUtil.Rectangle(Stage.self,Stage.shaps[i])){
                 Stage.effect(Stage.shaps[i],Stage.self);
                 if(Stage.result()){
+                    if(Stage.self.hp <= 0){
+                        Stage.events.push({type:"remove",target: Stage.shaps[i].id});
+                    }
                     return;
                 }
                 Stage.effect(Stage.self,Stage.shaps[i]);
@@ -225,6 +232,10 @@ class Magnet{
         this.cutDown.alpha = 0;
         this.cutDown.children[1].text = "5";
     }
+    clear(){
+        Scene.remove(this.cutDown);
+        this.cutDown = null;
+    }
 }
 /**
  * @description 形状组件
@@ -313,7 +324,10 @@ class Show{
     static effect(ev){
         if(ev.effect == "score"){
             scoreNode.text = Stage.self.score.toString();
+        }else if(ev.effect == "boom"){
+            Music.play("audio/boom.mp3");
         }
+
     }
     static remove(ev){
         let shap = Show.table[ev.target];
@@ -413,6 +427,30 @@ const insertShap = () => {
     Stage.insert(s);
 }
 /**
+ * @description 插入炸弹
+ */
+const insertBoom = () => {
+    let random = Math.random(),
+        probability = 0.5,
+        s;
+    if(random < 0.5 || Date.now() - Stage.boomTime < 5000 ){
+        return;
+    }
+    Stage.boomTime = Date.now();
+    s = new Shap({
+            type: "boom",
+            camp: 0,
+            width: 170,
+            height: 170,
+            x: Math.floor(Math.random()*(Stage.width - 170)),
+            y: -170,
+            effect: "hp",
+            value: -1,
+            vy: BASE_V.shap + Math.floor(Math.random()*BASE_V.shap)
+        });
+    Stage.insert(s);
+}
+/**
  * @description 重置玩家速度
  */
 const resetPV = ()=>{
@@ -502,6 +540,25 @@ class ShapAni{
         return ShapAni.vs*(0.1+1*Math.random()) * (Math.random()>0.5?-1:1);
     }
 }
+/**
+ * @description 通讯连接断开
+ */
+const connectClose = () => {
+    Stage.pause = 1;
+    Stage.clear();
+    if(stageNode){
+        Scene.remove(stageNode);
+        stageNode = null;
+    }
+    if(magnet){
+        magnet.clear();
+        magnet = null;
+    }
+    if(startNode){
+        Scene.remove(startNode);
+        startNode = null;
+    }
+}
 /****************** 立即执行 ******************/
 //初始化关卡数据库表
 DB.init("stage",{level:1,fightCount:0,lastFightTime:0});
@@ -520,6 +577,7 @@ Frame.add(()=>{
     }
     if(!Stage.pause){
         insertShap();
+        insertBoom();
         Show.distribute(Stage.loop());
         magnet.update();
     }
@@ -534,3 +592,4 @@ AppEmitter.add("intoMain",(node)=>{
 AppEmitter.add("gameStart",(node)=>{
     startGame();
 });
+Connect.notify.add("close",connectClose);

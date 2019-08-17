@@ -4,7 +4,6 @@ import Widget from '../libs/ni/widget';
 import Fs from '../libs/ni/fs';
 import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
-import Music from '../libs/ni/music';
 import Hash from "../libs/ni/sha512";
 import {AppEmitter} from './appEmitter';
 
@@ -26,6 +25,7 @@ export default class User{
      * @description 用户界面渲染对象
      */
     static show
+    static wxButton
     /**
      * @description 初始化平台授权，不是平台直接走默认登录
      * @param callback 
@@ -73,14 +73,17 @@ const ptFrom = {
     wx: () => {
         let wx = (window as any).wx,
         createButton = () => {
+            if(User.wxButton){
+                User.wxButton.destroy();
+            }
             var scale = Scene.screen.scale, w = Math.floor(386/scale), h = Math.floor(140/scale);
-            var button = wx.createUserInfoButton({type: 'image',image:"images/btn.png",style:{left: wx.getSystemInfoSync().windowWidth/2-w/2,bottom: 200/scale,width: w,height: h}})
-            button.onTap((res) =>{
-                Music.play("audio/boom.mp3");
+            User.wxButton = wx.createUserInfoButton({type: 'image',image:"images/btn.png",style:{left: wx.getSystemInfoSync().windowWidth/2-w/2,bottom: 200/scale,width: w,height: h}})
+            User.wxButton.onTap((res) =>{
                 if(res.errMsg=="getUserInfo:ok"){
                     User.info = res;
                     //清除微信授权按钮
-                    button.destroy();
+                    User.wxButton.destroy();
+                    User.wxButton = null;
                     User.login_wx(loginCallback);
                 }else{
                     console.log("wx authorize fail");

@@ -14,6 +14,9 @@ export default class Process{
         return processHandler(index);
     }
     static clear(){
+        if(!Process.node){
+            return;
+        }
         Scene.remove(Process.node);
         Process.timer = null;
         Process.node = null;

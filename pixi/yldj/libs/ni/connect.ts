@@ -5,8 +5,14 @@
 import Http from "./http";
 import Socket from "./websocket";
 import Emitter from "./emitter";
+import Widget from './widget';
+import Scene from './scene';
 import {Base64} from "./base64";
 /****************** 导出 ******************/
+enum Status{
+    connecting = 0, // 连接中
+    opened // 已经连接
+}
 /**
  * @description 前台通讯模块
  */
@@ -67,12 +73,17 @@ export default class Connect {
      */
     static ppTimer = 0
     /**
+     * @description 连接状态
+     */
+    static status = Status.connecting
+    /**
      * @description 打开链接
      */
     static open(cfg,callback){
         Connect.url = cfg.ws;
         Connect.openBack = callback;
         Connect.socket = new Socket(Connect.url,Connect.listener);
+        Scene.open("app-ui-connect",Scene.root);
     }
     /**
      * @description 向后台发送请求
@@ -141,6 +152,8 @@ export default class Connect {
                 if(event){
                     return reopen();
                 }
+                Connect.status = Status.opened;
+                WConnect.update();
                 ping();
                 Connect.openBack();
                 console.log("websocket opened!");
@@ -151,8 +164,11 @@ export default class Connect {
                 break;
             case "close":
                 console.error(event);
+                Connect.status = Status.connecting;
+                WConnect.update();
                 clearPing();
                 reopen();
+                Connect.notify.emit("close");
                 break;
         }
     }
@@ -164,6 +180,7 @@ interface NetParam {
     arg: any
     mid?: number
 }
+
 class Wait{
     constructor(mid,callback){
         this.mid = mid;
@@ -179,6 +196,27 @@ class Wait{
     timmer
     clear(){
         clearTimeout(this.timmer);
+    }
+}
+/**
+ * @description 用户组件
+ */
+class WConnect extends Widget{
+    added(node){
+        WConnect.node = node;
+        node.children[0].ni.left = -node.children[0].width/2;
+        node.children[0].ni.top = -node.children[0].height/2;
+        if(Connect.status == Status.connecting){
+            node.alpha = 1;
+        }
+    }
+    static node = null
+    static update(){
+        if(Connect.status == Status.connecting){
+            WConnect.node.alpha = 1;
+        }else{
+            WConnect.node.alpha = 0;
+        }
     }
 }
 /**
@@ -252,3 +290,5 @@ const clearPing = () => {
     clearTimeout(Connect.ppTimer);
     Connect.ppTimer = null;
 }
+// ================================== 立即执行
+Widget.registW("app-ui-connect",WConnect);
