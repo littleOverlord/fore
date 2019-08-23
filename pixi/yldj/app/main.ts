@@ -39,5 +39,4 @@ export default class Main {
     }
 }
 /****************** 本地 ******************/
-declare const canvas;
 declare const wx;

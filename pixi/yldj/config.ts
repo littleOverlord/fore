@@ -13,10 +13,10 @@ export default class Config{
     }
     platForm = "wx"
     name = "yldj"
-    remote = "https://mgame.xianquyouxi.com"
-    ws = "wss://mgame.xianquyouxi.com:10102"
-    // remote = "http://192.168.31.62:8081"
-    // ws = "ws://192.168.31.62:10101"
+    // remote = "https://mgame.xianquyouxi.com"
+    // ws = "wss://mgame.xianquyouxi.com:10102"
+    remote = "http://192.168.31.5:8081"
+    ws = "ws://192.168.31.5:10101"
     screen = {
         _width: 750,
         _height: 1334,
