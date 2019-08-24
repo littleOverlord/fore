@@ -58,7 +58,7 @@ export default class Fs {
 		}else if(cfg.platForm == "pc"){
 			Fs.fs = new PC(cfg.debug);
 			callback && callback();
-		}else if(cfg.platForm == "browser"){
+		}else if(cfg.platForm == "browser" || cfg.platForm == "app"){
 			Fs.fs = new Browser(cfg,callback);
 		}
 	}

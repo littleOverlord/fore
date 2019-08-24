@@ -34,7 +34,7 @@ var ni_modules = {};
     commonjs.exports.load = function(arr,callback){
         var arr = commonjs.exports.findDepends(arr),building = [],name,fileMap = {},
             rpath = function(path){
-                let data = fileMap[path];
+                var data = fileMap[path];
                 if(data){
                     var blob = new Blob([data], { type: "application/javascript" });
 		            return URL.createObjectURL(blob);
@@ -110,6 +110,7 @@ var ni_modules = {};
                 if(wait[i].count === 0){
                     for(var ii = 0, leng = wait[i].mods.length; ii < leng; ii++){
                         name = wait[i].mods[ii];
+                        alert(name);
                         ni_modules[name].func(commonjs.exports.require,ni_modules[name].exports,ni_modules[name])
                         delete ni_modules[name].func;
                     }
