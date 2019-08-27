@@ -11,6 +11,7 @@ import Util from "./util";
 export default class Fs {
 	static remote = ""
 	static appName = ""
+	static from = ""
 	/**
 	 * @description 文件处理具体模块，根据不同平台匹配
 	 */
@@ -50,6 +51,7 @@ export default class Fs {
 	static init(cfg,callback){
 		Fs.appName = cfg.name;
 		Fs.remote = cfg.remote+"/"+cfg.name;
+		Fs.from = cfg.platForm;
 		if(cfg.platForm == "wx"){
 			Fs.fs = new WXFS(cfg,()=>{
 				Fs.mkDirs();
@@ -342,7 +344,7 @@ class Browser{
 	except: string[] = []
 	isReady: boolean = false
 	isLocal(path: string, sign: string): boolean{
-		return this.depend[path] == sign;
+		return Fs.from == "app" || this.depend[path] == sign;
 	}
 	/**
 	 * @description 读取数据

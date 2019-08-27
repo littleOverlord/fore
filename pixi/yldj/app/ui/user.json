@@ -51,8 +51,8 @@
             "children": [
                 {
                     "type": "sprite",
+                    "on":{"tap":{"func":"login"}},
                     "data": {
-                        "on":{"tap":{"func":"login"}},
                         "id":"button_login",
                         "url":"images/btn/start.png",
                         "width": 386,
