@@ -50,7 +50,7 @@ export default class Fs {
 	 */
 	static init(cfg,callback){
 		Fs.appName = cfg.name;
-		Fs.remote = cfg.remote+"/"+cfg.name;
+		Fs.remote = cfg.appPath || cfg.remote+"/"+cfg.name;
 		Fs.from = cfg.platForm;
 		if(cfg.platForm == "wx"){
 			Fs.fs = new WXFS(cfg,()=>{
@@ -344,7 +344,11 @@ class Browser{
 	except: string[] = []
 	isReady: boolean = false
 	isLocal(path: string, sign: string): boolean{
-		return Fs.from == "app" || this.depend[path] == sign;
+		if(Fs.from == "app"){
+			return false;
+		}else{
+			return this.depend[path] == sign;
+		}
 	}
 	/**
 	 * @description 读取数据

@@ -117,11 +117,13 @@ winit.loadJS = function (roots, url, charset, callback, errText, i) {
 	n.src = roots[i || 0] + url;
 	head.appendChild(n);
 };
+winit.path = `file:///android_asset`;
 winit.cfg = (function(){
 	var cfg = {
 		platForm : "app",
 		name : "yldj",
 		remote : winit.domains[0],
+		appPath:winit.path,
 		ws: "wss://"+winit.remote+winit.main+":10102",
 		screen : {
 			_width: 750,
@@ -145,7 +147,6 @@ winit.cfg = (function(){
 	cfg.screen.scale = s;
 	return cfg;
 })();	
-winit.path = `file:///android_asset`;
 winit.start = function() {
 	winit.loadJS([winit.path], "/init.js?" + Math.random(), "utf8", function(url,err){
 		if(err){
