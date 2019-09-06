@@ -335,6 +335,7 @@ class Show{
         delete Show.table[ev.target];
     }
     static over(){
+        AppEmitter.emit("score",Stage.self.score);
         openStart();
         Stage.clear();
         magnet.reset();
