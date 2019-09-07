@@ -338,7 +338,7 @@ class Browser{
 				})
 			}, 0);
 		},(err)=>{
-			alert(err);
+			console.log(err);
 		});
 	}
 	except: string[] = []

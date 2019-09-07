@@ -1,3 +1,7 @@
+/**
+ * pixijs 已经屏蔽掉自带的ticker
+ * 		  修改webglSupport检查判断
+ */
 /****************** 导入 ******************/
 import * as PIXI from '../pixijs/pixi';
 import Loader from "./loader";
@@ -47,7 +51,6 @@ export default class Scene {
 		// option.sharedTicker = false;
 		// option.sharedLoader	= false;
 		app = new Application(option);
-		app.ticker = null;
 		//映射pixi坐标
 		app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
 			point.x = x * cfg.screen.scale - cfg.screen.left;

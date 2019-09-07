@@ -132,7 +132,7 @@ class WUser extends Widget{
 const regist = (account: string, password: string, callback: Function) => {
     Connect.request({type:"app/user@regist",arg:{name: account, psw: password, from: User.pt, gamename: Fs.appName}},(data) => {
         if(data.err){
-            alert("regist err::"+data.err.reson);
+            console.log("regist err::"+data.err.reson);
             return callback(data.err.reson);
         }
         DB.data.user.uid = data.ok.uid;
@@ -151,7 +151,7 @@ const regist = (account: string, password: string, callback: Function) => {
 const login = (account: string, password: string, callback: Function) => {
     Connect.request({type:"app/user@login",arg:{name: account, psw: password, gamename: Fs.appName}},(data) => {
         if(data.err){
-            alert("login err::"+data.err.reson);
+            console.log("login err::"+data.err.reson);
             return callback(data.err.reson);
         }
         DB.data.user.uid = data.ok.uid;

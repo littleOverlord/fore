@@ -27,7 +27,8 @@ export default class Main {
             antialias: true,
             transparent: false,
             view: (window as any).canvas,
-            resolution: 1
+            resolution: 1,
+            autoStart: false
         },cfg);
         Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
             Connect.open(cfg,()=>{
