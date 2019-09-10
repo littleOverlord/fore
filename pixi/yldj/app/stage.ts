@@ -19,8 +19,10 @@ let stageNode, // 关卡渲染节点
     stageBox, // 游戏主容器
     startNode; // 开始游戏界面
 const BASE_V = {
-    player:7,
-    shap:3
+    _player:3,
+    _shap:2,
+    player:3,
+    shap:2
 }
 class Stage {
     static width = 0
@@ -345,17 +347,10 @@ class Show{
  * @description 打开关卡界面
  */
 const open = () => {
-    let diff;
     stageNode = Scene.open("app-ui-stage",Scene.root);
     Stage.width = stageNode._width;
     Stage.height = stageNode._height;
-    if(Stage.width > Scene.screen._width){
-        BASE_V.player = Math.floor((BASE_V.player/Scene.screen._width)*Stage.width);
-    }
-    if(Stage.height > Scene.screen._height){
-        BASE_V.shap = Math.floor((BASE_V.shap/Scene.screen._height)*Stage.height);
-    }
-    console.log(Stage.width,Stage.height);
+    initV();
 }
 /**
  * @description 打开重新开始界面
@@ -450,6 +445,22 @@ const insertBoom = () => {
             vy: BASE_V.shap + Math.floor(Math.random()*BASE_V.shap)
         });
     Stage.insert(s);
+}
+/**
+ * @description 初始化速度，根据屏幕的宽度来确定，确保不同分辨率下游戏难度一致
+ */
+const initV = (reset?:boolean) => {
+    if(reset){
+        BASE_V.player = BASE_V._player; 
+        BASE_V.shap = BASE_V._shap; 
+    }
+    if(Stage.width > Scene.screen._width){
+        BASE_V.player = Math.floor((BASE_V.player/Scene.screen._width)*Stage.width);
+    }
+    if(Stage.height > Scene.screen._height){
+        BASE_V.shap = Math.floor((BASE_V.shap/Scene.screen._height)*Stage.height);
+    }
+    console.log(Stage.width,Stage.height);
 }
 /**
  * @description 重置玩家速度

@@ -524,7 +524,7 @@ const creater = {
 		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.0001));
 		rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
 		rectangle.endFill();
-		rectTexture = rectangle.generateTexture();
+		rectTexture = rectangle.generateCanvasTexture();
 		o = new Sprite(rectTexture);
 		creater.init("rect",o,data,parent);
 		return o;
