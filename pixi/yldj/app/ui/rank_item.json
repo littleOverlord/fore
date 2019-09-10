@@ -1,0 +1,29 @@
+{
+    "type":"container",
+    "data":{
+    },
+    "children":[
+        {
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/black.jpg",
+                "width": "100%",
+                "height": "100%",
+                "left": 0,
+                "top": 0,
+                "alpha":0.9
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "text":"暂无排行，请稍后再试",
+                "left":150,
+                "top": 110,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        }
+    ]
+}

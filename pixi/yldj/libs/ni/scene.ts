@@ -43,6 +43,8 @@ export default class Scene {
 	static cache = {}
 	//SpriteSheets
 	static spriteSheets = {}
+	// rectTextures
+	static rectTextures = {}
 	/**
 	 * @description create scene
 	 */
@@ -261,6 +263,24 @@ export default class Scene {
 		r.x = g.x;
 		r.y = g.y;
 		return r;
+	}
+	/**
+	 * @description 缓存rect texture
+	 * @param name 
+	 * @param texture 
+	 */
+	static setRectTexture(name,texture){
+		if(Scene.rectTextures[name]){
+			return console.log(`Has ${name} rect texture`)
+		}
+		Scene.rectTextures[name] = texture;
+	}
+	/**
+	 * @description 获取rect texture
+	 * @param name 
+	 */
+	static getRectTexture(name){
+		return Scene.rectTextures[name];
 	}
 }
 /****************** 本地 ******************/
@@ -518,27 +538,40 @@ const creater = {
 	 * }
 	 */
 	rect: (data: any, parent: any) => {
-		let rectangle = new Graphics(),rectTexture,o;
-		creater.init("rect",rectangle,data,parent);
-		rectangle.lineStyle(data["border-width"]||0, data["border-color"]||0, data["border-alpha"]||1, data["border-align"]||0.5);
-		rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.0001));
-		rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
-		rectangle.endFill();
-		rectTexture = rectangle.generateCanvasTexture();
+		let rectangle,rectTexture = Scene.getRectTexture(data.name),o;
+		if(!rectTexture){
+			rectangle = new Graphics()
+			creater.init("rect",rectangle,data,parent);
+			rectangle.lineStyle(data["border-width"]||0, data["border-color"]||0, data["border-alpha"]||1, data["border-align"]||0.5);
+			rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.0001));
+			rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
+			rectangle.endFill();
+			rectTexture = rectangle.generateCanvasTexture();
+			if(data.name){
+				Scene.setRectTexture(data.name,rectTexture);
+			}
+		}
+		
 		o = new Sprite(rectTexture);
 		creater.init("rect",o,data,parent);
 		return o;
 	},
 	/**
 	 * @description 创建 PIXI.Sprite
+	 * @param data {
+	 * 		url: ""    //通过Spritesheet加载纹理
+	 * 		netUrl: "" //通过网络直接加载纹理
+	 * }
 	 */
 	sprite: (data: any, parent: any) => {
 		let t = Scene.getTextureFromSpritesheet(data.url),o;
-		if(!t){
+		if(!t && !data.netUrl){
 			return console.error(`Can't create the sprite by "${data.url}"`);
+		}else if(data.netUrl){
+			o = new Sprite.from(data.netUrl);
+		}else if(t){
+			o = new Sprite(t);
 		}
-		
-		o = new Sprite(t);
 		//根据中心点调整sprite位置
 		if(t.defaultAnchor.x || t.defaultAnchor.y){
 			o.position.set((data.x || 0)-data.width*t.defaultAnchor.x,(data.y || 0) - data.height*t.defaultAnchor.y);
