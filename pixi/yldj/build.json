@@ -2,7 +2,7 @@
     {
         "name": "wx",
         "dist": "../dist/wx/yldj",
-        "ignore":["/README.md","/build.json","/index.html","/init.js","/pc.html","pc.js"],
+        "ignore":["/README.md","/build.json","/index.html","/app.html","/init.js","/pc.html","pc.js"],
         "plugins":{
             "ts":{
                 "mod":"ts2es6"
@@ -68,7 +68,7 @@
     {
         "name": "pc",
         "dist": "../../../pack-pc/src/yldj",
-        "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/index.html","/init.js"],
+        "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/app.html","/index.html","/init.js"],
         "plugins":{
             "ts":{
                 "mod":"ts2pc"
