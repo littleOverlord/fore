@@ -564,18 +564,19 @@ const creater = {
 	 * }
 	 */
 	sprite: (data: any, parent: any) => {
-		let t = Scene.getTextureFromSpritesheet(data.url),o;
+		let t = data.url?Scene.getTextureFromSpritesheet(data.url):null,o;
 		if(!t && !data.netUrl){
 			return console.error(`Can't create the sprite by "${data.url}"`);
 		}else if(data.netUrl){
 			o = new Sprite.from(data.netUrl);
 		}else if(t){
 			o = new Sprite(t);
+			//根据中心点调整sprite位置
+			if(t.defaultAnchor.x || t.defaultAnchor.y){
+				o.position.set((data.x || 0)-data.width*t.defaultAnchor.x,(data.y || 0) - data.height*t.defaultAnchor.y);
+			}
 		}
-		//根据中心点调整sprite位置
-		if(t.defaultAnchor.x || t.defaultAnchor.y){
-			o.position.set((data.x || 0)-data.width*t.defaultAnchor.x,(data.y || 0) - data.height*t.defaultAnchor.y);
-		}
+		
 		creater.init("sprite",o,data,parent);
 		return o;
 	},

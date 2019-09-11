@@ -18,13 +18,90 @@ let stageNode, // 关卡渲染节点
     magnet, // 磁铁
     stageBox, // 游戏主容器
     startNode; // 开始游戏界面
-const BASE_V = {
-    _player:3,
-    _shap:2,
-    player:3,
-    shap:2
+// 速度处理对象
+class BASE_V{
+    static grad = [[0,2.5,2],[20,4,2],[70,4,4],[140,5.5,4],[360,5.5,7],[1000,6,7.5]]
+    static _player: number
+    static _shap: number
+    static player: number
+    static shap: number
+    static currGrad = 0
+    /**
+     * @description 积分变化，重新计算初始速度
+     * @param score 
+     */
+    static caclGrad(score){
+        let next = BASE_V.grad[BASE_V.currGrad+1];
+        if(!next){
+            return;
+        }
+        if(score >= next[0]){
+            BASE_V.currGrad ++;
+            BASE_V.init();
+        }
+    }
+    /**
+     * @description 初始速度
+     */
+    static init(){
+        BASE_V._player = BASE_V.player = BASE_V.grad[BASE_V.currGrad][2];
+        BASE_V._shap = BASE_V.shap = BASE_V.grad[BASE_V.currGrad][1];
+    }
 }
+/**
+ * @description 公式
+ */
+class Formula{
+    /**
+     * @description 计算形状分数
+     * @param v 速度
+     * @param area 面积
+     */
+    static shapScore(v,area){
+        return Math.round((v+2)*76825/(10000+area)/4);
+    }
+    /**
+     * @description 计算形状插入最小时间间隔
+     * @param t 关卡进行时间(s)
+     */
+    static insertRangMin(t){
+        return Math.max(1200-t*15,600);
+    }
+    /**
+     * @description 计算形状插入最小时间间隔
+     * @param t 关卡进行时间(s)
+     */
+    static insertRangMax(t){
+        return Math.max(2400-t*10,2000);
+    }
+    /**
+     * @description 计算下一次插入形状的时间
+     * @param t 关卡进行时间(s)
+     */
+    static insertShapTime(t){
+        let rmin = Formula.insertRangMin(t),rmax = Formula.insertRangMax(t);
+        return Date.now() + rmin + Math.floor(Math.random()*(rmax - rmin));
+    }
+    /**
+     * @description 随机一定范围的自然时间点
+     * @param last 最大持续时间
+     */
+    static randomTime(last){
+        return Date.now() + Math.random() * last;
+    }
+    /**
+     * @description 形状旋转随机速度和方向
+     * @param v 速度
+     */
+    static shapAniRandomV(v){
+        return v*(0.1+1*Math.random()) * (Math.random()>0.5?-1:1);
+    }
+}
+/**
+ * @description 关卡状态机
+ */
 class Stage {
+    static startTime = 0
     static width = 0
     static height = 0
     /**
@@ -141,6 +218,7 @@ class Stage {
         Stage.self = null;
         Stage.id = 1;
         Stage.events = [];
+        Stage.startTime = 0
     }
 }
 class Shap{
@@ -375,6 +453,7 @@ const startGame = () => {
         startNode = null;
     }
     Stage.pause = 0;
+    Stage.startTime = Date.now();
     scoreNode.text = "0";
     magnet.init();
 }
@@ -403,7 +482,8 @@ const insertShap = () => {
     if(Stage.insertTimer && Date.now() < Stage.insertTimer){
         return;
     }
-    Stage.insertTimer = Date.now() + Stage.insertRang[0] + Math.floor(Math.random()*(Stage.insertRang[1] - Stage.insertRang[0]));
+    let dt = (Date.now() - Stage.startTime)/1000;
+    Stage.insertTimer = Formula.insertShapTime(dt);
     let index = Math.floor(Math.random()*shapArray.length),
         size = 50 + Math.floor(Math.random()*200),
         x = Math.floor(Math.random()*(Stage.width - size)),
@@ -416,9 +496,11 @@ const insertShap = () => {
             x: x,
             y: -size,
             effect: "score",
-            value: Math.ceil(vy*66825/(size * size)),
+            value: Formula.shapScore(vy,size * size)
+            ,
             vy: vy
         });
+        
     // console.log(Stage.width,size,x);
     Stage.insert(s);
 }
@@ -429,7 +511,7 @@ const insertBoom = () => {
     let random = Math.random(),
         probability = 0.5,
         s;
-    if(random < 0.5 || Date.now() - Stage.boomTime < 5000 ){
+    if(random < probability || Date.now() - Stage.boomTime < 5000 ){
         return;
     }
     Stage.boomTime = Date.now();
@@ -483,8 +565,8 @@ const resetPV = ()=>{
 class ShapAni{
     constructor(o: any){
         this.show = o;
-        this.v = this.vt = ShapAni.rdV();
-        this.time = ShapAni.rdTime();
+        this.v = this.vt = Formula.shapAniRandomV(ShapAni.vs);
+        this.time = Formula.randomTime(ShapAni.during);
         o.sa = this;
     }
     //显示对象
@@ -495,7 +577,8 @@ class ShapAni{
     vt
     //下次改变旋转速度的时间
     time
-
+    //改变旋转时间间隔
+    static during = 3000
     //每帧速度改变的幅度
     static vs = Math.PI / 200
     /**
@@ -530,8 +613,8 @@ class ShapAni{
         let d,ds;
         if(sa.vt == sa.v){
             if(Date.now() >= sa.time){
-                sa.time = ShapAni.rdTime();
-                sa.vt = ShapAni.rdV();
+                sa.time = Formula.randomTime(ShapAni.during);
+                sa.vt = Formula.shapAniRandomV(ShapAni.vs);
             }
             return;
         }
@@ -542,14 +625,6 @@ class ShapAni{
         }else{
             sa.v = sa.vt;
         }
-    }
-    //随机时间
-    static rdTime(){
-        return Date.now() + Math.random() * 3000;
-    }
-    //随机速度
-    static rdV(){
-        return ShapAni.vs*(0.1+1*Math.random()) * (Math.random()>0.5?-1:1);
     }
 }
 /**
