@@ -44,7 +44,18 @@ const getShareInfo = () => {
     // })
 }
 /****************** 立即执行 ******************/
-
+wx.showShareMenu({
+    withShareTicket: true,
+    success: ()=> {
+        console.log("open share success!")
+    },
+    fail: ()=>{
+        console.log("open share fail!")
+    },
+    complete: ()=>{
+        console.log("open share complete!")
+    }
+})
 
 wx.onShareAppMessage(() => {
     getShareInfo();
