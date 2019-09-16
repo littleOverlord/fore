@@ -58,6 +58,9 @@ wx.showShareMenu({
 })
 
 wx.onShareAppMessage(() => {
+    wx.updateShareMenu({
+        withShareTicket: true
+      })
     return createShareInfo()
 })  
 
@@ -70,5 +73,8 @@ AppEmitter.add("intoMain",()=>{
     console.log(launchOptions);
 })
 AppEmitter.add("share",()=>{
-    getShareInfo();
+    wx.updateShareMenu({
+        withShareTicket: true
+    })
+    wx.shareAppMessage(createShareInfo())
 })
