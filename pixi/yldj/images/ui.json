@@ -2,23 +2,15 @@
 
 "black.jpg":
 {
-	"frame": {"x":0,"y":0,"w":10,"h":10},
+	"frame": {"x":1,"y":1,"w":10,"h":10},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":10,"h":10},
 	"sourceSize": {"w":10,"h":10}
 },
-"button_buy.png":
-{
-	"frame": {"x":214,"y":0,"w":214,"h":100},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":214,"h":100},
-	"sourceSize": {"w":214,"h":100}
-},
 "circular.png":
 {
-	"frame": {"x":10,"y":0,"w":88,"h":88},
+	"frame": {"x":693,"y":1,"w":88,"h":88},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":88,"h":88},
@@ -26,7 +18,7 @@
 },
 "line.png":
 {
-	"frame": {"x":0,"y":136,"w":678,"h":30},
+	"frame": {"x":13,"y":1,"w":678,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":678,"h":30},
@@ -34,16 +26,24 @@
 },
 "magnet.png":
 {
-	"frame": {"x":98,"y":0,"w":116,"h":136},
-	"rotated": false,
+	"frame": {"x":875,"y":1,"w":116,"h":136},
+	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":116,"h":136},
 	"sourceSize": {"w":116,"h":136}
 },
+"share.png":
+{
+	"frame": {"x":783,"y":1,"w":90,"h":90},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":3,"w":90,"h":90},
+	"sourceSize": {"w":96,"h":96}
+},
 "stage.png":
 {
-	"frame": {"x":0,"y":166,"w":750,"h":1334},
-	"rotated": false,
+	"frame": {"x":1,"y":119,"w":750,"h":1334},
+	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":750,"h":1334},
 	"sourceSize": {"w":750,"h":1334}
@@ -53,8 +53,8 @@
 	"version": "1.0",
 	"image": "ui.png",
 	"format": "RGBA8888",
-	"size": {"w":750,"h":1500},
+	"size": {"w":1336,"h":870},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:cd519e018e2d6f4c1da50d2171f86c63:6ebe73a04c873c1ad888e228ea8da689:5b04aa198265472a3c5f56958d78e97b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:e5757c6e06800aefa437cb30db3b8a2a:830ed178014c88d7e3c2c4c27fe97738:5b04aa198265472a3c5f56958d78e97b$"
 }
 }

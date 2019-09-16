@@ -20,7 +20,7 @@ let stageNode, // 关卡渲染节点
     startNode; // 开始游戏界面
 // 速度处理对象
 class BASE_V{
-    static grad = [[0,2.5,2],[20,4,2],[70,4,4],[140,5.5,4],[360,5.5,7],[1000,6,7.5]]
+    static grad = [[0,4,2],[10,4,4],[30,5.5,4],[60,5.5,7],[120,6,7.5]]
     static _player: number
     static _shap: number
     static player: number
@@ -52,7 +52,7 @@ class BASE_V{
         if(Stage.height > Scene.screen._height){
             BASE_V.shap = Math.floor((BASE_V.shap/Scene.screen._height)*Stage.height);
         }
-        console.log(BASE_V._player,BASE_V.player,BASE_V._shap,BASE_V.shap);
+        // console.log(BASE_V._player,BASE_V.player,BASE_V._shap,BASE_V.shap);
     }
     static reset(){
         BASE_V.currGrad = 0;
@@ -163,7 +163,7 @@ class Stage {
         Stage.move(Stage.self);
         for(let i = Stage.shaps.length - 1; i >= 0; i--){
             Stage.move(Stage.shaps[i]);
-            if(AppUtil.Rectangle(Stage.self,Stage.shaps[i])){
+            if(AppUtil.Rectangle({x:Stage.self.x,y:Stage.self.y,width:20,height:20},Stage.shaps[i])){
                 Stage.effect(Stage.shaps[i],Stage.self);
                 if(Stage.result()){
                     if(Stage.self.hp <= 0){
@@ -301,7 +301,7 @@ class Magnet{
         return Date.now() + this.during + Math.floor(this.during * Math.random()*2);
     }
     change(curr){
-        console.log(curr);
+        // console.log(curr);
         this.curr = curr;
         this.list[1-curr].alpha = 0.3;
         this.list[curr].alpha = 1;
@@ -391,6 +391,9 @@ class WStart extends Widget{
     startGame(){
         BASE_V.reset();
         startGame();
+    }
+    share(){
+        AppEmitter.emit("share");
     }
 }
 /**

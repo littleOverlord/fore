@@ -78,6 +78,7 @@ const addScore = (score) => {
             return;
         }
         console.log(data);
+        DB.data.score.phase = score;
         readRank();
     })
 }
@@ -110,7 +111,7 @@ const updateRankPage = () => {
     for(let i = 0, len = ranksInfo.rank.length; i < len; i++){
         t = i+1;
         if(i > 2){
-            t = i-2+ranksInfo.start +1;
+            t = i-2+ranksInfo.start;
         }
         Scene.open("app-ui-rank_item",rankNode,null,{"info":ranksInfo.rank[i],"top":t,"index":i})
     }

@@ -93,14 +93,25 @@
             "children": [
                 {
                     "type": "sprite",
+                    "on":{"tap":{"func":"share"}},
+                    "data": {
+                        "id":"button_share",
+                        "url":"images/ui/share.png",
+                        "width": 96,
+                        "height": 96,
+                        "left": 20,
+                        "top":22
+                    }
+                },
+                {
+                    "type": "sprite",
                     "on":{"tap":{"func":"startGame"}},
                     "data": {
-                        "on":{"tap":{"func":"login"}},
                         "id":"button_login",
                         "url":"images/rank/restart.png",
                         "width": 386,
                         "height": 140,
-                        "left": -193,
+                        "left": -386,
                         "bottom":0
                     }
                 }
