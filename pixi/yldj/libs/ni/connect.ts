@@ -244,7 +244,7 @@ const matchHandler = (msg) => {
     if(!w){
         return console.error("invalid message which mid is ", mid);
     }
-    console.log(msg);
+    // console.log(msg);
     w.handler(msg.data);
     w.clear();
 }

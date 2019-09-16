@@ -30,7 +30,7 @@ class BASE_V{
      * @description 积分变化，重新计算初始速度
      * @param score 
      */
-    static caclGrad(score){
+    static caclGrad(score: number){
         let next = BASE_V.grad[BASE_V.currGrad+1];
         if(!next){
             return;
@@ -46,6 +46,17 @@ class BASE_V{
     static init(){
         BASE_V._player = BASE_V.player = BASE_V.grad[BASE_V.currGrad][2];
         BASE_V._shap = BASE_V.shap = BASE_V.grad[BASE_V.currGrad][1];
+        if(Stage.width > Scene.screen._width){
+            BASE_V.player = Math.floor((BASE_V.player/Scene.screen._width)*Stage.width);
+        }
+        if(Stage.height > Scene.screen._height){
+            BASE_V.shap = Math.floor((BASE_V.shap/Scene.screen._height)*Stage.height);
+        }
+        console.log(BASE_V._player,BASE_V.player,BASE_V._shap,BASE_V.shap);
+    }
+    static reset(){
+        BASE_V.currGrad = 0;
+        BASE_V.init();
     }
 }
 /**
@@ -57,28 +68,28 @@ class Formula{
      * @param v 速度
      * @param area 面积
      */
-    static shapScore(v,area){
+    static shapScore(v: number,area:number){
         return Math.round((v+2)*76825/(10000+area)/4);
     }
     /**
      * @description 计算形状插入最小时间间隔
      * @param t 关卡进行时间(s)
      */
-    static insertRangMin(t){
+    static insertRangMin(t:number){
         return Math.max(1200-t*15,600);
     }
     /**
      * @description 计算形状插入最小时间间隔
      * @param t 关卡进行时间(s)
      */
-    static insertRangMax(t){
+    static insertRangMax(t: number){
         return Math.max(2400-t*10,2000);
     }
     /**
      * @description 计算下一次插入形状的时间
      * @param t 关卡进行时间(s)
      */
-    static insertShapTime(t){
+    static insertShapTime(t: number): number{
         let rmin = Formula.insertRangMin(t),rmax = Formula.insertRangMax(t);
         return Date.now() + rmin + Math.floor(Math.random()*(rmax - rmin));
     }
@@ -86,15 +97,23 @@ class Formula{
      * @description 随机一定范围的自然时间点
      * @param last 最大持续时间
      */
-    static randomTime(last){
+    static randomTime(last: number): number{
         return Date.now() + Math.random() * last;
     }
     /**
      * @description 形状旋转随机速度和方向
      * @param v 速度
      */
-    static shapAniRandomV(v){
+    static shapAniRandomV(v: number): number{
         return v*(0.1+1*Math.random()) * (Math.random()>0.5?-1:1);
+    }
+    /**
+     * @description 计算掉落速度,在一定范围上下浮动
+     * @param rang 浮动范围(0.3)
+     */
+    static dorpV(rang:number):number{
+        let rad = Math.random()*rang,mk = Math.random()>0.5?-1:1;
+        return BASE_V.shap * (1+rad*mk);
     }
 }
 /**
@@ -370,6 +389,7 @@ class WStart extends Widget{
         lastScore.ni.left = (Stage.width- lastScore.width)/2;
     }
     startGame(){
+        BASE_V.reset();
         startGame();
     }
 }
@@ -403,6 +423,7 @@ class Show{
     }
     static effect(ev){
         if(ev.effect == "score"){
+            BASE_V.caclGrad(Stage.self.score);
             scoreNode.text = Stage.self.score.toString();
         }else if(ev.effect == "boom"){
             Music.play("audio/boom.mp3");
@@ -428,7 +449,7 @@ const open = () => {
     stageNode = Scene.open("app-ui-stage",Scene.root);
     Stage.width = stageNode._width;
     Stage.height = stageNode._height;
-    initV();
+    BASE_V.init();
 }
 /**
  * @description 打开重新开始界面
@@ -487,7 +508,7 @@ const insertShap = () => {
     let index = Math.floor(Math.random()*shapArray.length),
         size = 50 + Math.floor(Math.random()*200),
         x = Math.floor(Math.random()*(Stage.width - size)),
-        vy = BASE_V.shap + Math.floor(Math.random()*BASE_V.shap),
+        vy = Formula.dorpV(0.3),
         s = new Shap({
             type: shapArray[index],
             camp: 0,
@@ -496,8 +517,7 @@ const insertShap = () => {
             x: x,
             y: -size,
             effect: "score",
-            value: Formula.shapScore(vy,size * size)
-            ,
+            value: Formula.shapScore(vy,size * size),
             vy: vy
         });
         
@@ -524,25 +544,10 @@ const insertBoom = () => {
             y: -170,
             effect: "hp",
             value: -1,
-            vy: BASE_V.shap + Math.floor(Math.random()*BASE_V.shap)
+            vy: Formula.dorpV(0.3)
         });
+    
     Stage.insert(s);
-}
-/**
- * @description 初始化速度，根据屏幕的宽度来确定，确保不同分辨率下游戏难度一致
- */
-const initV = (reset?:boolean) => {
-    if(reset){
-        BASE_V.player = BASE_V._player; 
-        BASE_V.shap = BASE_V._shap; 
-    }
-    if(Stage.width > Scene.screen._width){
-        BASE_V.player = Math.floor((BASE_V.player/Scene.screen._width)*Stage.width);
-    }
-    if(Stage.height > Scene.screen._height){
-        BASE_V.shap = Math.floor((BASE_V.shap/Scene.screen._height)*Stage.height);
-    }
-    console.log(Stage.width,Stage.height);
 }
 /**
  * @description 重置玩家速度
