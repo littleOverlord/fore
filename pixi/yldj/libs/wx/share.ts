@@ -58,7 +58,6 @@ wx.showShareMenu({
 })
 
 wx.onShareAppMessage(() => {
-    getShareInfo();
     return createShareInfo()
 })  
 
