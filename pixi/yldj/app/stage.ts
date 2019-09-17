@@ -163,7 +163,7 @@ class Stage {
         Stage.move(Stage.self);
         for(let i = Stage.shaps.length - 1; i >= 0; i--){
             Stage.move(Stage.shaps[i]);
-            if(AppUtil.Rectangle({x:Stage.self.x,y:Stage.self.y,width:20,height:20},Stage.shaps[i])){
+            if(AppUtil.Rectangle(caclShapBox(Stage.self,20),Stage.shaps[i])){
                 Stage.effect(Stage.shaps[i],Stage.self);
                 if(Stage.result()){
                     if(Stage.self.hp <= 0){
@@ -258,6 +258,8 @@ class Shap{
     score = 0
     width = 0
     height = 0
+    box_width = null
+    box_height = null
     hp = 1
     x = 0
     y = 0
@@ -490,6 +492,8 @@ const insertSelf = () => {
         camp: 1,
         width: 80,
         height: 80,
+        box_width:60,
+        box_height:60,
         x: Stage.width-80,
         y: Stage.height - 195,
         effect: "hp",
@@ -543,6 +547,8 @@ const insertBoom = () => {
             camp: 0,
             width: 170,
             height: 170,
+            box_width:150,
+            box_height:150,
             x: Math.floor(Math.random()*(Stage.width - 170)),
             y: -170,
             effect: "hp",
@@ -632,6 +638,45 @@ class ShapAni{
             sa.v += (ShapAni.vs * (d/ds));
         }else{
             sa.v = sa.vt;
+        }
+    }
+}
+
+class ShapBox{
+    constructor(x,y,w,h){
+        this.reset(x,y,w,h);
+    }
+    x: number
+    y: number
+    width: number
+    height: number
+    reset(x,y,w,h){
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+    }
+    destory(){
+        ShapBox.cachs.push(this);
+    }
+
+    static cachs:[ShapBox]
+    /**
+     * @description 缩放包围盒
+     * @param shap 形状数据对象
+     * @param last 最终长宽大小
+     */
+    static cacl(shap,last) {
+        let cach = ShapBox.cachs.shift();
+        let diff = (shap.width - last)/2;
+        if(cach){
+            cach.
+        }
+        return {
+            x: shap.x + diff,
+            y: shap.y + diff,
+            width: last,
+            height: last
         }
     }
 }
