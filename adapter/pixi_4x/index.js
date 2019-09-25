@@ -311,19 +311,19 @@ export function isWebGLSupported()
 
     try
     {
-        if (!window.canvas && !window.WebGLRenderingContext)
-        {
-            return false;
-        }
+        // if (!window.WebGLRenderingContext)
+        // {
+        //     return false;
+        // }
 
         const canvas = window.canvas || document.createElement('canvas');
-        let gl = canvas.getContext('webgl', contextOptions) || canvas.getContext('experimental-webgl', contextOptions);
+        let gl = canvas.getContext('webgl', window.canvas?{}:contextOptions) || canvas.getContext('experimental-webgl', window.canvas?{}:contextOptions);
 
-        const success = !!(gl && gl.getContextAttributes().stencil);
-
+        var success = !!(gl && (window.canvas || gl.getContextAttributes().stencil));
+        // console.log(success);
         if (gl && !window.canvas)
         {
-            const loseContext = gl.getExtension('WEBGL_lose_context');
+            var loseContext = gl.getExtension('WEBGL_lose_context');
 
             if (loseContext)
             {
