@@ -37,7 +37,13 @@ export default class Emitter {
 		}
 		return r;
 	}
+
+	static global: Emitter
 }
 /****************** 本地 ******************/
 
 /****************** 立即执行 ******************/
+/**
+ * @description 注册全局事件触发器
+ */
+Emitter.global = new Emitter();

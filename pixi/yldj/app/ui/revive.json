@@ -1,0 +1,44 @@
+{   
+    "type": "container",
+    "data": {
+        "width": "100%",
+        "height": "100%",
+        "left": 0,
+        "top": 0,
+        "z":10
+    },
+    "children": [
+        {
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/black.jpg",
+                "width": "100%",
+                "height": "100%",
+                "left": 0,
+                "top": 0,
+                "alpha":0.8
+            }
+        },
+        {   
+            "type": "container",
+            "data": {
+                "left": "50%",
+                "top": "50%"
+            },
+            "children": [
+                {
+                    "type":"text",
+                    "on":{"tap":{"func":"revive"}},
+                    "data":{
+                        "text":"复活5",
+                        "left":-60,
+                        "bottom": 30,
+                        "style":{
+                            "fontFamily" : "Arial", "fontSize": 60, "fill" : "0xffffff", "align" : "center"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

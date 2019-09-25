@@ -1,9 +1,9 @@
 /****************** 导入 ******************/
 import Widget from '../libs/ni/widget';
 import DB from '../libs/ni/db';
-import { AppEmitter } from './appEmitter';
 import Connect from '../libs/ni/connect';
 import Scene from '../libs/ni/scene';
+import Emitter from '../libs/ni/emitter';
 
 /****************** 导出 ******************/
 
@@ -122,10 +122,10 @@ DB.init("score",{history:0,phase:0});
 //注册组件
 Widget.registW("app-ui-rank_top",WrankTop);
 Widget.registW("app-ui-rank_item",WrankItem);
-AppEmitter.add("gameStart",()=>{
+Emitter.global.add("gameStart",()=>{
     readScore();
     readRank();
 });
-AppEmitter.add("newScore",(score)=>{
+Emitter.global.add("newScore",(score)=>{
     addScore(score);
 });

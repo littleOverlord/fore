@@ -2,7 +2,7 @@
     {
         "name": "wx",
         "dist": "../dist/wx/yldj",
-        "ignore":["/README.md","/build.json","/index.html","/app.html","/init.js","/pc.html","pc.js"],
+        "ignore":["/README.md","/build.json","/index.html","/app.html","/init.js","/pc.html","/pc.js"],
         "plugins":{
             "ts":{
                 "mod":"ts2es6"

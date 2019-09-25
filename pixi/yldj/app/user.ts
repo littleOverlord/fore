@@ -4,8 +4,8 @@ import Widget from '../libs/ni/widget';
 import Fs from '../libs/ni/fs';
 import DB from '../libs/ni/db';
 import Connect from '../libs/ni/connect';
+import Emitter from '../libs/ni/emitter';
 import Hash from "../libs/ni/sha512";
-import {AppEmitter} from './appEmitter';
 
 /****************** 导出 ******************/
 export default class User{
@@ -36,7 +36,7 @@ export default class User{
                 break;
             }
         }
-        AppEmitter.emit("intoMain");
+        Emitter.global.emit("intoMain");
         User.show = Scene.open("app-ui-user",Scene.root);
     }
     /**
@@ -168,7 +168,7 @@ const loginCallback = (err) => {
     if(err){
         return console.log(err);
     }
-    AppEmitter.emit("gameStart");
+    Emitter.global.emit("selectProp");
     Scene.remove(User.show);
     User.show = null;
 }

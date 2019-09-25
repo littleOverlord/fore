@@ -1,8 +1,16 @@
 {"frames": {
 
+"armor.png":
+{
+	"frame": {"x":0,"y":96,"w":83,"h":96},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":83,"h":96},
+	"sourceSize": {"w":83,"h":96}
+},
 "boom.png":
 {
-	"frame": {"x":0,"y":0,"w":170,"h":170},
+	"frame": {"x":83,"y":96,"w":170,"h":170},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":170,"h":170},
@@ -10,15 +18,23 @@
 },
 "diamond.png":
 {
-	"frame": {"x":0,"y":170,"w":169,"h":182},
+	"frame": {"x":0,"y":630,"w":169,"h":182},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":169,"h":182},
 	"sourceSize": {"w":169,"h":182}
 },
+"filter.png":
+{
+	"frame": {"x":0,"y":0,"w":98,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":95},
+	"sourceSize": {"w":98,"h":95}
+},
 "hexagon.png":
 {
-	"frame": {"x":0,"y":352,"w":169,"h":182},
+	"frame": {"x":0,"y":448,"w":169,"h":182},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":169,"h":182},
@@ -26,15 +42,23 @@
 },
 "rectangle.png":
 {
-	"frame": {"x":0,"y":534,"w":169,"h":182},
+	"frame": {"x":0,"y":266,"w":169,"h":182},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":169,"h":182},
 	"sourceSize": {"w":169,"h":182}
 },
+"suction.png":
+{
+	"frame": {"x":98,"y":0,"w":96,"h":96},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":96,"h":96},
+	"sourceSize": {"w":96,"h":96}
+},
 "triangle.png":
 {
-	"frame": {"x":0,"y":716,"w":169,"h":182},
+	"frame": {"x":0,"y":812,"w":169,"h":182},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":169,"h":182},
@@ -45,8 +69,8 @@
 	"version": "1.0",
 	"image": "shap.png",
 	"format": "RGBA8888",
-	"size": {"w":170,"h":898},
+	"size": {"w":253,"h":994},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:4b566f6a0146af491a718d6d0fecc06e:2bb229627171e614e399ebe51966df64:b213b1811861c490c4c164fb28df9751$"
+	"smartupdate": "$TexturePacker:SmartUpdate:37ab4458054f6cd2a219886a42963b34:da5664c94dee0fa94c55943432823ab5:b213b1811861c490c4c164fb28df9751$"
 }
 }

@@ -1,0 +1,160 @@
+{   
+    "type": "container",
+    "data": {
+        "width": "100%",
+        "height": "100%",
+        "left": 0,
+        "top": 0,
+        "z":11
+    },
+    "children": [
+        {
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/black.jpg",
+                "width": "100%",
+                "height": "100%",
+                "left": 0,
+                "top": 0,
+                "alpha":0.9
+            }
+        },
+        {
+            "type":"text",
+            "data":{
+                "id":"title",
+                "text":"开局道具",
+                "top": 102,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        },
+        {   
+            "type": "container",
+            "data": {
+                "id":"props",
+                "left": "50%",
+                "top": 315
+            },
+            "children":[
+                {
+                    "type": "sprite",
+                    "data": {
+                        "url":"images/shap/suction.png",
+                        "width": 96,
+                        "height": 96,
+                        "left": -200,
+                        "top":30
+                    },
+                    "children":[
+                        {
+                            "type":"text",
+                            "data":{
+                                "text":"强大吸力",
+                                "top": 100,
+                                "left":-20,
+                                "style":{
+                                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "sprite",
+                    "data": {
+                        "url":"images/shap/filter.png",
+                        "width": 98,
+                        "height": 95,
+                        "left": -48,
+                        "top":30
+                    },
+                    "children":[
+                        {
+                            "type":"text",
+                            "data":{
+                                "text":"过滤炸弹",
+                                "top": 100,
+                                "left":-13,
+                                "style":{
+                                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "sprite",
+                    "data": {
+                        "url":"images/shap/armor.png",
+                        "width": 83,
+                        "height": 96,
+                        "left": 140,
+                        "top":30
+                    },
+                    "children":[
+                        {
+                            "type":"text",
+                            "data":{
+                                "text":"防弹铠甲",
+                                "top": 100,
+                                "left":-20,
+                                "style":{
+                                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type":"text",
+            "data":{
+                "id":"tip",
+                "text":"看广告随机获得一个道具",
+                "bottom": 400,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        },
+        {   
+            "type": "container",
+            "data": {
+                "width": 386,
+                "height": 140,
+                "left": "50%",
+                "bottom": 200
+            },
+            "children": [
+                {
+                    "type": "sprite",
+                    "on":{"tap":{"func":"look"}},
+                    "data": {
+                        "id":"button_login",
+                        "url":"images/rank/restart.png",
+                        "width": 386,
+                        "height": 140,
+                        "left": -193,
+                        "bottom":0
+                    }
+                },
+                {
+                    "type":"text",
+                    "on":{"tap":{"func":"skip"}},
+                    "data":{
+                        "id":"skip",
+                        "text":"跳过",
+                        "left": -40,
+                        "top":180,
+                        "style":{
+                            "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

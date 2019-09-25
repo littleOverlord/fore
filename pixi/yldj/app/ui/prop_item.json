@@ -1,0 +1,35 @@
+{
+    "type": "sprite",
+    "on":{"tap":{"func":"active"}},
+    "data": {
+        "url":"images/shap/suction.png",
+        "width": 96,
+        "height": 96,
+        "left": -200,
+        "top":30
+    },
+    "children":[
+        {
+            "type":"text",
+            "data":{
+                "text":"1",
+                "bottom": 0,
+                "right":0,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                }
+            }
+        },
+        {
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/black.jpg",
+                "width": "100%",
+                "height": 10,
+                "left": 0,
+                "top": 100,
+                "alpha":0.9
+            }
+        }
+    ]
+}

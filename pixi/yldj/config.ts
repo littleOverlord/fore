@@ -15,8 +15,8 @@ export default class Config{
     name = "yldj"
     // remote = "https://mgame.xianquyouxi.com"
     // ws = "wss://mgame.xianquyouxi.com:10102"
-    remote = "http://192.168.31.5:8081"
-    ws = "ws://192.168.31.5:10101"
+    remote = "http://192.168.28.92:8081"
+    ws = "ws://192.168.28.92:10101"
     screen = {
         _width: 750,
         _height: 1334,

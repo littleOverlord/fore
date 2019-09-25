@@ -4,8 +4,8 @@ import Frame from '../libs/ni/frame';
 import DB from "../libs/ni/db";
 import Widget from '../libs/ni/widget';
 import Music from '../libs/ni/music';
+import Emitter from '../libs/ni/emitter';
 
-import {AppEmitter} from './appEmitter';
 import { AppUtil } from "./util";
 import Connect from '../libs/ni/connect';
 
@@ -145,6 +145,8 @@ class Stage {
     static pause = 1
     //insert boom time
     static boomTime = 0
+    // 道具状态
+    static props: any = {}
     // 获取shap id
     static getId(){
         return Stage.id++;
@@ -157,30 +159,35 @@ class Stage {
         }else{
             Stage.shaps.push(shap);
         }
+        Stage.checkPropEffect("insert",shap);
         Stage.events.push({type:"insert",shap});
     }
     static run(){
         Stage.move(Stage.self);
         for(let i = Stage.shaps.length - 1; i >= 0; i--){
             Stage.move(Stage.shaps[i]);
-            if(AppUtil.Rectangle(caclShapBox(Stage.self,20),Stage.shaps[i])){
+            Stage.checkPropEffect("move",Stage.shaps[i]);
+            if(Stage.shaps[i].hp > 0 && AppUtil.Rectangle(ShapBox.cacl(Stage.self),ShapBox.cacl(Stage.shaps[i]))){
                 Stage.effect(Stage.shaps[i],Stage.self);
                 if(Stage.result()){
                     if(Stage.self.hp <= 0){
-                        Stage.events.push({type:"remove",target: Stage.shaps[i].id});
+                        Stage.removeOne(i);
                     }
                     return;
                 }
                 Stage.effect(Stage.self,Stage.shaps[i]);
             }
+            if(Stage.shaps[i].hp <= 0 || Stage.shaps[i].y >= Stage.height){
+                Stage.removeOne(i);
+            }
             if(Stage.result()){
                 return;
             }
-            if(Stage.shaps[i].hp <= 0 || Stage.shaps[i].y >= Stage.height){
-                Stage.events.push({type:"remove",target: Stage.shaps[i].id});
-                Stage.shaps.splice(i,1);
-            }
         }
+    }
+    static removeOne(i){
+        Stage.events.push({type:"remove",target: Stage.shaps[i].id});
+        Stage.shaps.splice(i,1);
     }
     static loop(): Array<any>{
         let evs;
@@ -191,36 +198,90 @@ class Stage {
         Stage.events = [];
         return evs;
     }
+    /**
+     * @description 效果
+     * @param src 施加效果的对象
+     * @param target 被施加效果的对象
+     */
     static effect(src: Shap,target: Shap){
+        //判断目标是否无敌
+        if(src.effect == "hp" && target.god && src.value < 0){
+            return;
+        }
         target[src.effect] += src.value;
         Stage.events.push({type:"effect",effect:src.effect,value: src.value, src:src.id, target: target.id});
     }
+    /**
+     * @description 道具效果
+     * @param name 道具名字 
+     * @param status 效果状态 0 移除 1添加
+     */
+    static propEffect(name: string,status:number){
+        let ischange = !!Stage.props[name] != !!status;
+        if(!ischange){
+            return;
+        }
+        Stage.props[name] = status;
+        if(status == 1){
+            PropHandl[name].add();
+        }else{
+            PropHandl[name].remove()
+        }
+    }
+    /**
+     * @description 根据触发点，触发对应道具效果
+     * @param type "insert"
+     * @param shap 
+     */
+    static checkPropEffect(type: string,shap: Shap){
+        for(let k in Stage.props){
+            if(Stage.props[k] && PropHandl[k][type]){
+                PropHandl[k][type](shap);
+            }
+        }
+    }
+    /**
+     * @description 移动
+     * @param shap 
+     */
     static move(shap: Shap){
-        let x = shap.x, y = shap.y,
-            cacl = (s,key) => {
-                let d = s["v"+key],ad = Math.abs(d),to = s.to[key],at = Math.abs(to),m = to/at;
-                if(at > ad){
-                    s[key] += (ad * m);
-                    s.to[key] = (at-ad)*m;
+        let velocity = shap.velocity,dtime,now = Date.now(),x = shap.x, y = shap.y,
+            cacl = (s) => {
+                let dx = s.to.x - s.x,
+                    dy = s.to.y - s.y,
+                    dist = Math.sqrt(dx * dx + dy * dy),
+                    ratio = dist / velocity;
+                if(ratio > 1){
+                    s.x += velocity * (dx / Math.abs(dx));
+                    s.y += velocity * (dy / Math.abs(dy));
                     return false;
                 }else{
-                    s[key] += to;
-                    s.to[key] = 0;
+                    s.x += dx;
+                    s.y += dy;
                     return true;
                 }
             };
+        if(shap.moveTime){
+            dtime = now - shap.moveTime;
+            velocity *= (dtime/16);
+            shap.moveTime = now;
+        }
         if(shap.to){
-            if(cacl(shap,"x") && cacl(shap,"y") && !shap.to.moving){
+            if(cacl(shap)){
                 shap.to = null;
             }
+        }else if(shap.type == "player"){
+            shap.x += velocity;
         }else{
-            shap.x += shap.vx;
-            shap.y += shap.vy;
+            shap.y += velocity;
         }
         if(x != shap.x || y != shap.y){
             Stage.events.push({type:"move",value: {x: shap.x, y: shap.y}, target: shap.id});
         }
     }
+    /**
+     * @description 检查结果
+     */
     static result(){
         let r = Stage.self.x <= 0 || Stage.self.x >= (Stage.width - Stage.self.width) || Stage.self.hp <= 0;
         if(r){
@@ -232,6 +293,16 @@ class Stage {
     static checkOut(shap){
 
     }
+    static reStart(){
+        let now = Date.now();
+        Stage.self.moveTime = now;
+        Stage.self.hp = 1;
+        Stage.self.x = (Stage.width - Stage.self.width)/2;
+        Stage.pause = 0;
+        for(let i =0 ,len = Stage.shaps.length; i < len; i++){
+            Stage.shaps[i].moveTime = now;
+        }
+    }
     static clear(){
         Stage.shaps = [];
         Stage.self = null;
@@ -240,6 +311,88 @@ class Stage {
         Stage.startTime = 0
     }
 }
+/**
+ * @description 道具效果处理
+ */
+class PropHandl{
+    /**
+     * @description 吸力
+     */
+    static suction = {
+        // 插入形状时的初始化函数
+        insert:(shap: Shap)=>{
+            if(!Stage.props.suction || shap.type == "boom"){
+                return;
+            }
+            shap.to = Stage.self;
+        }, 
+        move:(shap: Shap)=>{
+            if(!Stage.props.suction || !shap.to){
+                return;
+            }
+            shap.velocity += 1; 
+        },
+        add:()=>{
+            for(let i = 0, len = Stage.shaps.length; i < len; i++){
+                if(Stage.shaps[i].type == "boom"){
+                    continue;
+                }
+                Stage.shaps[i].to = Stage.self;
+            }
+            Stage.events.push({type:"effect",effect:"suction",handler:"add", target: Stage.self.id});
+            Stage.props.suction = 1;
+        },
+        remove:()=>{
+            Stage.events.push({type:"effect",effect:"suction",handler:"remove", target: Stage.self.id});
+            Stage.props.suction = 0;
+        }
+    }
+    /**
+     * @description 过滤炸弹
+     */
+    static filter = {
+        line: 300,
+        move:(shap: Shap)=>{
+            if(shap.type != "boom"){
+                return;
+            }
+            if(shap.y >= (PropHandl.filter.line - shap.height)){
+                shap.hp = 0;
+            }
+        },
+        add:()=>{
+            Stage.events.push({type:"effect",effect:"filter",handler:"add", line: PropHandl.filter.line});
+            Stage.props.filter = 1;
+        },
+        remove:()=>{
+            Stage.events.push({type:"effect",effect:"filter",handler:"remove", line: PropHandl.filter.line});
+            Stage.props.filter = 0;
+        }
+    }
+    /**
+     * @description 防弹铠甲
+     */
+    static armor = {
+        add:()=>{
+            Stage.events.push({type:"effect",effect:"armor",handler:"add"});
+            Stage.self.box_width = Stage.self.width;
+            Stage.self.box_height = Stage.self.height;
+            Stage.self.god = 1;
+            Stage.props.armor = 1;
+        },
+        remove:()=>{
+            Stage.events.push({type:"effect",effect:"armor",handler:"remove"});
+            Stage.self.box_width = 20;
+            Stage.self.box_height = 20;
+            Stage.self.god = 0;
+            Stage.props.armor = 0;
+        }
+    }
+    
+}
+/**
+ * @description 形状类
+ */
 class Shap{
     constructor(options){
         for(let k in options){
@@ -256,6 +409,9 @@ class Shap{
     //触发效果的值 根据效果类型，值的类型都不一样
     value: any = 0
     score = 0
+    //是否无敌 0 不是 1 是
+    god = 0
+
     width = 0
     height = 0
     box_width = null
@@ -263,8 +419,8 @@ class Shap{
     hp = 1
     x = 0
     y = 0
-    vx = 0
-    vy = 0
+    velocity = 0
+    moveTime = 0
     to: any
 }
 /**
@@ -392,10 +548,11 @@ class WStart extends Widget{
     }
     startGame(){
         BASE_V.reset();
-        startGame();
+        // startGame();
+        Emitter.global.emit("selectProp");
     }
     share(){
-        AppEmitter.emit("share");
+        Emitter.global.emit("share");
     }
 }
 /**
@@ -430,6 +587,7 @@ class Show{
         if(ev.effect == "score"){
             BASE_V.caclGrad(Stage.self.score);
             scoreNode.text = Stage.self.score.toString();
+            Emitter.global.emit("vibrate");
         }else if(ev.effect == "boom"){
             Music.play("audio/boom.mp3");
         }
@@ -441,10 +599,16 @@ class Show{
         delete Show.table[ev.target];
     }
     static over(){
-        AppEmitter.emit("newScore",Stage.self.score);
-        openStart();
-        Stage.clear();
-        magnet.reset();
+        Emitter.global.emit("showRevive",(r)=>{
+            if(r == 0){
+                Emitter.global.emit("newScore",Stage.self.score);
+                openStart();
+                Stage.clear();
+                magnet.reset();
+            }else if(r == 1){
+                Stage.reStart();
+            }
+        });
     }
 }
 /**
@@ -492,13 +656,13 @@ const insertSelf = () => {
         camp: 1,
         width: 80,
         height: 80,
-        box_width:60,
-        box_height:60,
+        box_width:20,
+        box_height:20,
         x: Stage.width-80,
         y: Stage.height - 195,
         effect: "hp",
         value: -1,
-        vx: -BASE_V.player
+        velocity: -BASE_V.player
     });
     Stage.insert(s);
 }
@@ -506,6 +670,7 @@ const insertSelf = () => {
  * @description 随机一个形状
  */
 const shapArray = ["diamond","rectangle","hexagon","triangle"];
+const shapSize = {w:169,h:182};
 const insertShap = () => {
     if(Stage.insertTimer && Date.now() < Stage.insertTimer){
         return;
@@ -520,12 +685,12 @@ const insertShap = () => {
             type: shapArray[index],
             camp: 0,
             width: size,
-            height: size,
+            height: Math.floor((size/shapSize.w)*shapSize.h),
             x: x,
             y: -size,
             effect: "score",
             value: Formula.shapScore(vy,size * size),
-            vy: vy
+            velocity: vy
         });
         
     // console.log(Stage.width,size,x);
@@ -553,7 +718,7 @@ const insertBoom = () => {
             y: -170,
             effect: "hp",
             value: -1,
-            vy: Formula.dorpV(0.3)
+            velocity: Formula.dorpV(0.3)
         });
     
     Stage.insert(s);
@@ -567,9 +732,9 @@ const resetPV = ()=>{
     }
    let dt = Stage.up - Stage.down; 
    if(dt > 0){
-        Stage.self.vx = magnet.curr? BASE_V.player:-BASE_V.player;
+        Stage.self.velocity = magnet.curr? BASE_V.player:-BASE_V.player;
    }else if(dt < 0){
-        Stage.self.vx = magnet.curr? -BASE_V.player * 2:BASE_V.player*2;
+        Stage.self.velocity = magnet.curr? -BASE_V.player * 2:BASE_V.player*2;
    }
 //    console.log(Stage.self.vx);
 }
@@ -641,7 +806,9 @@ class ShapAni{
         }
     }
 }
-
+/**
+ * @description 计算形状包围盒
+ */
 class ShapBox{
     constructor(x,y,w,h){
         this.reset(x,y,w,h);
@@ -659,25 +826,27 @@ class ShapBox{
     destory(){
         ShapBox.cachs.push(this);
     }
-
-    static cachs:[ShapBox]
+    /**
+     * @description 包围盒缓存
+     */
+    static cachs = []
     /**
      * @description 缩放包围盒
      * @param shap 形状数据对象
      * @param last 最终长宽大小
      */
-    static cacl(shap,last) {
-        let cach = ShapBox.cachs.shift();
-        let diff = (shap.width - last)/2;
+    static cacl(shap) {
+        let cach = ShapBox.cachs.shift(),
+            bw = shap.box_width || shap.width,
+            bh = shap.box_height || shap.height,
+            dw = (shap.width - bw)/2,
+            dh = (shap.height - bh)/2;
         if(cach){
-            cach.
+            cach.reset(shap.x + dw,shap.y + dh,bw,bh);
+        }else{
+            cach = new ShapBox(shap.x + dw,shap.y + dh,bw,bh);
         }
-        return {
-            x: shap.x + diff,
-            y: shap.y + diff,
-            width: last,
-            height: last
-        }
+        return cach;
     }
 }
 /**
@@ -698,6 +867,23 @@ const connectClose = () => {
         Scene.remove(startNode);
         startNode = null;
     }
+    BASE_V.reset();
+}
+/**
+ * @description 帧控制器
+ */
+const frameControl = ()=>{
+    if(!stageNode){
+        return;
+    }
+    if(!Stage.pause){
+        insertShap();
+        insertBoom();
+        Show.distribute(Stage.loop());
+        magnet.update();
+    }
+    resetPV();
+    ShapAni.run();
 }
 /****************** 立即执行 ******************/
 //初始化关卡数据库表
@@ -711,25 +897,16 @@ Widget.registW("app-ui-start",WStart);
 // Frame.add(()=>{
     
 // },50);
-Frame.add(()=>{
-    if(!stageNode){
-        return;
-    }
-    if(!Stage.pause){
-        insertShap();
-        insertBoom();
-        Show.distribute(Stage.loop());
-        magnet.update();
-    }
-    resetPV();
-    ShapAni.run();
-});
+Frame.add(frameControl);
 //注册页面打开事件
-AppEmitter.add("intoMain",(node)=>{
+Emitter.global.add("intoMain",()=>{
     open();
     insertSelf();
 });
-AppEmitter.add("gameStart",(node)=>{
+Emitter.global.add("gameStart",()=>{
     startGame();
+});
+Emitter.global.add("propOperate",(param)=>{
+    PropHandl[param.type] && PropHandl[param.type][param.operation]();
 });
 Connect.notify.add("close",connectClose);

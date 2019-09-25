@@ -1,0 +1,20 @@
+{   
+    "type": "container",
+    "data": {
+        "width":"100%",
+        "height":"100%",
+        "left": 0,
+        "top": 0,
+        "z":2
+    },
+    "children":[
+        {   
+            "type": "container",
+            "data": {
+                "id":"propList",
+                "right": 100,
+                "bottom": 100
+            }
+        }
+    ]
+}

@@ -2,6 +2,9 @@
 //mod
 import './stage';
 import './rank';
+import './prop';
+import './adv';
+import './revive';
 import  './net';
 //ui
 import './widget/button';

@@ -1,10 +1,11 @@
 import './libs/wx/weapp-adapter';
+import './libs/wx/api';
 
 import Config from "./config";
 import Fs from "./libs/ni/fs";
 import Http from "./libs/ni/http";
 import Main from './app/main';
-import './libs/wx/share';
+
 declare const wx;
 const cfg = new Config(wx.getSystemInfoSync());
 Http.get(`${cfg.remote}/${cfg.name}/depend.json`,"","",(err,data)=>{
