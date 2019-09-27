@@ -23,7 +23,7 @@ export default class DragonBones {
 	 * @description 添加配置
 	 */
 	static addDragonData(data){
-		console.log(Dragon);
+		// console.log(Dragon);
 		let name,tex;
 		if(!DragonBones.factory){
 			DragonBones.factory = (Dragon as any).PixiFactory.factory;

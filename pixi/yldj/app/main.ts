@@ -23,7 +23,7 @@ import Loader from '../libs/ni/loader';
  */
 export default class Main {
     constructor(cfg) {
-        console.log(cfg);
+        // console.log(cfg);
         let app = Scene.Application({
             width: cfg.screen.width,
             height: cfg.screen.height,  

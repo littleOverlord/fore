@@ -285,7 +285,7 @@ class Stage {
     static result(){
         let r = Stage.self.x <= 0 || Stage.self.x >= (Stage.width - Stage.self.width) || Stage.self.hp <= 0;
         if(r){
-            Stage.pause = 1;
+            Stage.setPause(1);
             Stage.events.push({type:"over",result:r});
         }
         return r;
@@ -293,12 +293,19 @@ class Stage {
     static checkOut(shap){
 
     }
+    static setPause(b:number){
+        Stage.pause = b;
+        Emitter.global.emit("stagePause",b);
+    }
+    /**
+     * @description 复活重新开始
+     */
     static reStart(){
         let now = Date.now();
         Stage.self.moveTime = now;
         Stage.self.hp = 1;
         Stage.self.x = (Stage.width - Stage.self.width)/2;
-        Stage.pause = 0;
+        Stage.setPause(0);
         for(let i =0 ,len = Stage.shaps.length; i < len; i++){
             Stage.shaps[i].moveTime = now;
         }
@@ -356,7 +363,7 @@ class PropHandl{
             if(shap.type != "boom"){
                 return;
             }
-            if(shap.y >= (PropHandl.filter.line - shap.height)){
+            if(shap.y > (PropHandl.filter.line - shap.height) && shap.y < PropHandl.filter.line){
                 shap.hp = 0;
             }
         },
@@ -588,13 +595,14 @@ class Show{
             BASE_V.caclGrad(Stage.self.score);
             scoreNode.text = Stage.self.score.toString();
             Emitter.global.emit("vibrate");
-        }else if(ev.effect == "boom"){
-            Music.play("audio/boom.mp3");
         }
 
     }
     static remove(ev){
         let shap = Show.table[ev.target];
+        if(shap.type == "boom"){
+            Music.play("audio/boom.mp3");
+        }
         Scene.remove(shap);
         delete Show.table[ev.target];
     }
@@ -602,6 +610,7 @@ class Show{
         Emitter.global.emit("showRevive",(r)=>{
             if(r == 0){
                 Emitter.global.emit("newScore",Stage.self.score);
+                Emitter.global.emit("clearProp");
                 openStart();
                 Stage.clear();
                 magnet.reset();
@@ -642,7 +651,7 @@ const startGame = () => {
         Scene.remove(startNode);
         startNode = null;
     }
-    Stage.pause = 0;
+    Stage.setPause(0);
     Stage.startTime = Date.now();
     scoreNode.text = "0";
     magnet.init();
@@ -853,7 +862,7 @@ class ShapBox{
  * @description 通讯连接断开
  */
 const connectClose = () => {
-    Stage.pause = 1;
+    Stage.setPause(1);
     Stage.clear();
     if(stageNode){
         Scene.remove(stageNode);

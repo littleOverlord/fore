@@ -2,7 +2,44 @@
     {
         "name": "wx",
         "dist": "../dist/wx/yldj",
-        "ignore":["/README.md","/build.json","/index.html","/app.html","/init.js","/pc.html","/pc.js"],
+        "ignore":[
+            "/README.md","/build.json","/index.html","/app.html","/init.js","/pc.html","/pc.ts",
+            "/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json"
+        ],
+        "plugins":{
+            "ts":{
+                "mod":"ts2es6"
+            },
+            "es6":{
+                "mod":"es62es6"
+            },
+            "es5":{
+                "mod":"es52es6"
+            },
+            "xls":{
+                "mod":"xls2json"
+            },
+            "xlsx":{
+                "mod":"xls2json"
+            },
+            "png":{
+                "mod":"pngmin",
+                "quality":60
+            }
+        },
+        "depend":{
+            "name":"depend.js",
+            "prev":"import Fs from './libs/ni/fs';\nFs.parseDepend(\n",
+            "last":"\n);"
+        }
+    },
+    {
+        "name": "bd",
+        "dist": "../dist/bd/yldj",
+        "ignore":[
+            "/README.md","/build.json","/index.html","/app.html","/init.js","/pc.html","/pc.ts",
+            "/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
+        ],
         "plugins":{
             "ts":{
                 "mod":"ts2es6"
@@ -33,7 +70,11 @@
     {
         "name": "browser",
         "dist": "../../../go/htdocs/yldj",
-        "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/pc.html","pc.js"],
+        "ignore":[
+            "/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/pc.html","pc.js",
+            "/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json",
+            "/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
+        ],
         "plugins":{
             "ts":{
                 "mod":"ts2es5"
@@ -68,7 +109,11 @@
     {
         "name": "pc",
         "dist": "../../../pack-pc/src/yldj",
-        "ignore":["/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/app.html","/index.html","/init.js"],
+        "ignore":[
+            "/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/app.html","/index.html","/init.js",
+            "/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json",
+            "/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
+        ],
         "plugins":{
             "ts":{
                 "mod":"ts2pc"

@@ -63,6 +63,7 @@ const readScore = () => {
         console.log(data);
         DB.data.score.phase = data.ok.phase;
         DB.data.score.history = data.ok.history;
+        setShareInfo(data.ok.phase);
     })
 }
 /**
@@ -73,6 +74,7 @@ const addScore = (score) => {
     if(score <= DB.data.score.phase){
         return console.log(`the score is not enough to update(${score}<=${DB.data.score.phase})`);
     }
+    setShareInfo(score);
     Connect.request({type: "app/score@add",arg: {score}},(data)=>{
         if(data.err){
             return;
@@ -116,13 +118,28 @@ const updateRankPage = () => {
         Scene.open("app-ui-rank_item",rankNode,null,{"info":ranksInfo.rank[i],"top":t,"index":i})
     }
 }
+/**
+ * @description 设置分享信息
+ */
+const setShareInfo = (phase) => {
+    let s = phase || DB.data.score.phase,t = "";
+    if(s > 0){
+        t = `我得到了${s}分，等你来挑战！`
+    }else{
+        t = "不服来战，一决高下！"
+    }
+    Emitter.global.emit("setShareInfo",{
+        title: t,
+        query:`uid=${DB.data.uid}`
+    })
+}
 /****************** 立即执行 ******************/
 //初始化关卡数据库表
 DB.init("score",{history:0,phase:0});
 //注册组件
 Widget.registW("app-ui-rank_top",WrankTop);
 Widget.registW("app-ui-rank_item",WrankItem);
-Emitter.global.add("gameStart",()=>{
+Emitter.global.add("intoMain",()=>{
     readScore();
     readRank();
 });

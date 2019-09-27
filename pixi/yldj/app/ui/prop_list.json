@@ -13,7 +13,8 @@
             "data": {
                 "id":"propList",
                 "right": 100,
-                "bottom": 100
+                "top":0,
+                "bottom": 260
             }
         }
     ]

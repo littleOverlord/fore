@@ -81,7 +81,7 @@ export default class Scene {
 			Events.loop();
 			DragonBones.update();
 		});
-		console.log(PIXI.spine);
+		// console.log(PIXI.spine);
 		return app;
 	}
 	/**
@@ -227,12 +227,12 @@ export default class Scene {
 			let texture = Loader.resources[k.replace(".json",".png")].texture.baseTexture;
 			Scene.spriteSheets[k] = new Spritesheet(texture,JSON.parse(data[k]));
 			Scene.spriteSheets[k].parse(function(sps){
-				console.log(sps);
+				// console.log(sps);
 			});
 			delete data[k];
 		}
-		console.log(Scene.spriteSheets);
-		console.log(PIXI.loader);
+		// console.log(Scene.spriteSheets);
+		// console.log(PIXI.loader);
 	}
 	/**
 	 * @description 根据图片路径获取spriteSheets
@@ -437,9 +437,9 @@ class Ni{
 		}
 		if(r !== undefined){
 			if(x !== undefined){
-				w = parent._width - x - r;
+				w = (parent._width || parent.width) - x - r;
 			}else{
-				x = parent._width - o.show.width - r;
+				x = (parent._width || parent.width) - (o.show._width || o.show.width) - r;
 			}
 		}
 		if(t !== undefined){
@@ -447,9 +447,9 @@ class Ni{
 		}
 		if(b !== undefined){
 			if(y !== undefined){
-				h = parent._height - y - b;
+				h = (parent._height || parent.height) - y - b;
 			}else{
-				y = parent._height - o.show._height - b;
+				y = (parent._height || parent.height) - (o.show._height || o.show.height) - b;
 			}
 		}
 		w = w !== undefined?w:o._width;

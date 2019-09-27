@@ -8,7 +8,9 @@ import Emitter from '../libs/ni/emitter';
 /****************** 导出 ******************/
 
 /****************** 本地 ******************/
-let selectNode;
+let selectNode,
+    listNode,
+    stagePause = 1; // 关卡状态 0 正在运行 1 暂停
 const kindOfProp = ["suction","filter","armor"];
 /**
  * @description 看广告随机道具组件
@@ -38,7 +40,7 @@ class SelectProp extends Widget{
  */
 class WProplist extends Widget{
     added(node){
-        Prop.nodeList = this.elements.get("propList");
+        Prop.listContent = this.elements.get("propList");
     }
 }
 /**
@@ -48,18 +50,21 @@ class WPropItem extends Widget{
     setProps(props){
         super.setProps(props);
         this.cfg.data.url = `images/shap/${props.type}.png`;
+        this.cfg.data.bottom = props.bottom;
         this.cfg.children[0].data.text = String(props.count);
         this.cfg.children[1].data.width = props.process;
         if(props.process == 0 && props.count == 0){
             this.cfg.children[1].data.alpha = 0;
         }
-        this.cfg.children[1].data.bottom = props.bottom;
+        
     }
     added(node){
         
     }
     active(){
-        Prop.caches.get(this.props.type).active();
+        if(!stagePause){
+            Prop.caches.get(this.props.type).active();
+        }
     }
 }
 /**
@@ -109,7 +114,7 @@ class Prop{
     public update(index):boolean{
         let now = Date.now(),leftTime = this.lastTime - now;
         if(!this.show && this.count>0){
-            this.show = Scene.open("app-ui-prop_item",Prop.nodeList,null,{
+            this.show = Scene.open("app-ui-prop_item",Prop.listContent,null,{
                 type:this.type,
                 process: this.processTotal?(leftTime/this.processTotal):0,
                 count: this.count,
@@ -143,7 +148,7 @@ class Prop{
     // 所有道具列表
     static caches: Map<string,Prop> = new Map()
     // 显示节点
-    static nodeList: any
+    static listContent: any
     // 添加道具
     static create(type: string){
         let cache = Prop.caches.get(type);
@@ -166,9 +171,10 @@ class Prop{
      * @description 清除道具数据
      */
     static clear(){
-        if(Prop.nodeList){
-            Scene.remove(Prop.nodeList);
-            Prop.nodeList = undefined;
+        if(listNode){
+            Scene.remove(listNode);
+            Prop.listContent = undefined;
+            listNode = undefined;
         }
         Prop.caches.clear();
     }
@@ -190,7 +196,7 @@ const intoGame = () => {
     Scene.remove(selectNode);
     Emitter.global.emit("gameStart");
     selectNode = undefined;
-    Scene.open("app-ui-prop_list",Scene.root);
+    listNode = Scene.open("app-ui-prop_list",Scene.root);
 }
 /**
  * @description 随机一个道具
@@ -203,7 +209,7 @@ const randomProp = () => {
  * @description 更新道具操作列表
  */
 const update = () => {
-    if(!Prop.nodeList){
+    if(!Prop.listContent){
         return;
     }
     let i = 0;
@@ -232,8 +238,11 @@ Widget.registW("app-ui-prop_list",WProplist);
 Emitter.global.add("selectProp",()=>{
     selectNode = Scene.open("app-ui-select_prop",Scene.root);
 });
-Emitter.global.add("resetProp",()=>{
-    Prop.reset();
+Emitter.global.add("clearProp",()=>{
+    Prop.clear();
+});
+Emitter.global.add("stagePause",(b)=>{
+    stagePause = b;
 });
 //设置帧回调
 Frame.add(update);

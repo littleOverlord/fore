@@ -20,7 +20,7 @@ export default class CfgMgr {
         delete data[k];
       }
     }
-    console.log(caches);
+    // console.log(caches);
   }
   /**
    * @description 获取某张配置表

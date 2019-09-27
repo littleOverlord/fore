@@ -14,6 +14,18 @@ import DB from "../ni/db";
 declare const wx;
 declare const canvas;
 
+let shareInfo = { //分享详情
+    title:"",
+    query:"",
+    callback:()=>{
+
+    }
+}; 
+let RewardedVideoAd,// 激励广告组件
+    BannerAd, //banner广告组件
+    SDKVersion: number;
+
+const sys = wx.getSystemInfoSync();
 /**
  * @description 微信api调用状态
  */
@@ -37,26 +49,88 @@ const launchOptions = wx.getLaunchOptionsSync();
 const createShareInfo = () => {
     let wxinfo = wx.getSystemInfoSync();
     return {
-        title: `引力对决，我得到了${DB.data.score.phase}分，等你来挑战`,
-        query:`uid=${DB.data.uid}`,
+        title: shareInfo.title,
+        query: shareInfo.query,
         imageUrl: canvas.toTempFilePathSync({
           destWidth: wxinfo.windowWidth,
           destHeight: wxinfo.windowHeight
         })
       }
 }
-
+const caclVersion = () => {
+    let arr = sys.SDKVersion.split();
+    for(let i = 0, len = arr.length;i < len; i++){
+        if(arr[i].length == 1){
+            arr[i] += "0";
+        }
+    }
+    SDKVersion = parseInt(arr.join(""),10);
+}
+/**
+ * @description 创建激励广告
+ * @callback (errcode) 0: 广告有效 1: 基础库太低，无法加载激励广告 2: 无效观看 3: 微信api调用错误
+ */
+const createRewardedVideoAd = (id,callback) => {
+    if(SDKVersion < 200040){
+        callback(1);
+    }
+    let RewardedVideoAd = wx.createRewardedVideoAd({
+        adUnitId:id
+    }),destroy = ()=>{
+        RewardedVideoAd.destroy(); 
+        RewardedVideoAd = undefined;
+    }
+    RewardedVideoAd.load();
+    RewardedVideoAd.show();
+    RewardedVideoAd.onError((err)=>{
+        console.log(err);
+        destroy();
+        callback(3); 
+    });
+    RewardedVideoAd.onClose((res)=>{
+        // 用户点击了【关闭广告】按钮
+        // 小于 2.1.0 的基础库版本，res 是一个 undefined
+        destroy();
+        if (res && res.isEnded || res === undefined) {
+            callback(0);
+        } else {
+            callback(2);
+        }
+    });
+}
+/**
+ * @description 创建banner广告
+ * @callback (banner) banner组件实例，用于销毁组件(banner.destroy())
+ */
+const createBannerAd = (id,callback) => {
+    if(SDKVersion < 200040){
+        callback();
+    }
+    let BannerAd = wx.createBannerAd({
+        adUnitId:id,
+        adIntervals: 30,
+        style:{
+            width: sys.windowWidth,
+            left:0
+        }
+    });
+    BannerAd.onResize((res)=>{
+        BannerAd.style.top = sys.windowHeight - res.height;
+    })
+    callback(BannerAd);
+}
 /****************** 立即执行 ******************/
+caclVersion();
 wx.showShareMenu({
     withShareTicket: true,
     success: ()=> {
-        console.log("open share success!")
+        // console.log("open share success!")
     },
     fail: ()=>{
-        console.log("open share fail!")
+        // console.log("open share fail!")
     },
     complete: ()=>{
-        console.log("open share complete!")
+        // console.log("open share complete!")
     }
 })
 /**
@@ -68,18 +142,19 @@ wx.onShareAppMessage(() => {
 })  
 
 wx.onShow((res)=>{
-    console.log("show::",res);
+    // console.log("show::",res);
     Emitter.global.emit("show");
     /**
      * @description 分享成功
      */
     if(status.share == 1){
-        Emitter.global.emit("shareComplete");
+        shareInfo.callback && shareInfo.callback();
+        shareInfo.callback = null;
         status.share = 0;
     }
 })
 wx.onHide((res)=>{
-    console.log("show::",res);
+    // console.log("show::",res);
     Emitter.global.emit("hide");
 })
 //初始化
@@ -92,11 +167,16 @@ wx.onHide((res)=>{
 /**
  * @description 主动分享
  */
-Emitter.global.add("share",()=>{
+Emitter.global.add("share",(arg)=>{
     status.share = 1;
     wx.shareAppMessage(createShareInfo());
 })
-
+/**
+ * @description 设置分享信息
+ */
+Emitter.global.add("setShareInfo",(arg)=>{
+    shareInfo = arg;
+})
 /**
  * @description 手机震动
  */
@@ -114,3 +194,20 @@ Emitter.global.add("vibrate",()=>{
     })
 })
 
+/**
+ * @description 打开激励广告
+ * @param arg {
+ *      id: ADVID, //广告id
+        callback
+ * }
+ */
+Emitter.global.add("advRewarded",(arg)=>{
+    createRewardedVideoAd(arg.id,arg.callback);
+})
+/**
+ * @description 打开banner广告
+ * @callback (banner) banner组件实例，用于销毁组件(banner.destroy())
+ */
+Emitter.global.add("advBanner",(arg)=>{
+    createBannerAd(arg.id,arg.callback);
+})

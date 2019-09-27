@@ -50,7 +50,6 @@ const update = () => {
     }
     leftTime = Math.floor(leftTime/1000);
     reviveNode.children[1].children[0].text = `复活${leftTime}`;
-    console.log(leftTime);
 }
 /**
  * @description 清除数据

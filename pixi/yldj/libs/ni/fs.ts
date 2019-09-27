@@ -54,7 +54,9 @@ export default class Fs {
 		Fs.from = cfg.platForm;
 		if(cfg.platForm == "wx"){
 			Fs.fs = new WXFS(cfg,()=>{
-				Fs.mkDirs();
+				if(!cfg.localRes){
+					Fs.mkDirs();
+				}
 				callback();
 			});
 		}else if(cfg.platForm == "pc"){
@@ -85,9 +87,9 @@ export default class Fs {
 						return console.log(err);
 					}
 					fileMap[p] = data;
-					if(Util.fileSuffix(p) == ".png"){
-						console.log(typeof data);
-					}
+					// if(Util.fileSuffix(p) == ".png"){
+					// 	console.log(typeof data);
+					// }
 					if(!isLocal){
 						Fs.fs.write(p,data,(_err,rp)=>{
 							if(_err){
@@ -127,7 +129,7 @@ export default class Fs {
 	 */
 	static parseDepend(data){
 		Fs.depend = new Depend(data);
-		console.log(Fs.depend);
+		// console.log(Fs.depend);
 	}
 	/**
 	 * @description 写缓存depend文件，方便查找是否已经存储到本地缓存
@@ -161,25 +163,31 @@ declare const require;
 declare const process;
 class WXFS{
 	private fs: any
-	private userDir: string
+	private userDir: string = ""
 	private depend: any
 	private waitDir = {}
+	private localRes = false
 	constructor(cfg: any,callback: Function){
 		this.fs = wx.getFileSystemManager();
-		this.userDir = wx.env.USER_DATA_PATH;
-		this.read(`_.depend`,(err,data)=>{
-			this.depend = err?{}:JSON.parse(data);
+		this.localRes = cfg.localRes;
+		if(!cfg.localRes){
+			this.userDir = wx.env.USER_DATA_PATH+"/";
+			this.read(`_.depend`,(err,data)=>{
+				this.depend = err?{}:JSON.parse(data);
+				callback && callback();
+			})
+		}else{
 			callback && callback();
-		})
+		}
 	}
 	except: string[] = [".js"]
 	isReady: boolean = false
 	isLocal(path, sign: string){
-		return this.depend[path] == sign;
+		return this.localRes || this.depend[path] == sign;
 	}
 	read(path: string,callback: Function){
 		this.fs.readFile({
-			filePath: `${this.userDir}/${path}`,
+			filePath: `${this.userDir}${path}`,
 			encoding: Fs.BlobType[Util.fileSuffix(path)]?"binary":"utf8",
 			success: (data) => {
 				callback(null,data.data);
@@ -193,12 +201,12 @@ class WXFS{
 		let dir = Util.fileDir(path);
 		this.mkDir(dir);
 		this.fs.writeFile({
-			filePath: `${this.userDir}/${path}`,
+			filePath: `${this.userDir}${path}`,
 			data: data,
 			encoding: (typeof data == "string")?"utf8":"binary",
 			success: () => {
-				callback(null,`${this.userDir}/${path}`);
-				console.log(path);
+				callback(null,`${this.userDir}${path}`);
+				// console.log(path);
 				if(!notWriteDepend){
 					this.depend[path] = Fs.depend.all[path].sign;
 					Fs.writeCacheDpend();
@@ -216,10 +224,10 @@ class WXFS{
 		}
 		wx.downloadFile({
 			url:`${remote}/${path}`,
-			filePath:`${this.userDir}/${path}`,
+			filePath:`${this.userDir}${path}`,
 			header: header,
 			success: (res) => {
-				console.log(res);
+				// console.log(res);
 				this.depend[path] = Fs.depend.all[path].sign;
 				if(binary){
 					callback(null,res);
@@ -241,17 +249,17 @@ class WXFS{
 			return;
 		}
 		try{
-			this.fs.statSync(`${this.userDir}/${dir}`);
+			this.fs.statSync(`${this.userDir}${dir}`);
 		}catch(e){
 			try{
-				this.fs.mkdirSync(`${this.userDir}/${dir}`,true);
+				this.fs.mkdirSync(`${this.userDir}${dir}`,true);
 			}catch(err){
 				console.log(e,err);
 			}
 		}
 	}
 	createImg(path: string,data?){
-		return `${this.userDir}/${path}`;
+		return `${this.userDir}${path}`;
 	}
 	/**
 	 * @description 写入缓存depend
@@ -282,7 +290,7 @@ class PC{
 		return true;
 	}
 	read(path, callback){
-		console.log(path);
+		// console.log(path);
 		this.fs.readFile(this.path.join(this.resPath,path),{encoding:"utf8"},callback);
 	}
 	write(path,data, callback){

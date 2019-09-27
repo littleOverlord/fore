@@ -14,6 +14,11 @@ let advNode,
     validTime = 15,
     startTime,
     lookBack: Function;
+// 平台广告id
+const ADVID = {
+    rewarded:0,
+    banner:0
+};
 /**
  * @description 用户组件
  */
@@ -41,7 +46,6 @@ const updDate = () => {
     }
     let diff = Math.floor((Date.now() - startTime)/1000),
         left = allTime - diff;
-    console.log(left);
     if(left < leftTime){
         leftTime = left;
         timeNode.text = leftTime.toString();
@@ -72,11 +76,31 @@ const clear = () => {
 /****************** 立即执行 ******************/
 //注册组件
 Widget.registW("app-ui-adv",Adv);
+//查看激励广告
+//@callback (errcode) 0: 广告有效 1: 基础库太低，无法加载激励广告 2: 无效观看 3: api调用错误
 Emitter.global.add("lookAdv",(callback)=>{
+    if(ADVID.rewarded){
+        Emitter.global.emit("advRewarded",{
+            id: ADVID.rewarded,
+            callback
+        });
+        return;
+    }
     if(advNode){
         return console.log("Con't open another adv page");
     }
     advNode = Scene.open("app-ui-adv",Scene.root)
     lookBack = callback;
+});
+// 打开banner广告
+//@callback (banner) banner组件实例，用于销毁组件(banner.destroy())
+Emitter.global.add("showBannerAdv",(callback)=>{
+    if(!ADVID.banner){
+        return;
+    }
+    Emitter.global.emit("advBanner",{
+        id: ADVID.banner,
+        callback
+    });
 });
 Frame.add(updDate);

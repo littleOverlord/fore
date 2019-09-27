@@ -110,7 +110,7 @@ const updateBar = () => {
     for(let i = 0; i < total; i++){
         _process += Process.table[i];
     }
-    console.log(_process);
+    // console.log(_process);
     Process.node.children[0].children[0].scale.x = _process || 0.0001;
     Process.node.children[0].children[2].text = (_process*100).toFixed(1);
 }

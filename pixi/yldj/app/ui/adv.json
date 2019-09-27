@@ -23,8 +23,8 @@
             "on":{"tap":{"func":"close"}},
             "data":{
                 "text":"关闭",
-                "top": 10,
-                "left":10,
+                "bottom": 60,
+                "left":20,
                 "style":{
                     "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
                 }
@@ -35,8 +35,8 @@
             "data":{
                 "id":"time",
                 "text":"30",
-                "top": 10,
-                "right":10,
+                "top": 100,
+                "right":20,
                 "style":{
                     "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
                 }

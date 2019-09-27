@@ -13,10 +13,12 @@ export default class Config{
     }
     platForm = "wx"
     name = "yldj"
-    // remote = "https://mgame.xianquyouxi.com"
-    // ws = "wss://mgame.xianquyouxi.com:10102"
-    remote = "http://192.168.28.92:8081"
-    ws = "ws://192.168.28.92:10101"
+    //是否使用全本地资源，否则会先从外网加载depend，然后对比资源签名，再决定本地加载还是外网加载
+    localRes = true
+    remote = "https://mgame.xianquyouxi.com"
+    ws = "wss://mgame.xianquyouxi.com:10102"
+    // remote = "http://192.168.28.92:8081"
+    // ws = "ws://192.168.28.92:10101"
     screen = {
         _width: 750,
         _height: 1334,
