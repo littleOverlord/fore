@@ -1,0 +1,44 @@
+{
+    "type": "container",
+    "data": {
+        "width": "100%",
+        "height": 8,
+        "left": 0,
+        "top":296,
+        "z":2
+    },
+    "children":[
+        {
+            "type": "sprite",
+            "data": {
+                "id":"filter0",
+                "url":"images/ui/filter.png",
+                "width": 106,
+                "height": 72,
+                "left": 0,
+                "top": -32
+            }
+        },
+        {
+            "type": "sprite",
+            "data": {
+                "id":"filter1",
+                "url":"images/ui/filter.png",
+                "width": 106,
+                "height": 72,
+                "right": -106,
+                "top": -32
+            }
+        },
+        {
+            "type":"app-ui-prop_effect",
+            "props":{
+                "url":"images/spine/itemact02.atlas",
+                "width":"100%",
+                "height":10,
+                "left":"50%",
+                "top":-1
+            }
+        }
+    ]
+}

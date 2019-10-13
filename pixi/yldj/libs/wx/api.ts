@@ -4,8 +4,7 @@
  */
 /****************** 导入 ******************/
 
-import Emitter from "../ni/emitter";;
-import DB from "../ni/db";
+import Emitter from "../ni/emitter";
 
 
 /****************** 导出 ******************/

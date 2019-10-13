@@ -1,0 +1,63 @@
+{
+    "type":"container",
+    "data":{
+        "width":170,
+        "height":240
+    },
+    "children":[
+        {
+            "type":"rect",
+            "data":{
+                "name":"rank_top_item_bg",
+                "width": 170,
+                "height": 240,
+                "left": 0,
+                "top": 0,
+                "background-color":"0xbd9a7c"
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "text":"",
+                "left":0,
+                "top": 10,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 36, "fill" : "0x592011", "align" : "center"
+                }
+            }
+        },
+        {
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/black.jpg",
+                "width": 112,
+                "height": 112,
+                "left": 30,
+                "top": 44
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "text":"name",
+                "left":0,
+                "top": 160,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 26, "fill" : "0x714230", "align" : "center"
+                }
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "text":"0",
+                "left":0,
+                "top": 200,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 32, "fill" : "0x592011", "align" : "center"
+                }
+            }
+        }
+    ]
+}

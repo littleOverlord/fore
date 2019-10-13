@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron';
 
 import Fs from "./libs/ni/fs";
+import "./libs/pc/fs";
 import Http from "./libs/ni/http";
 import Main from './app/main';
 

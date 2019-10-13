@@ -33,7 +33,7 @@ export default class Main {
             resolution: 1,
             autoStart: false
         },cfg);
-        Loader.add(["app/ui/","app/cfg/","audio/","images/"],function(res){
+        Loader.add(["app/ui/","app/cfg/","audio/","images/","font/"],function(res){
             Connect.open(cfg,()=>{
                 User.init();
                 Process.clear();

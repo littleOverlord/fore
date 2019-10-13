@@ -17,6 +17,10 @@ export default class Fs {
 	 */
 	static fs
 	/**
+	 * @description 创建fs的函数，由每个平台自己的fs模块设置
+	 */
+	static createFs: Function
+	/**
 	 * @description depend处理对象
 	 */
 	static depend: Depend
@@ -52,19 +56,7 @@ export default class Fs {
 		Fs.appName = cfg.name;
 		Fs.remote = cfg.appPath || cfg.remote+"/"+cfg.name;
 		Fs.from = cfg.platForm;
-		if(cfg.platForm == "wx"){
-			Fs.fs = new WXFS(cfg,()=>{
-				if(!cfg.localRes){
-					Fs.mkDirs();
-				}
-				callback();
-			});
-		}else if(cfg.platForm == "pc"){
-			Fs.fs = new PC(cfg.debug);
-			callback && callback();
-		}else if(cfg.platForm == "browser" || cfg.platForm == "app"){
-			Fs.fs = new Browser(cfg,callback);
-		}
+		Fs.createFs(cfg,callback);
 	}
 	/**
 	 * @description 读文件,如果本地没有则去远端下载
@@ -86,6 +78,7 @@ export default class Fs {
 					if(err){
 						return console.log(err);
 					}
+					let bt = this.BlobType[Util.fileSuffix(p)] || "",ifont = bt.indexOf("font")>0;
 					fileMap[p] = data;
 					// if(Util.fileSuffix(p) == ".png"){
 					// 	console.log(typeof data);
@@ -95,9 +88,17 @@ export default class Fs {
 							if(_err){
 								return console.log(_err);
 							}
+							if(ifont && Fs.fs.addFont){
+								Fs.fs.addFont(p,data);
+								delete fileMap[p];
+							}
 							loaded();
 						});
 					}else{
+						if(ifont && Fs.fs.addFont){
+							Fs.fs.addFont(p,data);
+							delete fileMap[p];
+						}
 						loaded();
 					}
 				}
@@ -155,289 +156,6 @@ export default class Fs {
 	}
 }
 /****************** 本地 ******************/
-/**
- * @description 微信文件处理类
- */
-declare const wx;
-declare const require;
-declare const process;
-class WXFS{
-	private fs: any
-	private userDir: string = ""
-	private depend: any
-	private waitDir = {}
-	private localRes = false
-	constructor(cfg: any,callback: Function){
-		this.fs = wx.getFileSystemManager();
-		this.localRes = cfg.localRes;
-		if(!cfg.localRes){
-			this.userDir = wx.env.USER_DATA_PATH+"/";
-			this.read(`_.depend`,(err,data)=>{
-				this.depend = err?{}:JSON.parse(data);
-				callback && callback();
-			})
-		}else{
-			callback && callback();
-		}
-	}
-	except: string[] = [".js"]
-	isReady: boolean = false
-	isLocal(path, sign: string){
-		return this.localRes || this.depend[path] == sign;
-	}
-	read(path: string,callback: Function){
-		this.fs.readFile({
-			filePath: `${this.userDir}${path}`,
-			encoding: Fs.BlobType[Util.fileSuffix(path)]?"binary":"utf8",
-			success: (data) => {
-				callback(null,data.data);
-			},
-			fail: (error)=>{
-				callback(error,null);
-			}
-		})
-	}
-	write(path: string,data: any,callback: Function, notWriteDepend?: boolean){
-		let dir = Util.fileDir(path);
-		this.mkDir(dir);
-		this.fs.writeFile({
-			filePath: `${this.userDir}${path}`,
-			data: data,
-			encoding: (typeof data == "string")?"utf8":"binary",
-			success: () => {
-				callback(null,`${this.userDir}${path}`);
-				// console.log(path);
-				if(!notWriteDepend){
-					this.depend[path] = Fs.depend.all[path].sign;
-					Fs.writeCacheDpend();
-				}
-			},
-			fail: (error)=>{
-				callback(error,null);
-			}
-		})
-	}
-	get(path,remote,callback){
-		let _this = this,header = {},binary = Fs.BlobType[Util.fileSuffix(path)];
-		if(binary){
-			header["content-type"] = "application/octet-stream";
-		}
-		wx.downloadFile({
-			url:`${remote}/${path}`,
-			filePath:`${this.userDir}${path}`,
-			header: header,
-			success: (res) => {
-				// console.log(res);
-				this.depend[path] = Fs.depend.all[path].sign;
-				if(binary){
-					callback(null,res);
-				}else{
-					Fs.writeCacheDpend();
-					_this.read(path,(err,data)=>{
-						callback(err,data);
-					});
-				}
-			},
-			fail: (error)=>{
-				callback(error,null);
-			}
-		})
-	}
-	mkDir(dir: string){
-		dir = dir.replace(/\/$/,"");
-		if(!dir){
-			return;
-		}
-		try{
-			this.fs.statSync(`${this.userDir}${dir}`);
-		}catch(e){
-			try{
-				this.fs.mkdirSync(`${this.userDir}${dir}`,true);
-			}catch(err){
-				console.log(e,err);
-			}
-		}
-	}
-	createImg(path: string,data?){
-		return `${this.userDir}${path}`;
-	}
-	/**
-	 * @description 写入缓存depend
-	 * @param callback 
-	 */
-	writeDepend(callback){
-		this.write("_.depend",JSON.stringify(this.depend),(err)=>{
-			callback(err);
-		},true);
-	}
-}
-/**
- * @description pc端文件处理类
- */
-class PC{
-	private fs
-	private path
-	private resPath = ""
-	constructor(debug: boolean){
-		let rp = debug?"src":"resources\\app.asar\\src";
-		this.fs = require("fs");
-		this.path = require("path");
-		this.resPath = this.path.join(process.cwd(),rp);
-	}
-	except: string[] = []
-	isReady: boolean = true
-	isLocal(path: string): boolean{
-		return true;
-	}
-	read(path, callback){
-		// console.log(path);
-		this.fs.readFile(this.path.join(this.resPath,path),{encoding:"utf8"},callback);
-	}
-	write(path,data, callback){
-		callback();
-	}
-	delete(path, callback){}
-	createImg(path: string,data?){
-		return this.path.join(this.resPath,path);
-	}
-}
-/**
- * @description 浏览器文件处理类
- */
-class Browser{
-	private iDB
-	private dbName:string
-	private tabName:string
-	private depend: any
-	private db: any
-	private init(callback,errorCallback){
-		let _this = this;
-		if (!_this.iDB) {
-			_this.db = {};
-			return callback && setTimeout(callback, 0);
-		}
-		try {
-			var request = _this.iDB.open(_this.dbName, 1);
-			request.onupgradeneeded = function (e) {
-				// 创建table
-				e.currentTarget.result.createObjectStore(_this.tabName, { autoIncrement: false });
-			};
-			request.onsuccess = function (e) {
-				_this.db = e.currentTarget.result;
-				callback && callback();
-			};
-			request.onerror = errorCallback;
-		} catch (e) {
-			_this.iDB = undefined;
-			_this.db = {};
-			return callback && setTimeout(callback, 0);
-		}
-	}
-	constructor(cfg: any,callback: Function){
-		let _this = this;
-		_this.dbName = cfg.name;
-		_this.tabName = cfg.name
-		_this.iDB = self.indexedDB || (self as any).webkitIndexedDB || (self as any).mozIndexedDB || (self as any).OIndexedDB || (self as any).msIndexedDB;
-		_this.init(()=>{
-			setTimeout(() => {
-				_this.read("_.depend",(err,data)=>{
-					_this.depend = (err || !data)?{}:JSON.parse(data);
-					callback && callback();
-				})
-			}, 0);
-		},(err)=>{
-			console.log(err);
-		});
-	}
-	except: string[] = []
-	isReady: boolean = false
-	isLocal(path: string, sign: string): boolean{
-		if(Fs.from == "app"){
-			return false;
-		}else{
-			return this.depend[path] == sign;
-		}
-	}
-	/**
-	 * @description 读取数据
-	 * @example
-	 */
-	read(path: string, callback: Function) {
-		if (!this.iDB) {
-			return setTimeout(function () { callback(this.db[path], path); }, 0);
-		}
-		var request = this.db.transaction(this.tabName, "readonly").objectStore(this.tabName).get(path);
-		request.onsuccess = function (e) {
-			callback(null,e.target.result);
-		};
-		request.onerror = (error)=>{
-			callback(error);
-		};
-	};
-
-	/**
-	 * @description 写入数据，如果键名存在则替换
-	 * @example
-	 */
-	write(path: string, data: any, callback: Function, notWriteDepend: boolean) {
-		if (!this.iDB) {
-			this.db[path] = data;
-			return callback && setTimeout(callback, 0);
-		}
-		var tx = this.db.transaction(this.tabName, "readwrite");
-		tx.objectStore(this.tabName).put(data, path);
-		tx.oncomplete = ()=>{
-			if(!notWriteDepend){
-				this.depend[path] = Fs.depend.all[path].sign;
-				Fs.writeCacheDpend();
-			}
-		};
-		tx.onerror = (error)=>{
-			// callback(error);
-		};
-		setTimeout(()=>{
-			callback(null,path);
-		},0)
-		
-	};
-	/**
-	 * @description 创建可用图片url
-	 * @param path 
-	 * @param data 
-	 */
-	createImg(path: string,data: any){
-		const suf = Util.fileSuffix(path);
-		const blob = new Blob([data], { type: Fs.BlobType[suf] });
-		return URL.createObjectURL(blob);
-	}
-	/**
-	 * @description 删除数据
-	 * @example
-	 */
-	delete(path: string, callback:Function) {
-		if (!this.iDB) {
-			delete this.db[path];
-			return callback && setTimeout(callback, 0);
-		}
-		var tx = this.db.transaction(this.tabName, "readwrite");
-		tx.objectStore(this.tabName).delete(path);
-		tx.oncomplete = ()=>{
-			callback();
-		};
-		tx.onerror = (error)=>{
-			callback(error);
-		};
-	};
-	/**
-	 * @description 写入缓存depend
-	 * @param callback 
-	 */
-	writeDepend(callback){
-		this.write("_.depend",JSON.stringify(this.depend),(err)=>{
-			callback(err);
-		},true);
-	}
-}
 
 /**
  * @description 解析depend

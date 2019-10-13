@@ -156,7 +156,7 @@ winit.start = function() {
 	}, "load index error");
 };
 winit.next = function(){
-	var mods = ["libs/ni/util","libs/ni/http","libs/ni/fs"];
+	var mods = ["libs/ni/util","libs/ni/http","libs/ni/fs","libs/ni/emitter","libs/browser/api","libs/browser/fs"];
 	ni_modules.commonjs.exports.domain = winit.path;
 	ni_modules.commonjs.exports.load(mods,function(){
 	ni_modules["libs/ni/http"].exports.default.get(`${winit.path}/depend.json?${Math.random()}`,"","",(err,data)=>{

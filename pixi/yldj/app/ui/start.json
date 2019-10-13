@@ -8,111 +8,101 @@
         "z":10
     },
     "children": [
-        {
+        {   
             "type": "sprite",
             "data": {
-                "url":"images/ui/black.jpg",
+                "url":"images/ui/stage.jpg",
                 "width": "100%",
                 "height": "100%",
                 "left": 0,
-                "top": 0,
-                "alpha":0.9
+                "top": 0
             }
         },
         {
-            "type":"text",
-            "data":{
-                "id":"lastScoreTitle",
-                "text":"本次得分",
-                "top": 102,
-                "style":{
-                    "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
-                }
-            }
-        },
-        {
-            "type":"text",
-            "data":{
-                "id":"lastScore",
-                "text":"0",
-                "top": 170,
-                "style":{
-                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "0xffffff", "align" : "center"
-                }
-            }
-        },
-        {   
             "type": "container",
             "data": {
+                "width":1,
+                "height":"100%",
                 "left": "50%",
-                "top": 315
+                "top": 0
             },
-            "children": [
+            "children":[
                 {
                     "type": "sprite",
                     "data": {
-                        "url":"images/rank/bg.png",
-                        "width": 718,
-                        "height": 547,
-                        "left": -359,
-                        "top":0
-                    },
-                    "children":[
-                        {
-                            "type":"app-ui-rank_top",
-                            "props":{
-                                "width":645,
-                                "height":268,
-                                "top":170,
-                                "left":23
-                            }
-                        },
-                        {
-                            "type":"text",
-                            "data":{
-                                "text":"排行榜：每周一凌晨刷新",
-                                "left":45,
-                                "bottom": 45,
-                                "style":{
-                                    "fontFamily" : "Arial", "fontSize": 24, "fill" : "0xffffff", "align" : "center"
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {   
-            "type": "container",
-            "data": {
-                "width": 386,
-                "height": 140,
-                "left": "50%",
-                "bottom": 200
-            },
-            "children": [
-                {
-                    "type": "sprite",
-                    "on":{"tap":{"func":"share"}},
-                    "data": {
-                        "id":"button_share",
-                        "url":"images/ui/share.png",
-                        "width": 96,
-                        "height": 96,
-                        "left": 20,
-                        "top":22
+                        "url":"images/ui/score.png",
+                        "width": 268,
+                        "height": 106,
+                        "left": -134,
+                        "top":140
                     }
                 },
                 {
-                    "type": "sprite",
-                    "on":{"tap":{"func":"startGame"}},
-                    "data": {
-                        "id":"button_login",
-                        "url":"images/rank/restart.png",
-                        "width": 386,
-                        "height": 140,
-                        "left": -386,
-                        "bottom":0
+                    "type":"text",
+                    "data":{
+                        "id":"lastScore",
+                        "text":"0",
+                        "top": 270,
+                        "style":{
+                            "fontFamily" : "Arial", "fontSize": 90, "fill" : "#d39b66", "align" : "center"
+                        }
+                    }
+                },
+                {
+                    "type":"rect",
+                    "data":{
+                        "name":"share_bg",
+                        "width": 200,
+                        "height": 60,
+                        "left": -100,
+                        "top": 370,
+                        "background-color":"#000000",
+                        "alpha":0.5
+                    }
+                },
+                {
+                    "type":"text",
+                    "on":{"tap":{"func":"share"}},
+                    "data":{
+                        "text":"发起挑战",
+                        "left":-80,
+                        "top": 380,
+                        "style":{
+                            "fontFamily" : "Arial", "fontSize": 40, "fill" : "#d3b397", "align" : "center"
+                        }
+                    }
+                },
+                {
+                    "type":"app-ui-rank_top",
+                    "props":{
+
+                    }
+                },
+                {
+                    "type":"app-ui-button",
+                    "props":{
+                        "on":{"tap":{"func":"gohome"}},
+                        "id":"btn_home",
+                        "url": "images/ui/home.png",
+                        "width": 90,
+                        "height": 94,
+                        "left": -210,
+                        "top": 922
+                    }
+                },
+                {
+                    "type":"app-ui-button",
+                    "props":{
+                        "on":{"tap":{"func":"startGame"}},
+                        "id":"btn_start",
+                        "url": "images/ui/start.png",
+                        "width": 280,
+                        "height": 102,
+                        "left": -54,
+                        "top": 918,
+                        "text": "再来一局",
+                        "size":52,
+                        "color":"#fdff83"
                     }
                 }
             ]

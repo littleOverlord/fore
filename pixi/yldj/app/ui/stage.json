@@ -12,7 +12,7 @@
         {
             "type": "sprite",
             "data": {
-                "url":"images/ui/stage.png",
+                "url":"images/ui/stage.jpg",
                 "width": "100%",
                 "height": "100%",
                 "left": 0,
@@ -23,13 +23,25 @@
         {
             "type": "text",
             "data": {
-                "id":"score",
-                "text":"0",
-                "left":50,
-                "top": 50,
+                "text":"分数",
+                "left":40,
+                "top": 33,
                 "z":5,
                 "style":{
-                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                    "fontFamily" : "Arial", "fontSize": 46, "fill" : "0xd39b66"
+                }
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "id":"score",
+                "text":"0",
+                "left":40,
+                "top": 78,
+                "z":5,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xd39b66"
                 }
             }
         },
@@ -38,10 +50,10 @@
             "data": {
                 "id":"line",
                 "url":"images/ui/line.png",
-                "width": "100%",
-                "height": 30,
-                "left": 0,
-                "bottom": 140,
+                "height": 8,
+                "left": 30,
+                "right":30,
+                "bottom": 92,
                 "z":10
             }
         },
@@ -50,10 +62,10 @@
             "data": {
                 "id":"magnet0",
                 "url":"images/ui/magnet.png",
-                "width": 116,
-                "height": 136,
+                "width": 86,
+                "height": 104,
                 "left": 0,
-                "bottom": 87,
+                "bottom": 44,
                 "alpha": 0,
                 "z":15
             }
@@ -63,10 +75,10 @@
             "data": {
                 "id":"magnet1",
                 "url":"images/ui/magnet.png",
-                "width": 116,
-                "height": 136,
-                "right": -116,
-                "bottom": 87,
+                "width": 86,
+                "height": 104,
+                "right": -86,
+                "bottom": 44,
                 "alpha": 0,
                 "z":20
             }

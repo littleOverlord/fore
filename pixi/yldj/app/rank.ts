@@ -27,29 +27,27 @@ class WrankTop extends Widget{
         }
     }
     added(node){
-        rankNode = node;
-        updateRankPage();
+        rankNode = this.elements.get("rank_top");
+        updateRankTop();
     }
 }
-class WrankItem extends Widget{
+class WrankTopItem extends Widget{
     setProps(props){
-        this.cfg.data.left = props.index * 90;
-        this.cfg.data.top = Math.floor(props.index / 6) * 200;
+        this.cfg.data.left = props.index * 205 + 35;
         if(props.info.head){
-            this.cfg.children[1].data.netUrl = props.info.head;
-            delete this.cfg.children[1].data.url;
+            this.cfg.children[2].data.netUrl = props.info.head;
+            delete this.cfg.children[2].data.url;
         }else{
-            this.cfg.children[1].data.url = "images/logo/logo.png"
+            this.cfg.children[2].data.url = "images/logo/logo.png"
         }
         if(props.info.name){
-            this.cfg.children[2].data.text = props.info.name;
+            this.cfg.children[3].data.text = props.info.name;
         }
-        this.cfg.children[0].data.text = `第${props.top}名`;
-        this.cfg.children[3].data.text = `${props.info.score}`;
-    }
-    added(node){
-        // TODO 插入排行数据....
-
+        this.cfg.children[1].data.text = `${props.top}`;
+        this.cfg.children[4].data.text = `${props.info.score}`;
+        if(props.self){
+            this.cfg.children[1].data.style.fill = "0x4d7721";
+        }
     }
 }
 /**
@@ -94,28 +92,36 @@ const readRank = () => {
         }
         console.log(data);
         ranksInfo = data.ok;
-        updateRankPage();
+        updateRankTop();
     })
 }
 /**
  * @description 更新排行页面
  */
-const updateRankPage = () => {
+const updateRankTop = () => {
     if(!rankNode || ranksInfo.rank.length == 0){
         return;
     }
-    let t;
-    rankNode.children[0].alpha = 0;
-    if(rankNode.children.length > 1){
-        rankNode.removeChildren(1);
+    let t,i = ranksInfo.top-ranksInfo.start,c = 0;
+    if(rankNode.children.length > 0){
+        rankNode.removeChildren();
     }
     // TODO 插入排行数据....
-    for(let i = 0, len = ranksInfo.rank.length; i < len; i++){
+    if(i <= 0) {
+        i = 0;
+    }else{
+        i -= 1;
+    }
+    for(let len = ranksInfo.rank.length; i < len; i++){
         t = i+1;
         if(i > 2){
             t = i-2+ranksInfo.start;
         }
-        Scene.open("app-ui-rank_item",rankNode,null,{"info":ranksInfo.rank[i],"top":t,"index":i})
+        Scene.open("app-ui-rank_top_item",rankNode,null,{"info":ranksInfo.rank[i],"top":t,"index":c,"self":ranksInfo.rank[i].uid == DB.data.user.uid})
+        c ++;
+        if(c >= 3){
+            return;
+        }
     }
 }
 /**
@@ -138,7 +144,7 @@ const setShareInfo = (phase) => {
 DB.init("score",{history:0,phase:0});
 //注册组件
 Widget.registW("app-ui-rank_top",WrankTop);
-Widget.registW("app-ui-rank_item",WrankItem);
+Widget.registW("app-ui-rank_top_item",WrankTopItem);
 Emitter.global.add("intoMain",()=>{
     readScore();
     readRank();

@@ -1,17 +1,53 @@
 {
     "type":"container",
     "data":{
+        "width":652,
+        "height":382,
+        "left":-326,
+        "top":485
     },
     "children":[
         {
-            "type": "text",
+            "type": "sprite",
             "data": {
-                "text":"暂无排行，请稍后再试",
-                "left":150,
-                "top": 110,
+                "url":"images/rank/bg.png",
+                "width": 652,
+                "height": 382,
+                "left": 0,
+                "top":0
+            }
+        },
+        {
+            "type":"container",
+            "data":{
+                "id":"rank_top",
+                "width":652,
+                "height":240,
+                "left":0,
+                "top":28
+            }
+        },
+        {
+            "type":"rect",
+            "data":{
+                "name":"rank_top_line",
+                "width": 608,
+                "height": 4,
+                "left": 22,
+                "top": 288,
+                "background-color":"#9c7b72"
+            }
+        },
+        {
+            "type":"text",
+            "data":{
+                "text":"查看全部排行>",
+                "left":200,
+                "bottom":40,
                 "style":{
-                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                    "fontFamily" : "Arial", "fontSize": 32, "fill" : "#592011", "align" : "center"
                 }
+
             }
         }
     ]

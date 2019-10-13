@@ -3,6 +3,7 @@ import Scene from '../libs/ni/scene';
 import Widget from '../libs/ni/widget';
 import Fs from '../libs/ni/fs';
 import DB from '../libs/ni/db';
+import Music from '../libs/ni/music';
 import Connect from '../libs/ni/connect';
 import Emitter from '../libs/ni/emitter';
 import Hash from "../libs/ni/sha512";
@@ -79,6 +80,7 @@ const ptFrom = {
             var scale = Scene.screen.scale, w = Math.floor(386/scale), h = Math.floor(140/scale);
             User.wxButton = wx.createUserInfoButton({type: 'image',image:"images/btn.png",style:{left: wx.getSystemInfoSync().windowWidth/2-w/2,bottom: 200/scale,width: w,height: h}})
             User.wxButton.onTap((res) =>{
+                Music.play("audio/butn.mp3");
                 if(res.errMsg=="getUserInfo:ok"){
                     User.info = res;
                     //清除微信授权按钮
@@ -112,8 +114,8 @@ const ptFrom = {
  * @description 用户组件
  */
 class WUser extends Widget{
-    added(){
-        let btn = this.elements.get("button_login");
+    added(node){
+        let btn = node.children[1].children[0];
         let wx = (window as any).wx;
         if(wx){
             btn.alpha = 0;
@@ -204,7 +206,7 @@ const encryptPassword = (ps: string): string => {
  * @description 注册登录
  */
 const initLocal = (callback) => {
-    let userInfomation = JSON.parse(localStorage.getItem("userInfo")),len = 12;//账号和密码的长度
+    let userInfomation = localStorage.getItem("userInfo")?JSON.parse(localStorage.getItem("userInfo")):null,len = 12;//账号和密码的长度
     
     if(userInfomation ){      
         login(userInfomation.account,userInfomation.encryPassword,(err)=>{

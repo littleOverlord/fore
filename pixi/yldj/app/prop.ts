@@ -26,12 +26,14 @@ class SelectProp extends Widget{
      * @description 跳过看广告，直接开始游戏
      */
     skip(){
+        removeSelectNode();
         intoGame();
     }
     /**
      * @description 看广告
      */
     look(){
+        removeSelectNode();
         Emitter.global.emit("lookAdv",lookAdvBack);
     }
 }
@@ -49,12 +51,12 @@ class WProplist extends Widget{
 class WPropItem extends Widget{
     setProps(props){
         super.setProps(props);
-        this.cfg.data.url = `images/shap/${props.type}.png`;
-        this.cfg.data.bottom = props.bottom;
-        this.cfg.children[0].data.text = String(props.count);
-        this.cfg.children[1].data.width = props.process;
+        this.cfg.data.top = props.top;
+        this.cfg.children[0].data.url = `images/shap/${props.type}.png`;
+        this.cfg.children[1].data.text = `x${props.count}`;
+        this.cfg.children[2].data.width = props.process;
         if(props.process == 0 && props.count == 0){
-            this.cfg.children[1].data.alpha = 0;
+            this.cfg.children[2].data.alpha = 0;
         }
         
     }
@@ -65,6 +67,31 @@ class WPropItem extends Widget{
         if(!stagePause){
             Prop.caches.get(this.props.type).active();
         }
+    }
+}
+/**
+ * @description 道具特效组件
+ */
+class WPropEff extends Widget{
+    setProps(props){
+        super.setProps(props);
+        this.cfg.data.url = props.url;
+        this.cfg.data.top = props.top;
+        this.cfg.data.left = props.left;
+        this.cfg.data.width = props.width;
+        this.cfg.data.height = props.height;
+    }
+    added(node){
+        node.state.setAnimation(0, "animation", true);
+    }
+}
+/**
+ * @description 道具特效组件
+ */
+class WPropEffFilter extends Widget{
+    added(node){
+        let filter1 = this.elements.get("filter1");
+        filter1.scale.x = -1;
     }
 }
 /**
@@ -80,9 +107,11 @@ class Prop{
     // 剩余次数
     public count: number
     // 持续时间
-    public lastTime: number
+    public lastTime: number = 0
     // 道具显示对象
     public show: any
+    // 道具效果显示对象
+    public effect: any
     // 每个道具的持续生命
     public life: number = 10 * 1000
     // 显示位置
@@ -102,6 +131,7 @@ class Prop{
             this.lastTime = now + this.life;
             this.processTotal = this.life;
             Emitter.global.emit("propOperate",{type:this.type,operation:"add"});
+            PropEffect.create(this.type);
         }
         this.count--;
         console.log("prop active!!");
@@ -112,13 +142,13 @@ class Prop{
      * @return 是否显示
      */
     public update(index):boolean{
-        let now = Date.now(),leftTime = this.lastTime - now;
+        let now = Date.now(),leftTime = this.lastTime - now,p,text;
         if(!this.show && this.count>0){
             this.show = Scene.open("app-ui-prop_item",Prop.listContent,null,{
                 type:this.type,
                 process: this.processTotal?(leftTime/this.processTotal):0,
                 count: this.count,
-                bottom: index * 126
+                top: (index+1) * 22
             });
             this.index = index;
             return true;
@@ -130,18 +160,23 @@ class Prop{
             if(this.processTotal){
                 this.processTotal = 0;
                 Emitter.global.emit("propOperate",{type:this.type,operation:"remove"});
+                PropEffect.remove(this.type);
             }
             return false;
         }
         
         if(this.index != index){
             this.index = index;
-            this.show.ni.bottom = index * 126;
+            this.show.ni.top = (index+1) * 22;
         }
-        if(String(this.count) != this.show.children[0].text){
-            this.show.children[0].text = String(this.count);
+        text = `x${this.count}`
+        if(text != this.show.children[1].text){
+            this.show.children[1].text = text;
         }
-        this.show.children[1].ni.width = `${(leftTime/this.processTotal)*100}%`;
+        if(leftTime > 0 && this.processTotal > 0){
+            p = `${(leftTime/this.processTotal)*100}%`;
+        }
+        this.show.children[2].ni.width = p || 0;
         return true;
     }
 
@@ -180,6 +215,87 @@ class Prop{
     }
 }
 /**
+ * @description 道具效果
+ */
+class PropEffect{
+    /**
+     * @description 道具效果配置表
+     */
+    static cfg = {
+        "suction":{
+            name:"itemact01",
+            width:512,
+            height:512,
+            left:()=>{
+                return PropEffect.pos[0] + 118/2;
+            },
+            top:()=>{
+                return PropEffect.pos[1] + 118/2;
+            },
+            widget:"app-ui-prop_effect"
+        },
+        "filter":{
+            name:"itemact02",
+            width:700,
+            height:10,
+            widget:"app-ui-prop_effect_filter"
+        },
+        "armor":{
+            name:"itemact03",
+            width:96,
+            height:96,
+            left:()=>{
+                return PropEffect.pos[0] + 118/2;
+            },
+            top:()=>{
+                return PropEffect.pos[1] + 118/2;
+            },
+            widget:"app-ui-prop_effect"
+        }
+    }
+    static table = {}
+    static pos:Array<number>
+    /**
+     * @description 创建特效
+     */
+    static create(type){
+        let cfg = PropEffect.cfg[type],
+            url = `images/spine/${cfg.name}.atlas`,
+            width = cfg.width,
+            height = cfg.height,
+            left = cfg.left?cfg.left():null,
+            top = cfg.top?cfg.top():null;
+        PropEffect.table[type] = Scene.open(cfg.widget,Scene.root,null,{url,width,height,left,top});
+    }
+    /**
+     * @description 移除特效
+     */
+    static remove(type){
+        let eff = PropEffect.table[type];
+        if(!eff){
+            return;
+        }
+        Scene.remove(eff);
+        delete PropEffect.table[type];
+    }
+    /**
+     * @description 创建特效
+     */
+    static update(){
+        let eff,cfg;
+        for(let type in PropEffect.table){
+            cfg = PropEffect.cfg[type];
+            eff = PropEffect.table[type];
+            if(cfg.left){
+                eff.ni.left = cfg.left(); 
+            }
+            if(cfg.top){
+                eff.ni.top = cfg.top(); 
+            }
+        }
+    }
+}
+/**
  * @description 看广告回调
  * @param r 0 无效 1 有效
  */
@@ -190,12 +306,20 @@ const lookAdvBack = (r) => {
     intoGame();
 }
 /**
+ * @description 关闭道具选择页面
+ */
+const removeSelectNode = () => {
+    if(!selectNode){
+        return;
+    }
+    Scene.remove(selectNode);
+    selectNode = undefined;
+}
+/**
  * @description 进入游戏
  */
 const intoGame = () => {
-    Scene.remove(selectNode);
     Emitter.global.emit("gameStart");
-    selectNode = undefined;
     listNode = Scene.open("app-ui-prop_list",Scene.root);
 }
 /**
@@ -223,10 +347,7 @@ const update = () => {
  * @description 通讯断开
  */
 const connectClose = () => {
-    if(selectNode){
-        Scene.remove(selectNode);
-        selectNode = undefined;
-    }
+    removeSelectNode();
     Prop.clear();
 }
 /****************** 立即执行 ******************/
@@ -234,6 +355,8 @@ const connectClose = () => {
 Widget.registW("app-ui-select_prop",SelectProp);
 Widget.registW("app-ui-prop_item",WPropItem);
 Widget.registW("app-ui-prop_list",WProplist);
+Widget.registW("app-ui-prop_effect",WPropEff);
+Widget.registW("app-ui-prop_effect_filter",WPropEffFilter);
 //业务监听
 Emitter.global.add("selectProp",()=>{
     selectNode = Scene.open("app-ui-select_prop",Scene.root);
@@ -243,6 +366,10 @@ Emitter.global.add("clearProp",()=>{
 });
 Emitter.global.add("stagePause",(b)=>{
     stagePause = b;
+});
+Emitter.global.add("selfPos",(pos)=>{
+    PropEffect.pos = pos;
+    PropEffect.update();
 });
 //设置帧回调
 Frame.add(update);

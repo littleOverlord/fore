@@ -1,12 +1,16 @@
+import './libs/bd/swan-adapter';
+import './libs/bd/api';
+
 import Config from "./config";
 import Fs from "./libs/ni/fs";
 import Http from "./libs/ni/http";
 import Main from './app/main';
 
 import  "./depend";
+import "./libs/bd/fs";
 
-declare const wx;
-const cfg = new Config(wx.getSystemInfoSync());
+declare const swan;
+const cfg = new Config(swan.getSystemInfoSync());
 if(cfg.localRes){
     Fs.init(cfg,()=>{});
     new Main(cfg);

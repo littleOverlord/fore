@@ -1,0 +1,13 @@
+
+itemact02.png
+size: 689,16
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+itemack02a
+  rotate: false
+  xy: 2, 2
+  size: 685, 10
+  orig: 700, 10
+  offset: 10, 0
+  index: -1

@@ -4,17 +4,30 @@
         "width":"100%",
         "height":"100%",
         "left": 0,
-        "top": 0,
+        "bottom": 0,
         "z":2
     },
     "children":[
         {   
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/prop_list.png",
+                "width":92,
+                "height":285,
+                "right": 26,
+                "bottom": 185,
+                "z":1
+            }
+        },
+        {   
             "type": "container",
             "data": {
                 "id":"propList",
-                "right": 100,
-                "top":0,
-                "bottom": 260
+                "width":92,
+                "height":285,
+                "right": 26,
+                "bottom":185,
+                "z":2
             }
         }
     ]

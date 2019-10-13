@@ -2,9 +2,11 @@
 import Loader from "./loader";
 import Util from "./util";
 import Fs from "./fs";
+import Emitter from "./emitter";
 /****************** 导出 ******************/
 
 export default class Music {
+  static buffs = {}
   //音乐缓存表
   static table = {}
   //背景音乐
@@ -25,12 +27,20 @@ export default class Music {
    * @description 播放音乐
    */
   static play(path: string,loop?: boolean){
-    let m = Music.table[path];
+    let m = createBufferSource(path);
     if(loop){
-      m.loop = loop;
       Music.bgm = path;
+      if(!m){
+        return;
+      }
+      m.loop = loop;
     }
-    m.start();
+    try{
+      m.start();
+      Music.table[path] = m;
+    }catch(e){
+      console.log(e);
+    }
   }
   /**
    * @description 暂停音乐
@@ -104,12 +114,31 @@ const autioCtx = new ((window as any).AudioContext || (window as any).webkitAudi
  */
 const decodeAudioData = (k: string, data: ArrayBuffer): void => {
   autioCtx.decodeAudioData(data, (buff)=>{
-    let a = autioCtx.createBufferSource();
-    a.buffer = buff || Fs.fs.createImg(k);
-    Music.table[k] = a;
+    Music.buffs[k] = buff || Fs.fs.createImg(k);
+    if(Music.bgm && !Music.table[k]){
+      Music.play(k,true);
+    }
   })
 }
-
+const createBufferSource = (k) => {
+  if(!Music.buffs[k]){
+    return;
+  }
+  let a = autioCtx.createBufferSource();
+    a.buffer = Music.buffs[k];
+    a.connect && a.connect(autioCtx.destination);
+  return a;
+}
 /****************** 立即执行 ******************/
 //绑定资源监听
 Loader.addResListener("registMusic",Music.registMusic);
+Emitter.global.add("hide",()=>{
+  if(Music.bgm){
+    Music.stop(Music.bgm);
+  }
+});
+Emitter.global.add("show",()=>{
+  if(Music.bgm){
+    Music.play(Music.bgm,true);
+  }
+})

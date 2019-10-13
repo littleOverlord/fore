@@ -9,8 +9,8 @@ import Frame from '../libs/ni/frame';
 /****************** 本地 ******************/
 let advNode,
     timeNode,
-    allTime = 30,
-    leftTime = 30,
+    allTime = 15,
+    leftTime = 15,
     validTime = 15,
     startTime,
     lookBack: Function;
@@ -23,6 +23,10 @@ const ADVID = {
  * @description 用户组件
  */
 class Adv extends Widget{
+    setProps(props){
+        super.setProps(props);
+        this.cfg.children[2].data.text = `${leftTime}`;
+    }
     added(node){
         timeNode = this.elements.get("time");
         startTime = Date.now();
@@ -67,8 +71,8 @@ const cacl = (): number => {
 const clear = () => {
     advNode = null;
     timeNode = null;
-    allTime = 30;
-    leftTime = 30;
+    allTime = 15;
+    leftTime = 15;
     validTime = 15;
     startTime = 0;
     lookBack = null;
@@ -87,6 +91,7 @@ Emitter.global.add("lookAdv",(callback)=>{
         return;
     }
     if(advNode){
+        debugger;
         return console.log("Con't open another adv page");
     }
     advNode = Scene.open("app-ui-adv",Scene.root)

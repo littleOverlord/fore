@@ -71,8 +71,8 @@ export default class Loader {
 	static distributeResource(res){
 		Loader.resListener.registWC(res);
 		Loader.resListener.registCfg(res);
-		// Loader.resListener.addSpineData(res);
-		Loader.resListener.addDragonData(res);
+		Loader.resListener.addSpineData(res);
+		// Loader.resListener.addDragonData(res);
 		Loader.resListener.registMusic(res);
 		Loader.resListener.createSpriteSheets(res);
 	}

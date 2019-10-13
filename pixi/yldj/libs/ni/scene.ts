@@ -8,7 +8,7 @@ import Loader from "./loader";
 import Frame from './frame';
 import Animate from './animate';
 import { Events } from './events';
-import DragonBones from './dragonbones';
+import Spine from './spine';
 import Widget from './widget';
 
 /****************** 导出 ******************/
@@ -79,9 +79,8 @@ export default class Scene {
 			Scene.FPS.loop();
 			app.render();
 			Events.loop();
-			DragonBones.update();
 		});
-		// console.log(PIXI.spine);
+		console.log(PIXI.spine,Spine);
 		return app;
 	}
 	/**
@@ -145,9 +144,9 @@ export default class Scene {
 					// console.log(`Delete the node which id is ${this.ni.id} from cache!!`);
 					o.widget.elements.delete(o.ni.id);
 				}
-				if(this.ni.type === "dragonbones"){
-					DragonBones.remove(this.ni);
-				}
+				// if(this.ni.type === "dragonbones"){
+				// 	DragonBones.remove(this.ni);
+				// }
 			})
 			if(option.children && option.children.length){
 				for(i=0, leng = option.children.length; i < leng; i++){
@@ -346,9 +345,6 @@ class Ni{
 		if(!isAni){
 			this.animate = null;
 		}
-		if(cfg.anicallback){
-			this.anicallback = cfg.anicallback;
-		}
 		this.show = show;
 		this.resize(parent);
 	}
@@ -378,35 +374,12 @@ class Ni{
 		this.delayRS();
 	}
 	/**
-	 * @description 动画回调
-	 */
-	public anicallback(status: string,ani: string){
-
-	}
-	/**
-	 * @description 播放骨骼动画
-	 */
-	public play(ani: string = this.animate.ani,times: number = this.animate.times){
-		if(this.type !== "dragonbones"){
-			return;
-		}
-		this.animate.ani = ani;
-		this.animate.times = times;
-		DragonBones.play(this);
-	}
-	/**
-	 * @description 暂停骨骼动画
-	 */
-	public stop(ani: string = this.animate.ani){
-		if(this.type !== "dragonbones"){
-			return;
-		}
-		DragonBones.stop(ani,this);
-	}
-	/**
 	 * @description 重新计算位置大小
 	 */
 	public resize(parent?: any){
+		if(!parent && !this.show.parent){
+			return console.log("no parent!",this);
+		}
 		let bound = Ni.caclBound(this,parent);
 		
 		bound.w !== undefined && (this.show.width = bound.w);
@@ -508,7 +481,7 @@ const creater = {
 		if(typeof data.alpha == "number"){
 			o.alpha = data.alpha;
 		}
-		if(data.anchor != undefined){
+		if(o.anchor && data.anchor != undefined){
 			o.anchor.x = data.anchor[0];
 			o.anchor.y = data.anchor[1];
 		}
@@ -592,8 +565,13 @@ const creater = {
 	 * PIXI.TextStyle http://pixijs.download/release/docs/PIXI.TextStyle.html
 	 */
 	text: (data: any, parent: any) => {
+		data.style.fontFamily = "zcool-gdh";
 		let o = new Text(data.text,data.style);
+		if(data.style.align == "center" && parent){
+			data.left = ((parent._width || parent.width) - o.width)/2;
+		}
 		creater.init("text",o,data, parent);
+		
 		return o;
 	},
 	/**
@@ -644,13 +622,12 @@ const creater = {
 	/**
 	 * @description 创建dragonbones
 	 */
-	dragonbones: (data: any, parent: any)=>{
-		let o = DragonBones.create(data);
+	spine: (data: any, parent: any)=>{
+		let o = Spine.create(data);
 		if(!o){
 			return console.error(`Can't find the dragonbones data by "${data.url}".`);
 		}
-		creater.init("dragonbones",o,data,parent);
-		o.ni.play();
+		creater.init("spine",o,data,parent);
 		return o;
 	}
 }

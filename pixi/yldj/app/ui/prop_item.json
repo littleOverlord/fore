@@ -1,13 +1,21 @@
 {
-    "type": "sprite",
+    "type": "container",
     "on":{"tap":{"func":"active"}},
     "data": {
-        "url":"images/shap/suction.png",
-        "width": 96,
-        "height": 96,
-        "left": 0
+        "width": 70,
+        "height": 70,
+        "left": 12
     },
     "children":[
+        {
+            "type": "sprite",
+            "data": {
+                "url":"images/shap/suction.png",
+                "width": 70,
+                "height": 70,
+                "z":0
+            }
+        },
         {
             "type":"text",
             "data":{
@@ -15,8 +23,9 @@
                 "bottom": 0,
                 "right":0,
                 "style":{
-                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
-                }
+                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xf4ebe2", "align" : "center","stroke":"#000000","strokeThickness":1
+                },
+                "z":1
             }
         },
         {
@@ -24,9 +33,10 @@
             "data": {
                 "url":"images/ui/black.jpg",
                 "width": "100%",
-                "height": 20,
+                "height": 10,
                 "left": 0,
-                "top": 100
+                "top": 60,
+                "z":2
             }
         }
     ]

@@ -5,7 +5,8 @@
         "height": 0,
         "left": "50%",
         "top":  "50%",
-        "alpha":0
+        "alpha":0,
+        "z":10
     },
     "children":[
         {
@@ -15,7 +16,7 @@
                 "left":-160,
                 "top": -80,
                 "style":{
-                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "0xff0000", "align" : "center"
+                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "#ffffff","stroke":"#000000","strokeThickness":2
                 }
             }
         },
@@ -26,7 +27,7 @@
                 "left":-40,
                 "top": 0,
                 "style":{
-                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "0xff0000", "align" : "center"
+                    "fontFamily" : "Arial", "fontSize": 80, "fill" : "#ffffff","stroke":"#000000","strokeThickness":2
                 }
             }
         }

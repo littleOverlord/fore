@@ -1,0 +1,13 @@
+
+itemact03.png
+size: 144,144
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+itemack03
+  rotate: false
+  xy: 2, 2
+  size: 140, 140
+  orig: 140, 140
+  offset: 0, 0
+  index: -1

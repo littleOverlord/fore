@@ -1,6 +1,7 @@
 /****************** 导入 ******************/
 import Scene from '../../libs/ni/scene';
 import Widget from '../../libs/ni/widget';
+import Music from '../../libs/ni/music';
 import { Events, HandlerResult } from '../../libs/ni/events';
 import Util from '../../libs/ni/util';
 
@@ -27,15 +28,20 @@ class Button extends Widget{
     */
     setProps(props){
         super.setProps(props);
-        const cfg = this.cfg,text = cfg.children[0].data,dk = ["id","url","width","height","left","top"];
+        const cfg = this.cfg,dk = ["id","url","width","height","left","top"];
+        let text;
         for(let i = 0, len = dk.length; i < len; i++){
             cfg.data[dk[i]] = props[dk[i]];
         }
         cfg.on = props.on || {"tap":{"func":"buttonTap",arg:[]}};
-        text.text = props.text;
-        text.style.fontSize = props.size;
-        text.style.fill = props.color;
-
+        if(props.text){
+            text = cfg.children[0].data;
+            text.text = props.text;
+            text.style.fontSize = props.size;
+            text.style.fill = props.color;
+        }else{
+            cfg.children.shift();
+        }
         if(props.on && props.on.tap){
             this[cfg.on.tap.func] = ()=>{
                 return this.buttonTap();
@@ -45,23 +51,27 @@ class Button extends Widget{
     }
     added(){
         let node = this.elements.get(this.props.id),
-            text = this.elements.get(this.props.id).children[0];
+            text;
         node.anchor.set(0.5,0.5);
         node.ni.left = this.props.left + this.props.width/2;
         node.ni.top = this.props.top + this.props.height/2;
-        text.ni.left = (this.props.width - text.width)/2 - this.props.width/2;
-        text.ni.top = (this.props.height - text.height)/2 - this.props.height/2;
-        console.log(text.width,text.height);
+        if(this.props.text){
+            text = this.elements.get(this.props.id).children[0];
+            text.ni.left = (this.props.width - text.width)/2 - this.props.width/2;
+            text.ni.top = (this.props.height - text.height)/2 - this.props.height/2;
+        }
+        // console.log(text.width,text.height);
     }
     tapStart(){
         let btn = this.elements.get(this.props.id);
         btn.scale.x = btn.scale.y = 0.8;
-        console.log("tapStart");
+        // console.log("tapStart");
     }
     buttonTap(){
         let btn = this.elements.get(this.props.id);
         btn.scale.x = btn.scale.y = 1;
-        console.log("buttonTap");
+        // console.log("buttonTap");
+        Music.play("audio/butn.mp3");
         return HandlerResult.OK;
     }
 }

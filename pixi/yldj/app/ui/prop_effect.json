@@ -1,0 +1,10 @@
+{
+    "type": "spine",
+    "data": {
+        "url":"",
+        "width": 70,
+        "height": 70,
+        "left": 12,
+        "z":2
+    }
+}

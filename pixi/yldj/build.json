@@ -3,8 +3,10 @@
         "name": "wx",
         "dist": "../dist/wx/yldj",
         "ignore":[
-            "/README.md","/build.json","/index.html","/app.html","/init.js","/pc.html","/pc.ts",
-            "/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json"
+            "/README.md","/build.json",
+            "/libs/browser","/index.html","/app.html","/init.js",
+            "/libs/pc","/pc.html","/pc.ts",
+            "/libs/bd","/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json"
         ],
         "plugins":{
             "ts":{
@@ -25,6 +27,12 @@
             "png":{
                 "mod":"pngmin",
                 "quality":60
+            },
+            "txt":{
+                "mod":"txt"
+            },
+            "ttf":{
+                "mod":"ttf"
             }
         },
         "depend":{
@@ -37,8 +45,10 @@
         "name": "bd",
         "dist": "../dist/bd/yldj",
         "ignore":[
-            "/README.md","/build.json","/index.html","/app.html","/init.js","/pc.html","/pc.ts",
-            "/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
+            "/README.md","/build.json",
+            "/libs/browser","/index.html","/app.html","/init.js",
+            "/libs/pc","/pc.html","/pc.ts",
+            "/libs/wx","/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
         ],
         "plugins":{
             "ts":{
@@ -59,6 +69,12 @@
             "png":{
                 "mod":"pngmin",
                 "quality":60
+            },
+            "txt":{
+                "mod":"txt"
+            },
+            "ttf":{
+                "mod":"ttf"
             }
         },
         "depend":{
@@ -71,9 +87,10 @@
         "name": "browser",
         "dist": "../../../go/htdocs/yldj",
         "ignore":[
-            "/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/pc.html","pc.js",
-            "/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json",
-            "/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
+            "/README.md","/build.json",
+            "/libs/pc","/pc.html","pc.js",
+            "/libs/bd","/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json",
+            "/libs/wx","/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
         ],
         "plugins":{
             "ts":{
@@ -98,6 +115,12 @@
             "jpg":{
                 "mod":"jpgmin",
                 "quality":60
+            },
+            "txt":{
+                "mod":"txt"
+            },
+            "ttf":{
+                "mod":"ttf"
             }
         },
         "depend":{
@@ -110,9 +133,10 @@
         "name": "pc",
         "dist": "../../../pack-pc/src/yldj",
         "ignore":[
-            "/README.md","/build.json","/config.ts","/game.json","/game.ts","/project.config.json","/app.html","/index.html","/init.js",
-            "/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json",
-            "/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
+            "/README.md","/build.json",
+            "/libs/browser","/app.html","/index.html","/init.js",
+            "/libs/bd","/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json",
+            "/libs/wx","/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
         ],
         "plugins":{
             "ts":{
@@ -134,6 +158,12 @@
             "jpg":{
                 "mod":"jpgmin",
                 "quality":60
+            },
+            "txt":{
+                "mod":"txt"
+            },
+            "ttf":{
+                "mod":"ttf"
             }
         },
         "depend":{

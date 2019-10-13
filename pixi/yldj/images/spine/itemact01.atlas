@@ -1,0 +1,13 @@
+
+itemact01.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+itemack01
+  rotate: false
+  xy: 2, 2
+  size: 412, 432
+  orig: 512, 512
+  offset: 50, 39
+  index: -1

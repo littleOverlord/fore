@@ -7,11 +7,13 @@ import Http from "./libs/ni/http";
 import Main from './app/main';
 
 import  "./depend";
+import "./libs/wx/fs";
 
 declare const wx;
 const cfg = new Config(wx.getSystemInfoSync());
 if(cfg.localRes){
     Fs.init(cfg,()=>{});
+    wx.loadFont("font/zkgdh.ttf");
     new Main(cfg);
 }else{
     Http.get(`${cfg.remote}/${cfg.name}/depend.json`,"","",(err,data)=>{

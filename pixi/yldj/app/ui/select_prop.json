@@ -42,9 +42,9 @@
                     "type": "sprite",
                     "data": {
                         "url":"images/shap/suction.png",
-                        "width": 96,
-                        "height": 96,
-                        "left": -200,
+                        "width": 140,
+                        "height": 140,
+                        "left": -240,
                         "top":30
                     },
                     "children":[
@@ -52,10 +52,10 @@
                             "type":"text",
                             "data":{
                                 "text":"强大吸力",
-                                "top": 100,
-                                "left":-20,
+                                "top": 150,
+                                "left":-10,
                                 "style":{
-                                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                                    "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
                                 }
                             }
                         }
@@ -65,9 +65,9 @@
                     "type": "sprite",
                     "data": {
                         "url":"images/shap/filter.png",
-                        "width": 98,
-                        "height": 95,
-                        "left": -48,
+                        "width": 140,
+                        "height": 140,
+                        "left": -70,
                         "top":30
                     },
                     "children":[
@@ -75,10 +75,10 @@
                             "type":"text",
                             "data":{
                                 "text":"过滤炸弹",
-                                "top": 100,
-                                "left":-13,
+                                "top": 150,
+                                "left":-10,
                                 "style":{
-                                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                                    "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
                                 }
                             }
                         }
@@ -88,9 +88,9 @@
                     "type": "sprite",
                     "data": {
                         "url":"images/shap/armor.png",
-                        "width": 83,
-                        "height": 96,
-                        "left": 140,
+                        "width": 140,
+                        "height": 140,
+                        "left": 100,
                         "top":30
                     },
                     "children":[
@@ -98,10 +98,10 @@
                             "type":"text",
                             "data":{
                                 "text":"防弹铠甲",
-                                "top": 100,
-                                "left":-20,
+                                "top": 150,
+                                "left":-10,
                                 "style":{
-                                    "fontFamily" : "Arial", "fontSize": 30, "fill" : "0xffffff", "align" : "center"
+                                    "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
                                 }
                             }
                         }
@@ -130,15 +130,18 @@
             },
             "children": [
                 {
-                    "type": "sprite",
-                    "on":{"tap":{"func":"look"}},
-                    "data": {
-                        "id":"button_login",
-                        "url":"images/rank/restart.png",
+                    "type":"app-ui-button",
+                    "props":{
+                        "on":{"tap":{"func":"look"}},
+                        "id":"button_goon",
+                        "url": "images/ui/start.png",
                         "width": 386,
                         "height": 140,
                         "left": -193,
-                        "bottom":0
+                        "top": 0,
+                        "text": "继续",
+                        "size":52,
+                        "color":"#fdff83"
                     }
                 },
                 {
@@ -150,7 +153,7 @@
                         "left": -40,
                         "top":180,
                         "style":{
-                            "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff", "align" : "center"
+                            "fontFamily" : "Arial", "fontSize": 40, "fill" : "0xffffff"
                         }
                     }
                 }

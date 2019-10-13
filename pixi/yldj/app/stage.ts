@@ -1,5 +1,6 @@
 /****************** 导入 ******************/
 import Scene from '../libs/ni/scene';
+
 import Frame from '../libs/ni/frame';
 import DB from "../libs/ni/db";
 import Widget from '../libs/ni/widget';
@@ -8,6 +9,7 @@ import Emitter from '../libs/ni/emitter';
 
 import { AppUtil } from "./util";
 import Connect from '../libs/ni/connect';
+import Spine from '../libs/ni/spine';
 
 
 /****************** 导出 ******************/
@@ -169,12 +171,12 @@ class Stage {
             Stage.checkPropEffect("move",Stage.shaps[i]);
             if(Stage.shaps[i].hp > 0 && AppUtil.Rectangle(ShapBox.cacl(Stage.self),ShapBox.cacl(Stage.shaps[i]))){
                 Stage.effect(Stage.shaps[i],Stage.self);
-                if(Stage.result()){
-                    if(Stage.self.hp <= 0){
-                        Stage.removeOne(i);
-                    }
-                    return;
-                }
+                // if(Stage.result()){
+                //     if(Stage.self.hp <= 0){
+                //         Stage.removeOne(i);
+                //     }
+                //     return;
+                // }
                 Stage.effect(Stage.self,Stage.shaps[i]);
             }
             if(Stage.shaps[i].hp <= 0 || Stage.shaps[i].y >= Stage.height){
@@ -318,6 +320,7 @@ class Stage {
         Stage.startTime = 0
     }
 }
+
 /**
  * @description 道具效果处理
  */
@@ -337,7 +340,9 @@ class PropHandl{
             if(!Stage.props.suction || !shap.to){
                 return;
             }
-            shap.velocity += 1; 
+            shap.velocity *= 1.5; 
+            shap.scale /= 1.5;
+            Stage.events.push({type:"effect",effect:"scale",value:shap.scale, target: shap.id});
         },
         add:()=>{
             for(let i = 0, len = Stage.shaps.length; i < len; i++){
@@ -365,6 +370,7 @@ class PropHandl{
             }
             if(shap.y > (PropHandl.filter.line - shap.height) && shap.y < PropHandl.filter.line){
                 shap.hp = 0;
+                Stage.events.push({type:"effect",effect:"hp",value: -1, src:Stage.self.id, target: shap.id});
             }
         },
         add:()=>{
@@ -418,6 +424,8 @@ class Shap{
     score = 0
     //是否无敌 0 不是 1 是
     god = 0
+    //缩放
+    scale = 1
 
     width = 0
     height = 0
@@ -507,16 +515,21 @@ class Magnet{
 class WShap extends Widget{
     setProps(props){
         super.setProps(props);
-        let sc = props.width/this.cfg.data.width;
-            // ss = this.cfg.children[1].data.style.fontSize * sc;
-            // ss = ss < 24?24:ss;
-            this.cfg.data.width = props.width;
+        let ol = props.width/2,ot = props.height/2;
+        this.cfg.data.width = props.width;
         this.cfg.data.height = props.height;
         this.cfg.data.left = props.x;
         this.cfg.data.top = props.y;
-        this.cfg.children[0].data.url = props.type == "player"?`images/ui/circular.png`:`images/shap/${props.type}.png`;
-        this.cfg.children[0].data.left = props.width/2;
-        this.cfg.children[0].data.top = props.height/2;
+        if(props.type == "player"){
+            this.cfg.children[0].data.url = `images/ui/circular.png`;
+        }else if(props.type == "boom"){
+            this.cfg.children[0].data.url = `images/spine/boom.atlas`;
+            this.cfg.children[0].type = "spine";
+        }else{
+            this.cfg.children[0].data.url = `images/shap/${props.type}.png`;
+        }
+        this.cfg.children[0].data.left = ol;
+        this.cfg.children[0].data.top = ot;
         if(props.effect == "score"){
             // this.cfg.children[1].data.text = props.value.toString();
         }
@@ -546,17 +559,20 @@ class WPlayer extends Widget{
 class WStart extends Widget{
     setProps(props){
         super.setProps(props);
-        this.cfg.children[2].data.text = scoreNode.text;
+        this.cfg.children[1].children[1].data.text = scoreNode.text;
     }
     added(){
-        let title = this.elements.get("lastScoreTitle"),lastScore = this.elements.get("lastScore");
-        title.ni.left = (Stage.width- title.width)/2;
-        lastScore.ni.left = (Stage.width- lastScore.width)/2;
+        let lastScore = this.elements.get("lastScore");
+        lastScore.ni.left = -lastScore.width/2;
     }
     startGame(){
         BASE_V.reset();
         // startGame();
         Emitter.global.emit("selectProp");
+        setTimeout(()=>{
+            Scene.remove(startNode);
+            startNode = null;
+        },0);
     }
     share(){
         Emitter.global.emit("share");
@@ -579,9 +595,26 @@ class Show{
     static insert(ev){
         let shap;
         // shap = Scene.open(ev.shap.camp?"app-ui-player":"app-ui-shap",stageNode,null,ev.shap);
+        
         shap = Scene.open("app-ui-shap",stageBox,null,ev.shap);
         if(!ev.shap.camp){
             ShapAni.init(shap);
+        }
+        if(ev.shap.type == "boom"){
+            shap.children[0].state.setAnimation(0, 'idle', true);
+            // dont run too fast
+            shap.children[0].state.timeScale = 1;
+            shap.children[0].state.addListener({
+                complete:(a)=>{
+                    if(a.animation.name == "attack"){
+                        console.log("remove boom~!");
+                        setTimeout(()=>{
+                            Scene.remove(shap);
+                            delete Show.table[ev.shap.id];
+                        },0);
+                    }
+                }
+            })
         }
         Show.table[ev.shap.id] = shap;
     }
@@ -589,35 +622,56 @@ class Show{
         let shap = Show.table[ev.target];
         shap.x = ev.value.x;
         shap.y = ev.value.y;
+        if(ev.target == Stage.self.id){
+            Emitter.global.emit("selfPos",[ev.value.x,ev.value.y]);
+        }
     }
     static effect(ev){
+        let shap = Show.table[ev.target];
         if(ev.effect == "score"){
             BASE_V.caclGrad(Stage.self.score);
             scoreNode.text = Stage.self.score.toString();
             Emitter.global.emit("vibrate");
+            Music.play("audio/score.mp3");
+        }else if(ev.effect == "hp"){
+            shap.die = true;
+        }else if(ev.effect == "scale"){
+            shap.scale.x = ev.value;
+            shap.scale.y = ev.value;
         }
 
     }
     static remove(ev){
         let shap = Show.table[ev.target];
-        if(shap.type == "boom"){
+        if(shap.widget.props.type == "boom" && shap.die){
             Music.play("audio/boom.mp3");
+            ShapAni.lookatStop(Stage.self,shap);
+            shap.children[0].state.setAnimation(0, 'attack', false);
+            shap.children[0].state.timeScale = 1;
+            return;
         }
         Scene.remove(shap);
         delete Show.table[ev.target];
     }
     static over(){
-        Emitter.global.emit("showRevive",(r)=>{
-            if(r == 0){
-                Emitter.global.emit("newScore",Stage.self.score);
-                Emitter.global.emit("clearProp");
-                openStart();
-                Stage.clear();
-                magnet.reset();
-            }else if(r == 1){
-                Stage.reStart();
-            }
-        });
+        let self = Show.table[Stage.self.id];
+        self.alpha = 0;
+        Music.play("audio/fail.mp3");
+        setTimeout(()=>{
+            Emitter.global.emit("showRevive",(r)=>{
+                if(r == 0){
+                    Emitter.global.emit("newScore",Stage.self.score);
+                    Emitter.global.emit("clearProp");
+                    openStart();
+                    Stage.clear();
+                    magnet.reset();
+                }else if(r == 1){
+                    Stage.reStart();
+                    self.alpha = 1;
+                }
+            });
+        },1000)
+        
     }
 }
 /**
@@ -647,10 +701,6 @@ const startGame = () => {
         }
         insertSelf();
     }
-    if(startNode){
-        Scene.remove(startNode);
-        startNode = null;
-    }
     Stage.setPause(0);
     Stage.startTime = Date.now();
     scoreNode.text = "0";
@@ -663,12 +713,12 @@ const insertSelf = () => {
     let s = new Shap({
         type: "player",
         camp: 1,
-        width: 80,
-        height: 80,
-        box_width:20,
-        box_height:20,
-        x: Stage.width-80,
-        y: Stage.height - 195,
+        width: 118,
+        height: 118,
+        box_width:80,
+        box_height:80,
+        x: Stage.width-118,
+        y: Stage.height - (96+118/2),
         effect: "hp",
         value: -1,
         velocity: -BASE_V.player
@@ -678,8 +728,7 @@ const insertSelf = () => {
 /**
  * @description 随机一个形状
  */
-const shapArray = ["diamond","rectangle","hexagon","triangle"];
-const shapSize = {w:169,h:182};
+const shapArray = ["octagon","pentagon","rectangle","hexagon","triangle"];
 const insertShap = () => {
     if(Stage.insertTimer && Date.now() < Stage.insertTimer){
         return;
@@ -694,7 +743,7 @@ const insertShap = () => {
             type: shapArray[index],
             camp: 0,
             width: size,
-            height: Math.floor((size/shapSize.w)*shapSize.h),
+            height: size,
             x: x,
             y: -size,
             effect: "score",
@@ -711,20 +760,24 @@ const insertShap = () => {
 const insertBoom = () => {
     let random = Math.random(),
         probability = 0.5,
+        size,
+        x,
         s;
     if(random < probability || Date.now() - Stage.boomTime < 5000 ){
         return;
     }
     Stage.boomTime = Date.now();
+    size = 140 + Math.floor(Math.random()*80),
+    x = Math.floor(Math.random()*(Stage.width - size))
     s = new Shap({
             type: "boom",
             camp: 0,
-            width: 170,
-            height: 170,
-            box_width:150,
-            box_height:150,
-            x: Math.floor(Math.random()*(Stage.width - 170)),
-            y: -170,
+            width: size,
+            height: size,
+            box_width:size -40,
+            box_height:size -40,
+            x: Math.floor(Math.random()*(Stage.width - size)),
+            y: -size,
             effect: "hp",
             value: -1,
             velocity: Formula.dorpV(0.3)
@@ -793,6 +846,30 @@ class ShapAni{
             }
         }
     }
+    static lookatStop(look: Shap,at: any){
+        let dx = at.x - look.x,
+            dy = look.y - at.y,
+            r = 0;
+        if((dx == 0 && dy == 0) && (dx == 0 && dy > 0)){
+            r = 0;
+        }else if(dx > 0 && dy == 0){
+            r = Math.PI/2;
+        }else if(dx == 0 && dy < 0){
+            r = Math.PI;
+        }else if(dx < 0 && dy ==0){
+            r = Math.PI*1.5;
+        }else if(dx > 0 && dy >0){
+            r = Math.atan(Math.abs(dx/dy));
+        }else if(dx > 0 && dy < 0){
+            r = Math.atan(Math.abs(dy/dx))+Math.PI/2;
+        }else if(dx < 0 && dy < 0){
+            r = Math.atan(Math.abs(dx/dy))+Math.PI;
+        }else if(dx < 0 && dy > 0){
+            r = Math.atan(Math.abs(dy/dx))+Math.PI*1.5;
+        }
+        at.children[0].rotation  = r;
+        delete at.sa;
+    }   
     /**
      * @description 同步速度
      * @param sa 
@@ -911,11 +988,12 @@ Frame.add(frameControl);
 Emitter.global.add("intoMain",()=>{
     open();
     insertSelf();
+    Music.play("audio/bg.mp3",true);
 });
 Emitter.global.add("gameStart",()=>{
     startGame();
 });
 Emitter.global.add("propOperate",(param)=>{
-    PropHandl[param.type] && PropHandl[param.type][param.operation]();
+    PropHandl[param.type] && PropHandl[param.type][param.operation](param);
 });
 Connect.notify.add("close",connectClose);
