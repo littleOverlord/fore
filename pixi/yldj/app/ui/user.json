@@ -46,6 +46,7 @@
                         "url": "images/ui/start.png",
                         "width": 386,
                         "height": 140,
+                        "lineHeight":124,
                         "left": -193,
                         "top": 0,
                         "text": "开始游戏",

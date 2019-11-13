@@ -68,19 +68,19 @@ export default class Scene {
 		app.stage.addChild(this.root);
 		this.root.calculateBounds();
 		//FPS
-		this.FPS.node = new Text("FPS 0",{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010,strokeThickness:2});
-		this.FPS.node.position.set(15,115);
-		this.FPS.node.ni = {z:1};
-		app.stage.addChild(this.FPS.node);
+		// this.FPS.node = new Text("FPS 0",{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010,strokeThickness:2});
+		// this.FPS.node.position.set(15,115);
+		// this.FPS.node.ni = {z:1};
+		// app.stage.addChild(this.FPS.node);
 
 		this.screen = cfg.screen;
 		//添加主循环
 		Frame.add(function(){
-			Scene.FPS.loop();
+			// Scene.FPS.loop();
 			app.render();
 			Events.loop();
 		});
-		console.log(PIXI.spine,Spine);
+		// console.log(PIXI.spine,Spine);
 		return app;
 	}
 	/**
@@ -281,11 +281,38 @@ export default class Scene {
 	static getRectTexture(name){
 		return Scene.rectTextures[name];
 	}
+	/**
+	 * @description 创建canvas纹理
+	 */
+	static createCanvasTexture(canvas){
+		let texture = new BaseTexture(canvas);
+		texture = new Texture(texture);
+		Texture.removeFromCache(texture);
+		// console.log(texture);
+		return texture;
+	}
+	/**
+	 * @description 添加纹理精灵到指定父节点
+	 * @param texture 纹理
+	 * @param parent 父节点
+	 */
+	static createSpriteFromTexture(texture, parent){
+		let sprite = new Sprite(texture);
+		parent.addChild(sprite);
+		return sprite;
+	}
+	/**
+	 * @description 从缓存中删除纹理
+	 * @param texture 需要删除的纹理
+	 */
+	static removeTextureFromCache(texture){
+		Texture.removeFromCache(texture);
+	}
 }
 /****************** 本地 ******************/
 let Application = PIXI.Application,
 		Container = PIXI.Container,
-		TextureCache = PIXI.utils.TextureCache,
+		Texture = PIXI.Texture,
 		Sprite = PIXI.Sprite,
 		Rectangle = PIXI.Rectangle,
 		Text = PIXI.Text,
@@ -293,6 +320,7 @@ let Application = PIXI.Application,
 		AnimatedSprite = PIXI.extras.AnimatedSprite,
 		Point = PIXI.Point,
 		Graphics = PIXI.Graphics,
+		BaseTexture = PIXI.BaseTexture,
 		//当前渲染实例 new PIXI.Application()
 		app;
 class Ni{
@@ -493,6 +521,15 @@ const creater = {
 	container: (data: any, parent: any) => {
 		let o = new Container();
 		creater.init("container",o,data,parent);
+		if(data.mask){
+			const graphics = new PIXI.Graphics(),
+				bounds = o.getBounds();
+			graphics.beginFill(0xFF3300);
+			graphics.drawRect(0, 0, data.width, data.height);
+			graphics.endFill();
+			parent.appendChild(graphics);
+			o.mask = graphics;
+		}
 		return o;
 	},
 	/**
@@ -508,6 +545,7 @@ const creater = {
 	 * 	border-align:0.5
 	 * 	background-color:0x66CCFF
 	 * 	background-alpha:1
+	 *  radius:0 圆角度数
 	 * }
 	 */
 	rect: (data: any, parent: any) => {
@@ -517,7 +555,12 @@ const creater = {
 			creater.init("rect",rectangle,data,parent);
 			rectangle.lineStyle(data["border-width"]||0, data["border-color"]||0, data["border-alpha"]||1, data["border-align"]||0.5);
 			rectangle.beginFill(data["background-color"]||0,data["background-alpha"]||(data["background-color"]?1:0.0001));
-			rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
+			if(data.radius > 0){
+				rectangle.drawRoundedRect(0, 0, rectangle._width,rectangle._height,data.radius);
+			}else{
+				rectangle.drawRect(0, 0, rectangle._width,rectangle._height);
+			}
+			
 			rectangle.endFill();
 			rectTexture = rectangle.generateCanvasTexture();
 			if(data.name){
@@ -526,6 +569,10 @@ const creater = {
 		}
 		
 		o = new Sprite(rectTexture);
+		if(data.mask && data.mask.url){
+			const mask = creater.sprite(data.mask,o);
+			o.mask = mask;
+		}
 		creater.init("rect",o,data,parent);
 		return o;
 	},
@@ -566,9 +613,20 @@ const creater = {
 	 */
 	text: (data: any, parent: any) => {
 		data.style.fontFamily = "zcool-gdh";
-		let o = new Text(data.text,data.style);
+		let o = new Text(data.text,data.style), line;
 		if(data.style.align == "center" && parent){
 			data.left = ((parent._width || parent.width) - o.width)/2;
+		}
+		if(data.line == "under"){
+			line = creater.rect({
+				"name":"textline"+data.style.fill,
+				"width": o.width,
+				"height": 2,
+				"left": 0,
+				"top": o.height+2,
+				"background-color":data.style.fill || "#000000"
+			},o);
+			o.addChild(line);
 		}
 		creater.init("text",o,data, parent);
 		

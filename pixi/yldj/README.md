@@ -50,6 +50,11 @@ container.mask = gra;
 微信小游戏图片尺寸长宽都必须小于2048
 ```
 
+## bug
+```
+1. widget destroy 子节点的widget没法触发
+```
+
 ## 引力对决
 
 1: 形状初始位置调整

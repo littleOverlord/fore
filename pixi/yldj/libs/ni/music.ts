@@ -27,6 +27,7 @@ export default class Music {
    * @description 播放音乐
    */
   static play(path: string,loop?: boolean){
+    Music.table[path] && Music.table[path].stop();
     let m = createBufferSource(path);
     if(loop){
       Music.bgm = path;

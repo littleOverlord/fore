@@ -129,6 +129,7 @@ class swanFS{
      * @param path 
      */
     addFont(path){
+		console.log(`${this.userDir}${path}`);
         let r = swan.loadFont(`${this.userDir}${path}`);
         console.log(r);
     }

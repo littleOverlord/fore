@@ -57,6 +57,7 @@
                         "left": -100,
                         "top": 370,
                         "background-color":"#000000",
+                        "radius":15,
                         "alpha":0.5
                     }
                 },
@@ -81,27 +82,16 @@
                 {
                     "type":"app-ui-button",
                     "props":{
-                        "on":{"tap":{"func":"gohome"}},
-                        "id":"btn_home",
-                        "url": "images/ui/home.png",
-                        "width": 90,
-                        "height": 94,
-                        "left": -210,
-                        "top": 922
-                    }
-                },
-                {
-                    "type":"app-ui-button",
-                    "props":{
                         "on":{"tap":{"func":"startGame"}},
                         "id":"btn_start",
                         "url": "images/ui/start.png",
                         "width": 280,
                         "height": 102,
-                        "left": -54,
+                        "lineHeight":94,
+                        "left": -140,
                         "top": 918,
                         "text": "再来一局",
-                        "size":52,
+                        "size":62,
                         "color":"#fdff83"
                     }
                 }

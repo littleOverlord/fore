@@ -3,6 +3,8 @@ import Widget from '../libs/ni/widget';
 import Emitter from '../libs/ni/emitter';
 import Scene from '../libs/ni/scene';
 import Frame from '../libs/ni/frame';
+import Connect from '../libs/ni/connect';
+import Time from '../libs/ni/time';
 
 /****************** 导出 ******************/
 
@@ -13,7 +15,8 @@ let advNode,
     leftTime = 15,
     validTime = 15,
     startTime,
-    lookBack: Function;
+    lookBack: Function,
+    timeMgr = new Time("adv");
 // 平台广告id
 const ADVID = {
     rewarded:0,
@@ -29,7 +32,7 @@ class Adv extends Widget{
     }
     added(node){
         timeNode = this.elements.get("time");
-        startTime = Date.now();
+        startTime = timeMgr.now();
     }
     /**
      * @description 关闭广告
@@ -48,7 +51,7 @@ const updDate = () => {
     if(leftTime == 0 || !timeNode){
         return;
     }
-    let diff = Math.floor((Date.now() - startTime)/1000),
+    let diff = Math.floor((timeMgr.now() - startTime)/1000),
         left = allTime - diff;
     if(left < leftTime){
         leftTime = left;
@@ -76,6 +79,17 @@ const clear = () => {
     validTime = 15;
     startTime = 0;
     lookBack = null;
+    timeMgr.reset();
+}
+/**
+ * @description 通讯断开
+ */
+const connectClose = () => {
+    if(!advNode){
+        return;
+    }
+    Scene.remove(advNode);
+    clear();
 }
 /****************** 立即执行 ******************/
 //注册组件
@@ -108,4 +122,20 @@ Emitter.global.add("showBannerAdv",(callback)=>{
         callback
     });
 });
+//监听游戏是否切到后台
+Emitter.global.add("hide",()=>{
+    if(!advNode){
+        return;
+    }
+    timeMgr.stop();
+})
+//监听游戏是否切到前台
+Emitter.global.add("show",()=>{
+    if(!advNode){
+        return;
+    }
+    timeMgr.resume();
+})
 Frame.add(updDate);
+//通讯监听
+Connect.notify.add("close",connectClose);

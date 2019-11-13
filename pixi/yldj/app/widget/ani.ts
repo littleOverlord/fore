@@ -33,7 +33,7 @@ class Ani extends Widget{
         }
     }
     added(o){
-        console.log();
+        // console.log();
         o.ni.anicallback = this.props.anicallback;
     }
 }

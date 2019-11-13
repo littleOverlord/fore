@@ -1,0 +1,27 @@
+
+zhuazhua.png
+size: 256,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zhua01
+  rotate: false
+  xy: 2, 106
+  size: 116, 102
+  orig: 116, 102
+  offset: 0, 0
+  index: -1
+zhua02
+  rotate: false
+  xy: 2, 2
+  size: 116, 102
+  orig: 116, 102
+  offset: 0, 0
+  index: -1
+zhuaeff
+  rotate: false
+  xy: 120, 91
+  size: 68, 117
+  orig: 68, 121
+  offset: 0, 3
+  index: -1

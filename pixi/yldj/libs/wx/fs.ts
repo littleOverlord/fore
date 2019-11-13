@@ -130,7 +130,7 @@ class WXFS{
      */
     addFont(path){
         let r = wx.loadFont(`${this.userDir}${path}`);
-        console.log(r);
+        // console.log(r);
     }
 }
 /****************** 立即执行 ******************/

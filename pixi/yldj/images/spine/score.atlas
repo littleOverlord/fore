@@ -1,0 +1,13 @@
+
+score.png
+size: 123,120
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+cube
+  rotate: false
+  xy: 2, 2
+  size: 119, 116
+  orig: 128, 128
+  offset: 0, 7
+  index: -1

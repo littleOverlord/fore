@@ -153,7 +153,7 @@ wx.onShow((res)=>{
     }
 })
 wx.onHide((res)=>{
-    // console.log("show::",res);
+    // console.log("hide::",res);
     Emitter.global.emit("hide");
 })
 //初始化

@@ -4,7 +4,7 @@
         "dist": "../dist/wx/yldj",
         "ignore":[
             "/README.md","/build.json",
-            "/libs/browser","/index.html","/app.html","/init.js",
+            "/libs/browser","/index.html","/xiaohuoban.html","/app.html","/init.js",
             "/libs/pc","/pc.html","/pc.ts",
             "/libs/bd","/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json"
         ],
@@ -46,7 +46,7 @@
         "dist": "../dist/bd/yldj",
         "ignore":[
             "/README.md","/build.json",
-            "/libs/browser","/index.html","/app.html","/init.js",
+            "/libs/browser","/index.html","/xiaohuoban.html","/app.html","/init.js",
             "/libs/pc","/pc.html","/pc.ts",
             "/libs/wx","/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
         ],
@@ -134,7 +134,7 @@
         "dist": "../../../pack-pc/src/yldj",
         "ignore":[
             "/README.md","/build.json",
-            "/libs/browser","/app.html","/index.html","/init.js",
+            "/libs/browser","/app.html","/index.html","/xiaohuoban.html","/init.js",
             "/libs/bd","/game.bd.ts","/config.bd.ts","/game.bd.json","/pkginfo.json","/project.swan.json",
             "/libs/wx","/game.wx.ts","/config.wx.ts","/game.wx.json","/project.config.json"
         ],

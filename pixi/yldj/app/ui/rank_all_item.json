@@ -1,0 +1,84 @@
+{
+    "type":"container",
+    "data":{
+        "width":608,
+        "height":104
+    },
+    "children":[
+        {
+            "type":"rect",
+            "data":{
+                "name":"rank_all_item_bg",
+                "width": 608,
+                "height": 100,
+                "left": 0,
+                "top": 0,
+                "background-color":"0xbd9a7c"
+            }
+        },
+        {
+            "type":"container",
+            "data":{
+                "width":86,
+                "height":36,
+                "left":0,
+                "top":36
+            },
+            "children":[
+                {
+                    "type": "text",
+                    "data": {
+                        "text":"",
+                        "top": 0,
+                        "style":{
+                            "fontFamily" : "Arial", "fontSize": 36, "fill" : "0x592011", "align" : "center"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "sprite",
+            "data": {
+                "url":"images/ui/black.jpg",
+                "width": 67,
+                "height": 67,
+                "left": 89,
+                "top": 14
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "text":"name",
+                "left":178,
+                "top": 36,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 26, "fill" : "0x714230", "align" : "left"
+                }
+            }
+        },
+        {
+            "type": "text",
+            "data": {
+                "text":"0",
+                "left":440,
+                "top": 36,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 32, "fill" : "0x592011", "align" : "left"
+                }
+            }
+        },
+        {
+            "type":"rect",
+            "data":{
+                "name":"rank_all_item_line",
+                "width": 608,
+                "height": 4,
+                "left": 0,
+                "top": 100,
+                "background-color":"0x9c7b72"
+            }
+        }
+    ]
+}

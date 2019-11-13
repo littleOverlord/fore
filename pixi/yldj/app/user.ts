@@ -26,103 +26,60 @@ export default class User{
      * @description 用户界面渲染对象
      */
     static show
-    static wxButton
+    static ptButton
     /**
      * @description 初始化平台授权，不是平台直接走默认登录
      * @param callback 
      */
     static init(){
-        for(let k in ptFrom){
-            if(ptFrom[k]()){
-                break;
+        // 检查是否由平台创建登录按钮
+        let pfResult = Emitter.global.emit("ptfromUser",{
+            success: (ptName) => {
+                User.pt = ptName;
+                loginCallback(null);
+            },
+            fail: () => {
+                initLocal(loginCallback);
             }
-        }
+        });
+        User.ptButton = pfResult[0];
         Emitter.global.emit("intoMain");
         User.show = Scene.open("app-ui-user",Scene.root);
-    }
-    /**
-     * @description 微信登录
-     */
-    static login_wx(callback){
-        
-        if(User.info == undefined || !User.code){
-            return;
-        }
-        Connect.request({type:"app/wx@login",arg:{
-            "code":User.code,
-            "encrypted": User.info.encryptedData,
-            "gamename": Fs.appName,
-            "iv":User.info.iv
-        }},(data) => {
-            if(data.err){
-                return console.log(data.err.reson);
-            }
-            DB.data.user.uid = data.ok.uid;
-            DB.data.user.from = "wx";
-            User.info && (DB.data.user.info = User.info);
-            callback();
-        })
-        
     }
 }
 
 /****************** 本地 ******************/
 /**
- * @description 平台授权初始化
- */
-const ptFrom = {
-    wx: () => {
-        let wx = (window as any).wx,
-        createButton = () => {
-            if(User.wxButton){
-                User.wxButton.destroy();
-            }
-            var scale = Scene.screen.scale, w = Math.floor(386/scale), h = Math.floor(140/scale);
-            User.wxButton = wx.createUserInfoButton({type: 'image',image:"images/btn.png",style:{left: wx.getSystemInfoSync().windowWidth/2-w/2,bottom: 200/scale,width: w,height: h}})
-            User.wxButton.onTap((res) =>{
-                Music.play("audio/butn.mp3");
-                if(res.errMsg=="getUserInfo:ok"){
-                    User.info = res;
-                    //清除微信授权按钮
-                    User.wxButton.destroy();
-                    User.wxButton = null;
-                    User.login_wx(loginCallback);
-                }else{
-                    console.log("wx authorize fail");
-                    initLocal(loginCallback);
-                }
-            })
-        };
-        if(!wx){
-            return false;
-        }
-        User.pt = "wx";
-        wx.login({
-            success(res) {
-              if (res.code) {
-                User.code = res.code;
-                createButton();
-              } else {
-                console.log("wx login fail");
-              }
-            }
-        })
-        return true;
-    }
-}
-/**
  * @description 用户组件
  */
 class WUser extends Widget{
-    added(node){
-        let btn = node.children[1].children[0];
-        let wx = (window as any).wx;
-        if(wx){
-            btn.alpha = 0;
+    setProps(){
+        if(User.ptButton){
+            this.cfg.children.splice(1,1);
         }
+        
+    }
+    added(node){
+        // let btn = node.children[1].children[0];
+        // let wx = (window as any).wx;
+        // if(wx){
+        //     btn.ni.left = 3000;
+        // }
     }
     login(){
-        initLocal(loginCallback);
+        Music.play("audio/butn.mp3");
+        let pfResult = Emitter.global.emit("ptfromLogin",{
+            success: (ptName) => {
+                User.pt = ptName;
+                loginCallback(null);
+            },
+            fail: () => {
+                initLocal(loginCallback);
+            }
+        });
+        if(!pfResult[0]){
+            initLocal(loginCallback);
+        }
     }
 }
 /**
@@ -140,6 +97,7 @@ const regist = (account: string, password: string, callback: Function) => {
         DB.data.user.uid = data.ok.uid;
         DB.data.user.from = User.pt;
         DB.data.user.username = data.ok.username;
+        DB.data.user.isnew = 1;
         localStorage.setItem("userInfo",`{"account":"${account}","encryPassword":"${password}"}`);
         callback();
     })
@@ -159,6 +117,7 @@ const login = (account: string, password: string, callback: Function) => {
         DB.data.user.uid = data.ok.uid;
         DB.data.user.from = data.ok.from;
         DB.data.user.username = data.ok.username;
+        DB.data.user.isnew = 0;
         callback();
     })
 }
@@ -171,6 +130,7 @@ const loginCallback = (err) => {
         return console.log(err);
     }
     Emitter.global.emit("selectProp");
+    Emitter.global.emit("login");
     Scene.remove(User.show);
     User.show = null;
 }
@@ -199,7 +159,7 @@ const encryptPassword = (ps: string): string => {
     let b64 = caclHash(ps,"B64"),
         hex = caclHash(ps,"HEX");
     ps = caclHash(blendStrig(b64.substr(0,b64.length-2), hex),"B64");
-    console.log(b64,hex,ps);
+    // console.log(b64,hex,ps);
     return ps;
 }
 /**
@@ -238,8 +198,18 @@ const getStr = (s,len) => {
     }
     return str;
 }
+const connectClose = () => {
+    if(User.show){
+        Scene.remove(User.show);
+        User.show = null;
+    }
+}
 /****************** 立即执行 ******************/
 //初始化关卡数据库表
-DB.init("user",{uid:0,username:"",info:{},from:""});
+DB.init("user",{uid:0,username:"",info:{},from:"",name:"",head:"",isnew:1});
+
 //注册组件
 Widget.registW("app-ui-user",WUser);
+
+//通讯事件监听
+Connect.notify.add("close",connectClose);

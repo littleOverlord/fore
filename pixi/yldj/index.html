@@ -161,7 +161,7 @@ winit.next = function(){
 	ni_modules.commonjs.exports.load(mods,function(){
 	ni_modules["libs/ni/http"].exports.default.get(`${winit.path}/depend.json?${Math.random()}`,"","",(err,data)=>{
 			if(err){
-				return console.log(err)
+				return console.log("get depent::",err)
 			}
 			var depend = JSON.parse(data);
 			ni_modules["libs/ni/fs"].exports.default.parseDepend(depend);

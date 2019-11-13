@@ -58,7 +58,7 @@ class Button extends Widget{
         if(this.props.text){
             text = this.elements.get(this.props.id).children[0];
             text.ni.left = (this.props.width - text.width)/2 - this.props.width/2;
-            text.ni.top = (this.props.height - text.height)/2 - this.props.height/2;
+            text.ni.top = ((this.props.lineHeight || this.props.height)-this.props.height - text.height)/2;
         }
         // console.log(text.width,text.height);
     }

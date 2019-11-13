@@ -4,6 +4,7 @@ import Connect from '../libs/ni/connect';
 import Scene from '../libs/ni/scene';
 import Frame from '../libs/ni/frame';
 import Emitter from '../libs/ni/emitter';
+import Time from '../libs/ni/time';
 
 /****************** 导出 ******************/
 
@@ -18,8 +19,7 @@ const kindOfProp = ["suction","filter","armor"];
 class SelectProp extends Widget{
     added(node){
         
-        let title = this.elements.get("title"),tip = this.elements.get("tip");
-        title.ni.left = (Scene.screen.width - title.width)/2;
+        let tip = this.elements.get("tip");
         tip.ni.left = (Scene.screen.width - tip.width)/2;
     }
     /**
@@ -64,6 +64,7 @@ class WPropItem extends Widget{
         
     }
     active(){
+        // console.log("active",this.props.type);
         if(!stagePause){
             Prop.caches.get(this.props.type).active();
         }
@@ -82,7 +83,7 @@ class WPropEff extends Widget{
         this.cfg.data.height = props.height;
     }
     added(node){
-        node.state.setAnimation(0, "animation", true);
+        node.state.setAnimation(0, "itemact", true);
     }
 }
 /**
@@ -123,7 +124,7 @@ class Prop{
         if(this.count <= 0){
             return;
         }
-        let now = Date.now(),leftTime = this.lastTime - now;
+        let now = Time.global.now(),leftTime = this.lastTime - now;
         if(leftTime > 0){
             this.lastTime += this.life;
             this.processTotal += this.life;
@@ -134,7 +135,7 @@ class Prop{
             PropEffect.create(this.type);
         }
         this.count--;
-        console.log("prop active!!");
+        // console.log("prop active!!");
     }
     /**
      * @description 更新道具
@@ -142,32 +143,33 @@ class Prop{
      * @return 是否显示
      */
     public update(index):boolean{
-        let now = Date.now(),leftTime = this.lastTime - now,p,text;
+        let now = Time.global.now(),leftTime = this.lastTime - now,p,text;
         if(!this.show && this.count>0){
+            // console.log(index);
             this.show = Scene.open("app-ui-prop_item",Prop.listContent,null,{
                 type:this.type,
                 process: this.processTotal?(leftTime/this.processTotal):0,
                 count: this.count,
-                top: (index+1) * 22
+                top: index * 92 + 22
             });
             this.index = index;
             return true;
         }else if(this.count > 0 && this.show && this.show.alpha == 0){
             this.show.alpha = 1;
-        }
-        if(this.count <= 0 && leftTime <= 0){
-            this.show && this.show.alpha && (this.show.alpha = 0);
-            if(this.processTotal){
-                this.processTotal = 0;
-                Emitter.global.emit("propOperate",{type:this.type,operation:"remove"});
-                PropEffect.remove(this.type);
+            if(this.index == index){
+                this.show.ni.top = index * 92 + 22;
             }
+        }else if(this.count == 0 && this.show && this.show.alpha == 0){
+            return false;
+        }
+        if(this.lastTime > 0 && leftTime <= 0){
+            Prop.clearSingl(this);
             return false;
         }
         
         if(this.index != index){
             this.index = index;
-            this.show.ni.top = (index+1) * 22;
+            this.show.ni.top = index * 92 + 22;
         }
         text = `x${this.count}`
         if(text != this.show.children[1].text){
@@ -201,6 +203,21 @@ class Prop{
             v.count = 0;
             v.lastTime = 0;
         })
+    }
+    /**
+     * @description 清除单个效果
+     */
+    static clearSingl(p: Prop){
+        if(p.count <= 0 && p.show && p.show.alpha){
+             p.show.alpha = 0;
+             p.show.ni.top = 2000;
+        }
+        if(p.processTotal){
+            p.processTotal = 0;
+            p.lastTime = 0;
+            Emitter.global.emit("propOperate",{type:p.type,operation:"remove"});
+            PropEffect.remove(p.type);
+        }
     }
     /**
      * @description 清除道具数据
@@ -242,8 +259,8 @@ class PropEffect{
         },
         "armor":{
             name:"itemact03",
-            width:96,
-            height:96,
+            width:160,
+            height:160,
             left:()=>{
                 return PropEffect.pos[0] + 118/2;
             },
@@ -370,6 +387,14 @@ Emitter.global.add("stagePause",(b)=>{
 Emitter.global.add("selfPos",(pos)=>{
     PropEffect.pos = pos;
     PropEffect.update();
+});
+Emitter.global.add("addProp",(type)=>{
+    Prop.create(type);
+});
+Emitter.global.add("clearPropEffect",()=>{
+    Prop.caches.forEach((v,k) => {
+        Prop.clearSingl(v);
+    })
 });
 //设置帧回调
 Frame.add(update);

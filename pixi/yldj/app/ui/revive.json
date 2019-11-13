@@ -9,33 +9,96 @@
     },
     "children": [
         {
-            "type": "sprite",
-            "data": {
-                "url":"images/ui/black.jpg",
+            "type":"rect",
+            "data":{
+                "name":"black_bg",
                 "width": "100%",
                 "height": "100%",
                 "left": 0,
                 "top": 0,
-                "alpha":0.8
+                "background-color":"#000000",
+                "alpha":0.6
             }
+        },
+        {
+            "type": "container",
+            "data": {
+                "left": "50%",
+                "top": 0
+            },
+            "children":[
+                {
+                    "type": "sprite",
+                    "data": {
+                        "url":"images/ui/top_light.png",
+                        "width": 732,
+                        "height": 428,
+                        "left": -366,
+                        "top": 0
+                    }
+                }
+            ]
         },
         {   
             "type": "container",
             "data": {
+                "width":1,
+                "height":1,
                 "left": "50%",
                 "top": "50%"
             },
             "children": [
                 {
+                    "type": "sprite",
+                    "data": {
+                        "url":"images/ui/downtime_bg.png",
+                        "width": 272,
+                        "height": 280,
+                        "left": -136,
+                        "top": -280,
+                        "z":1
+                    }
+                },
+                {
                     "type":"text",
-                    "on":{"tap":{"func":"revive"}},
                     "data":{
-                        "text":"复活5",
-                        "left":-60,
-                        "bottom": 30,
+                        "id":"down_time",
+                        "text":"5",
+                        "top": -140,
                         "style":{
-                            "fontFamily" : "Arial", "fontSize": 60, "fill" : "0xffffff", "align" : "center"
-                        }
+                            "fontFamily" : "Arial", "fontSize": 120, "fill" : "0xf5cab0", "align" : "center"
+                        },
+                        "z":5
+                    }
+                },
+                {
+                    "type":"app-ui-button",
+                    "props":{
+                        "on":{"tap":{"func":"revive"}},
+                        "id":"btn_revive",
+                        "url": "images/ui/start.png",
+                        "width": 280,
+                        "height": 102,
+                        "left": -140,
+                        "top": 130,
+                        "text": "复活",
+                        "size":68,
+                        "lineHeight":90,
+                        "color":"#fdff83",
+                        "z":10
+                    }
+                },
+                {
+                    "type":"text",
+                    "on":{"tap":{"func":"skip"}},
+                    "data":{
+                        "text":"跳过",
+                        "top": 275,
+                        "style":{
+                            "fontFamily" : "Arial", "fontSize": 50, "fill" : "0xd39b66", "align" : "center"
+                        },
+                        "line":"under",
+                        "z":15
                     }
                 }
             ]

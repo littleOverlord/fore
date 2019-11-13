@@ -6,10 +6,10 @@ import DB from "../libs/ni/db";
 import Widget from '../libs/ni/widget';
 import Music from '../libs/ni/music';
 import Emitter from '../libs/ni/emitter';
+import Time from '../libs/ni/time';
 
 import { AppUtil } from "./util";
 import Connect from '../libs/ni/connect';
-import Spine from '../libs/ni/spine';
 
 
 /****************** 导出 ******************/
@@ -22,7 +22,7 @@ let stageNode, // 关卡渲染节点
     startNode; // 开始游戏界面
 // 速度处理对象
 class BASE_V{
-    static grad = [[0,4,2],[10,4,4],[30,5.5,4],[60,5.5,7],[120,6,7.5]]
+    static grad = [[0,4,2],[10,4,4],[30,5.5,4],[60,5.5,7],[120,6,7]]
     static _player: number
     static _shap: number
     static player: number
@@ -65,6 +65,14 @@ class BASE_V{
  * @description 公式
  */
 class Formula{
+    static BASE = {
+        insertShap:{
+            min_min:600,
+            min_max:1200,
+            max_min:2000,
+            max_max: 2400
+        }
+    }
     /**
      * @description 计算形状分数
      * @param v 速度
@@ -78,14 +86,14 @@ class Formula{
      * @param t 关卡进行时间(s)
      */
     static insertRangMin(t:number){
-        return Math.max(1200-t*15,600);
+        return Math.max(Formula.BASE.insertShap.min_max-t*15,Formula.BASE.insertShap.min_min);
     }
     /**
      * @description 计算形状插入最小时间间隔
      * @param t 关卡进行时间(s)
      */
     static insertRangMax(t: number){
-        return Math.max(2400-t*10,2000);
+        return Math.max(Formula.BASE.insertShap.max_max-t*10,Formula.BASE.insertShap.max_min);
     }
     /**
      * @description 计算下一次插入形状的时间
@@ -93,14 +101,14 @@ class Formula{
      */
     static insertShapTime(t: number): number{
         let rmin = Formula.insertRangMin(t),rmax = Formula.insertRangMax(t);
-        return Date.now() + rmin + Math.floor(Math.random()*(rmax - rmin));
+        return Time.global.now() + rmin + Math.floor(Math.random()*(rmax - rmin));
     }
     /**
      * @description 随机一定范围的自然时间点
      * @param last 最大持续时间
      */
     static randomTime(last: number): number{
-        return Date.now() + Math.random() * last;
+        return Time.global.now() + Math.random() * last;
     }
     /**
      * @description 形状旋转随机速度和方向
@@ -116,6 +124,12 @@ class Formula{
     static dorpV(rang:number):number{
         let rad = Math.random()*rang,mk = Math.random()>0.5?-1:1;
         return BASE_V.shap * (1+rad*mk);
+    }
+    /**
+     * @description 插入道具的时间
+     */
+    static insertPropTime(){
+        return Time.global.now() + Math.random() * (40000 - 20000) + 20000;
     }
 }
 /**
@@ -138,6 +152,8 @@ class Stage {
     //添加新形状的频率区间
     static insertRang = [600,2000]
     static insertTimer
+    //道具添加时间
+    static propTimer
     //down
     static down = 0
     //up
@@ -149,6 +165,8 @@ class Stage {
     static boomTime = 0
     // 道具状态
     static props: any = {}
+    // 能复活的次数
+    static reviveCount = 1
     // 获取shap id
     static getId(){
         return Stage.id++;
@@ -207,10 +225,13 @@ class Stage {
      */
     static effect(src: Shap,target: Shap){
         //判断目标是否无敌
-        if(src.effect == "hp" && target.god && src.value < 0){
+        if(src.effect == "hp" && (target.god || Time.global.now() < (target.reviveTime+2000)) && src.value < 0){
             return;
         }
-        target[src.effect] += src.value;
+        if(typeof src.value == "number"){
+            target[src.effect] += src.value;
+        }
+        
         Stage.events.push({type:"effect",effect:src.effect,value: src.value, src:src.id, target: target.id});
     }
     /**
@@ -247,7 +268,7 @@ class Stage {
      * @param shap 
      */
     static move(shap: Shap){
-        let velocity = shap.velocity,dtime,now = Date.now(),x = shap.x, y = shap.y,
+        let velocity = shap.velocity,dtime,now = Time.global.now(),x = shap.x, y = shap.y,
             cacl = (s) => {
                 let dx = s.to.x - s.x,
                     dy = s.to.y - s.y,
@@ -303,21 +324,24 @@ class Stage {
      * @description 复活重新开始
      */
     static reStart(){
-        let now = Date.now();
-        Stage.self.moveTime = now;
+        // let now = Time.global.now();
+        // Stage.self.moveTime = now;
         Stage.self.hp = 1;
         Stage.self.x = (Stage.width - Stage.self.width)/2;
+        Stage.self.reviveTime = Time.global.now();
         Stage.setPause(0);
-        for(let i =0 ,len = Stage.shaps.length; i < len; i++){
-            Stage.shaps[i].moveTime = now;
-        }
+        // console.log("restart!!")
+        // for(let i =0 ,len = Stage.shaps.length; i < len; i++){
+        //     Stage.shaps[i].moveTime = now;
+        // }
     }
     static clear(){
         Stage.shaps = [];
         Stage.self = null;
         Stage.id = 1;
         Stage.events = [];
-        Stage.startTime = 0
+        Stage.startTime = 0;
+        Stage.reviveCount = 1;
     }
 }
 
@@ -337,11 +361,14 @@ class PropHandl{
             shap.to = Stage.self;
         }, 
         move:(shap: Shap)=>{
-            if(!Stage.props.suction || !shap.to){
+            if(!Stage.props.suction && !shap.to || shap.type == "boom"){
                 return;
             }
-            shap.velocity *= 1.5; 
-            shap.scale /= 1.5;
+            shap.velocity *= 1.3; 
+            shap.scale -= 0.05;
+            if(shap.scale <= 0){
+                shap.scale = 0.001;
+            }
             Stage.events.push({type:"effect",effect:"scale",value:shap.scale, target: shap.id});
         },
         add:()=>{
@@ -353,10 +380,16 @@ class PropHandl{
             }
             Stage.events.push({type:"effect",effect:"suction",handler:"add", target: Stage.self.id});
             Stage.props.suction = 1;
+            for(let k in Formula.BASE.insertShap){
+                Formula.BASE.insertShap[k] = Formula.BASE.insertShap[k]/5;
+            }
         },
         remove:()=>{
             Stage.events.push({type:"effect",effect:"suction",handler:"remove", target: Stage.self.id});
             Stage.props.suction = 0;
+            for(let k in Formula.BASE.insertShap){
+                Formula.BASE.insertShap[k] = Formula.BASE.insertShap[k]*5;
+            }
         }
     }
     /**
@@ -424,6 +457,8 @@ class Shap{
     score = 0
     //是否无敌 0 不是 1 是
     god = 0
+    //复活时间点
+    reviveTime = 0
     //缩放
     scale = 1
 
@@ -443,10 +478,18 @@ class Shap{
  */
 class WStage extends Widget{
     start(){
-        Stage.down = Date.now();
+        // if(Stage.pause){
+        //     return;
+        // }
+        Stage.down = Time.global.now();
+        // console.log("down time::",Stage.down);
     }
     end(){
-        Stage.up = Date.now();
+        // if(Stage.pause){
+        //     return;
+        // }
+        Stage.up = Time.global.now();
+        // console.log("up time::",Stage.up);
     }
     added(node){
         scoreNode = this.elements.get("score");
@@ -456,9 +499,13 @@ class WStage extends Widget{
 }
 class Magnet{
     constructor(elements){
-        this.list[0] = elements.get("magnet0");
-        this.list[1] = elements.get("magnet1");
+        this.list[0] = elements.get("zhuazhua0");
+        this.list[1] = elements.get("zhuazhua1");
         this.list[1].scale.x = -1;
+        this.list[0].state.setAnimation(0, 'zhua02', true);
+        this.list[0].state.timeScale = 1;
+        this.list[1].state.setAnimation(0, 'zhua02', true);
+        this.list[1].state.timeScale = 1;
         this.cutDown = Scene.open("app-ui-magnet_tip",Scene.root);
     }
     cutDown = null
@@ -471,19 +518,19 @@ class Magnet{
         this.change(0);
     }
     caclTime(){
-        return Date.now() + this.during + Math.floor(this.during * Math.random()*2);
+        return Time.global.now() + this.during + Math.floor(this.during * Math.random()*2);
     }
     change(curr){
         // console.log(curr);
         this.curr = curr;
-        this.list[1-curr].alpha = 0.3;
-        this.list[curr].alpha = 1;
+        this.list[curr].state.setAnimation(0, 'zhua01', true);
+        this.list[1-curr].state.setAnimation(0, 'zhua02', true);
     }
     update(){
         if(Stage.pause){
             return;
         }
-        let diff = this.nearTime - Date.now(),v;
+        let diff = this.nearTime - Time.global.now(),v;
         if(this.cutDown.children[1].text == "0" && this.cutDown.alpha == 1){
             this.reset();
             this.nearTime = this.caclTime();
@@ -554,7 +601,39 @@ class WPlayer extends Widget{
     }
 }
 /**
+ * @description 复活等待组件
+ */
+class WReviveWait extends Widget{
+    node
+    restart(){
+        
+        Time.global.resume();
+        let node = this.node;
+        setTimeout(()=>{
+            Scene.remove(node);
+            Stage.reStart();
+        },0);
+    }
+    added(node){
+        this.node = node;
+    }
+}
+/**
  * @description 开始游戏界面
+ */
+/**
+{
+    "type":"app-ui-button",
+    "props":{
+        "on":{"tap":{"func":"gohome"}},
+        "id":"btn_home",
+        "url": "images/ui/home.png",
+        "width": 90,
+        "height": 94,
+        "left": -210,
+        "top": 922
+    }
+},
  */
 class WStart extends Widget{
     setProps(props){
@@ -569,7 +648,9 @@ class WStart extends Widget{
         BASE_V.reset();
         // startGame();
         Emitter.global.emit("selectProp");
+        Show.clear();
         setTimeout(()=>{
+            Emitter.global.emit("ptRankClose");
             Scene.remove(startNode);
             startNode = null;
         },0);
@@ -583,6 +664,15 @@ class WStart extends Widget{
  */
 class Show{
     static table = {}
+    /**
+     * @description 清空显示
+     */
+    static clear(){
+        for(let key in Show.table){
+            Scene.remove(Show.table[key]);
+            delete Show.table[key];
+        }
+    }
     /**
      * @description 分发事件
      * @param evs 事件列表
@@ -607,7 +697,7 @@ class Show{
             shap.children[0].state.addListener({
                 complete:(a)=>{
                     if(a.animation.name == "attack"){
-                        console.log("remove boom~!");
+                        // console.log("remove boom~!");
                         setTimeout(()=>{
                             Scene.remove(shap);
                             delete Show.table[ev.shap.id];
@@ -617,6 +707,11 @@ class Show{
             })
         }
         Show.table[ev.shap.id] = shap;
+        if(!Emitter.global.emit("guide",()=>{
+            Stage.setPause(0);
+        })[0]){
+            Stage.setPause(1);
+        }
     }
     static move(ev){
         let shap = Show.table[ev.target];
@@ -630,7 +725,6 @@ class Show{
         let shap = Show.table[ev.target];
         if(ev.effect == "score"){
             BASE_V.caclGrad(Stage.self.score);
-            scoreNode.text = Stage.self.score.toString();
             Emitter.global.emit("vibrate");
             Music.play("audio/score.mp3");
         }else if(ev.effect == "hp"){
@@ -638,6 +732,8 @@ class Show{
         }else if(ev.effect == "scale"){
             shap.scale.x = ev.value;
             shap.scale.y = ev.value;
+        }else if(ev.effect == "prop"){
+            Emitter.global.emit("addProp",ev.value);
         }
 
     }
@@ -650,6 +746,9 @@ class Show{
             shap.children[0].state.timeScale = 1;
             return;
         }
+        if(shapArray.indexOf(shap.widget.props.type) >= 0 && shap.die){
+            ScoreEffect.addEff(shap);
+        }
         Scene.remove(shap);
         delete Show.table[ev.target];
     }
@@ -657,21 +756,136 @@ class Show{
         let self = Show.table[Stage.self.id];
         self.alpha = 0;
         Music.play("audio/fail.mp3");
+        Time.global.stop();
+        Emitter.global.emit("clearPropEffect");
         setTimeout(()=>{
-            Emitter.global.emit("showRevive",(r)=>{
-                if(r == 0){
-                    Emitter.global.emit("newScore",Stage.self.score);
-                    Emitter.global.emit("clearProp");
-                    openStart();
-                    Stage.clear();
-                    magnet.reset();
-                }else if(r == 1){
-                    Stage.reStart();
-                    self.alpha = 1;
-                }
-            });
+            if(Stage.reviveCount > 0){
+                Stage.reviveCount --;
+                Emitter.global.emit("showRevive",(r)=>{
+                    if(r == 0){
+                        gameOver();
+                    }else if(r == 1){
+                        self.alpha = 1;
+                        self.x = (Stage.width - Stage.self.width)/2;
+                        Scene.open("app-ui-revive_wait",Scene.root);
+                    }
+                });
+            }else{
+                gameOver();
+            }
+            
         },1000)
         
+    }
+}
+class ScoreEffect{
+    /**
+     * @description 分数缩放
+     */
+    static scale = 1.5
+    /**
+     * @description 缩放到最大持续时间
+     */
+    static stayTime = 0
+    /**
+     * @description 特效列表
+     */
+    static effects = []
+    /**
+     * @description 加分数
+     */
+    static addScore(){
+        scoreNode.text = Stage.self.score.toString();
+        ScoreEffect.scale = 1.5;
+        if(ScoreEffect.stayTime){
+            ScoreEffect.stayTime = Time.global.now()+100;
+        }
+    }
+    /**
+     * @description 加特效
+     */
+    static addEff(shap){
+        let cfg = {
+            "type": "spine",
+            "data": {
+                "url":"images/spine/score.atlas",
+                "width": 128,
+                "height": 128,
+                "left": shap.x,
+                "top":shap.y,
+                "z":2
+            }
+        },eff = Scene.create(cfg,null,Scene.root),
+        baseDist = Stage.self.y - scoreNode.y,
+        theDist = AppUtil.caclDistance(shap,scoreNode);
+        eff.__startTime = Time.global.now();
+        eff.__lastTime = (theDist/baseDist)*1350/1.5;
+        eff.__startPos = {x:shap.x,y:shap.y};
+        eff.state.setAnimation(0, 'score', false);
+        eff.state.timeScale = (baseDist/theDist)*1.5;
+        eff.state.addListener({
+            complete:(a)=>{
+                // console.log(Time.global.now()-eff.startTime);
+                eff.aniEnd = true;
+                ScoreEffect.addScore();
+            }
+        })
+        ScoreEffect.effects.push(eff);
+    }
+    /**
+     * @description 更新动画
+     */
+    static update(){
+        ScoreEffect.caclScale();
+        ScoreEffect.caclPos();
+    }
+    static caclPos(){
+        let i = ScoreEffect.effects.length -1,eff,lt;
+        while(i >= 0){
+            eff = ScoreEffect.effects[i];
+            lt = (Time.global.now() - eff.__startTime)/eff.__lastTime;
+            if(lt > 1){
+                lt = 1;
+            }
+            if(eff.aniEnd){
+                Scene.remove(eff);
+                ScoreEffect.effects.splice(i,1);
+            }else{
+                // console.log(lt);
+                eff.x = eff.__startPos.x + (scoreNode.x - eff.__startPos.x)*lt;
+                eff.y = eff.__startPos.y + (scoreNode.y - eff.__startPos.y)*lt;
+            }
+            i--;
+        }
+    }
+    static caclScale(){
+        if(ScoreEffect.scale > 1 && scoreNode.scale.x < ScoreEffect.scale){
+            scoreNode.scale.x += 0.1;
+            scoreNode.scale.y += 0.1;
+            if(scoreNode.scale.x >= ScoreEffect.scale){
+                ScoreEffect.stayTime = Time.global.now()+100;
+            }
+        }else if(ScoreEffect.scale == 1 && scoreNode.scale.x > ScoreEffect.scale){
+            scoreNode.scale.x -= 0.1;
+            scoreNode.scale.y -= 0.1;
+        }else if(ScoreEffect.stayTime == 0 && ScoreEffect.scale > 1 && scoreNode.scale.x >= ScoreEffect.scale){
+            ScoreEffect.stayTime = Time.global.now()+100;
+        }
+        if(ScoreEffect.stayTime && Time.global.now() >= ScoreEffect.stayTime){
+            ScoreEffect.stayTime = 0;
+            ScoreEffect.scale = 1;
+        }
+        // console.log(scoreNode.scale.x,scoreNode.scale.y);
+    }
+    static clear(){
+        ScoreEffect.scale = 1;
+        ScoreEffect.stayTime = 0;
+        scoreNode.scale.x = 1;
+        scoreNode.scale.y = 1;
+        for(let i = 0, len = ScoreEffect.effects.length; i < len; i++){
+            Scene.remove(ScoreEffect.effects[i]);
+        }
+        ScoreEffect.effects = [];
     }
 }
 /**
@@ -690,19 +904,28 @@ const openStart = () => {
     startNode = Scene.open("app-ui-start",Scene.root);
 }
 /**
+ * @description 游戏结束
+ */
+const gameOver = () => {
+    Emitter.global.emit("newScore",Stage.self.score);
+    Emitter.global.emit("clearProp");
+    openStart();
+    Stage.clear();
+    magnet.reset();
+    ScoreEffect.clear();
+    Time.global.reset();
+}
+/**
  * @description 开始游戏
  */
 const startGame = () => {
     if(!Stage.self){
             
-        for(let key in Show.table){
-            Scene.remove(Show.table[key]);
-            delete Show.table[key];
-        }
+        
         insertSelf();
     }
     Stage.setPause(0);
-    Stage.startTime = Date.now();
+    Stage.startTime = Time.global.now();
     scoreNode.text = "0";
     magnet.init();
 }
@@ -717,7 +940,7 @@ const insertSelf = () => {
         height: 118,
         box_width:80,
         box_height:80,
-        x: Stage.width-118,
+        x: (Stage.width-118)/2,
         y: Stage.height - (96+118/2),
         effect: "hp",
         value: -1,
@@ -730,10 +953,10 @@ const insertSelf = () => {
  */
 const shapArray = ["octagon","pentagon","rectangle","hexagon","triangle"];
 const insertShap = () => {
-    if(Stage.insertTimer && Date.now() < Stage.insertTimer){
+    if(Stage.insertTimer && Time.global.now() < Stage.insertTimer){
         return;
     }
-    let dt = (Date.now() - Stage.startTime)/1000;
+    let dt = (Time.global.now() - Stage.startTime)/1000;
     Stage.insertTimer = Formula.insertShapTime(dt);
     let index = Math.floor(Math.random()*shapArray.length),
         size = 50 + Math.floor(Math.random()*200),
@@ -755,6 +978,38 @@ const insertShap = () => {
     Stage.insert(s);
 }
 /**
+ * @description 随机一个道具
+ */
+const propArray = ["armor","filter","suction"];
+const insertProp = () => {
+    let lastTimer = Stage.propTimer;
+    if(Stage.propTimer && Time.global.now() < Stage.propTimer){
+        return;
+    }
+    Stage.propTimer = Formula.insertPropTime();
+    if(!lastTimer){
+        return;
+    }
+    let index = Math.floor(Math.random()*propArray.length),
+        size = 50 + Math.floor(Math.random()*100),
+        x = Math.floor(Math.random()*(Stage.width - size)),
+        vy = Formula.dorpV(0.3),
+        s = new Shap({
+            type: propArray[index],
+            camp: 0,
+            width: size,
+            height: size,
+            x: x,
+            y: -size,
+            effect: "prop",
+            value: propArray[index],
+            velocity: vy
+        });
+        
+    // console.log(Stage.width,size,x);
+    Stage.insert(s);
+}
+/**
  * @description 插入炸弹
  */
 const insertBoom = () => {
@@ -763,10 +1018,10 @@ const insertBoom = () => {
         size,
         x,
         s;
-    if(random < probability || Date.now() - Stage.boomTime < 5000 ){
+    if(random < probability || Time.global.now() - Stage.boomTime < 5000 ){
         return;
     }
-    Stage.boomTime = Date.now();
+    Stage.boomTime = Time.global.now();
     size = 140 + Math.floor(Math.random()*80),
     x = Math.floor(Math.random()*(Stage.width - size))
     s = new Shap({
@@ -774,8 +1029,8 @@ const insertBoom = () => {
             camp: 0,
             width: size,
             height: size,
-            box_width:size -40,
-            box_height:size -40,
+            box_width:size*2/3,
+            box_height:size*2/3,
             x: Math.floor(Math.random()*(Stage.width - size)),
             y: -size,
             effect: "hp",
@@ -793,12 +1048,14 @@ const resetPV = ()=>{
         return;
     }
    let dt = Stage.up - Stage.down; 
-   if(dt > 0){
+   if(dt >= 0){
         Stage.self.velocity = magnet.curr? BASE_V.player:-BASE_V.player;
    }else if(dt < 0){
         Stage.self.velocity = magnet.curr? -BASE_V.player * 2:BASE_V.player*2;
    }
-//    console.log(Stage.self.vx);
+//    if(Time.global.now() < Stage.self.reviveTime +2000){
+    //    console.log(Stage.down,Stage.up ,  Stage.self.velocity);
+//    }
 }
 /**
  * @description 形状动画
@@ -877,7 +1134,7 @@ class ShapAni{
     static syncSpeed(sa){
         let d,ds;
         if(sa.vt == sa.v){
-            if(Date.now() >= sa.time){
+            if(Time.global.now() >= sa.time){
                 sa.time = Formula.randomTime(ShapAni.during);
                 sa.vt = Formula.shapAniRandomV(ShapAni.vs);
             }
@@ -965,9 +1222,12 @@ const frameControl = ()=>{
     if(!Stage.pause){
         insertShap();
         insertBoom();
+        insertProp();
         Show.distribute(Stage.loop());
         magnet.update();
+        
     }
+    ScoreEffect.update();
     resetPV();
     ShapAni.run();
 }
@@ -979,6 +1239,7 @@ Widget.registW("app-ui-stage",WStage);
 Widget.registW("app-ui-shap",WShap);
 Widget.registW("app-ui-player",WPlayer);
 Widget.registW("app-ui-start",WStart);
+Widget.registW("app-ui-revive_wait",WReviveWait);
 //注册循环
 // Frame.add(()=>{
     
@@ -996,4 +1257,13 @@ Emitter.global.add("gameStart",()=>{
 Emitter.global.add("propOperate",(param)=>{
     PropHandl[param.type] && PropHandl[param.type][param.operation](param);
 });
+Emitter.global.add("hide",()=>{
+    // console.log("stage hide");
+    Time.global.stop();
+});
+Emitter.global.add("show",()=>{
+    // console.log("stage show");
+    Time.global.resume();
+});
+//通讯事件监听
 Connect.notify.add("close",connectClose);

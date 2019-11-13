@@ -15,6 +15,15 @@ export class AppUtil{
        else return false;
    }
    /**
+    * @description 计算a,b两点之间的距离
+    * @param a 
+    * @param b 
+    */
+   static caclDistance(a: any,b: any): number{
+        let dis = Math.sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+        return dis;
+   }
+   /**
     * @description 计算 !! 为true的元素个数
     * @param o []
     */

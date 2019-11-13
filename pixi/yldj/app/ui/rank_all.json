@@ -1,0 +1,107 @@
+{
+    "type":"container",
+    "data":{
+        "width":"100%",
+        "height":"100%",
+        "left":0,
+        "top":0,
+        "z":12
+    },
+    "children":[
+        {
+            "type": "sprite",
+            "on":{"tap":{"func":"empty"}},
+            "data": {
+                "url":"images/ui/stage.jpg",
+                "width": "100%",
+                "height": "100%",
+                "left": 0,
+                "top":0
+            }
+        },
+        {
+            "type":"text",
+            "data":{
+                "text":"好友排行榜",
+                "top":122,
+                "style":{
+                    "fontFamily" : "Arial", "fontSize": 60, "fill" : "#d39b66", "align" : "center"
+                }
+            }
+        },
+        {
+            "type":"container",
+            "data":{
+                "width":1,
+                "height":"100%",
+                "left":"50%",
+                "top":0
+            },
+            "children":[
+                {
+                    "type": "sprite",
+                    "on":{"start":{"func":"start"},"end":{"func":"end"}},
+                    "data": {
+                        "url":"images/rank/bg.png",
+                        "width": 652,
+                        "height": 740,
+                        "left": -326,
+                        "top":206
+                    }
+                },
+                {
+                    "type":"text",
+                    "data":{
+                        "text":"每周一凌晨刷新",
+                        "top":231,
+                        "left":-295,
+                        "style":{
+                            "fontFamily" : "Arial", "fontSize": 30, "fill" : "#592011", "align" : "left"
+                        }
+                    }
+                },
+                {
+                    "type": "sprite",
+                    "data": {
+                        "url":"images/rank/self_bg.png",
+                        "width": 652,
+                        "height": 162,
+                        "left": -326,
+                        "top":946
+                    }
+                },
+                {
+                    "type": "sprite",
+                    "on":{"tap":{"func":"goback"}},
+                    "data": {
+                        "url":"images/ui/back.png",
+                        "width": 90,
+                        "height": 94,
+                        "left": -45,
+                        "bottom":104
+                    }
+                },
+                {
+                    "type":"container",
+                    "data":{
+                        "id":"rankAllContent",
+                        "width":608,
+                        "height":624,
+                        "left":-304,
+                        "top":280,
+                        "mask":false
+                    }
+                },
+                {
+                    "type":"app-ui-rank_all_item",
+                    "props":{
+                        "top":970,
+                        "left":-304,
+                        "index":0,
+                        "noline":true
+                    }
+                }
+            ]
+        }
+    ]
+}

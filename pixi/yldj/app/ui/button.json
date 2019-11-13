@@ -13,9 +13,7 @@
             "type": "text",
             "data": {
                 "text": "button",
-                "style": {"fontSize":30,"fill":"#adbbd9","strokeThickness":2},
-                "left": 34,
-                "top": 25
+                "style": {"fontSize":30,"fill":"#adbbd9","dropShadow":true,"dropShadowColor":"0x6a6e1c","dropShadowDistance":4,"dropShadowAlpha":0.5,"dropShadowAngle":1.9}
             }
         }
     ]

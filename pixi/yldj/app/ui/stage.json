@@ -58,28 +58,26 @@
             }
         },
         {
-            "type": "sprite",
+            "type": "spine",
             "data": {
-                "id":"magnet0",
-                "url":"images/ui/magnet.png",
-                "width": 86,
-                "height": 104,
+                "id":"zhuazhua0",
+                "url":"images/spine/zhuazhua.atlas",
+                "width": 130,
+                "height": 121,
                 "left": 0,
-                "bottom": 44,
-                "alpha": 0,
+                "bottom":-28,
                 "z":15
             }
         },
         {
-            "type": "sprite",
+            "type": "spine",
             "data": {
-                "id":"magnet1",
-                "url":"images/ui/magnet.png",
-                "width": 86,
-                "height": 104,
-                "right": -86,
-                "bottom": 44,
-                "alpha": 0,
+                "id":"zhuazhua1",
+                "url":"images/spine/zhuazhua.atlas",
+                "width": 130,
+                "height": 121,
+                "right": -130,
+                "bottom":-28,
                 "z":20
             }
         },

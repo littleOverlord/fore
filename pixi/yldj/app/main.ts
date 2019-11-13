@@ -6,6 +6,7 @@ import './prop';
 import './adv';
 import './revive';
 import  './net';
+import './guide';
 //ui
 import './widget/button';
 import './widget/ani';

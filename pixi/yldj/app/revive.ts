@@ -8,6 +8,7 @@ import Frame from '../libs/ni/frame';
 
 /****************** 本地 ******************/
 let reviveNode,
+    timeNode,
     reviveBack: Function,
     stop = false,
     lastTime = 5000,
@@ -25,10 +26,24 @@ class Wrevive extends Widget{
             return;
         }
         stop = true;
+        let callback = reviveBack;
+        clear();
         Emitter.global.emit("lookAdv",(r)=>{
-            reviveBack(r);
-            clear();
+            callback(r);
         });
+    }
+    /**
+     * @description 跳过，不复活
+     */
+    skip(){
+        reviveBack(0);
+        clear();
+    }
+    /**
+     * @description 添加到渲染节点
+     */
+    added(){
+        timeNode = this.elements.get("down_time");
     }
 }
 /**
@@ -49,7 +64,7 @@ const update = () => {
         endTime = 0;
     }
     leftTime = Math.floor(leftTime/1000);
-    reviveNode.children[1].children[0].text = `复活${leftTime}`;
+    timeNode.text = leftTime;
 }
 /**
  * @description 清除数据
@@ -60,6 +75,7 @@ const clear = () => {
         reviveNode = undefined;
         endTime = 0;
         reviveBack = undefined;
+        timeNode = undefined;
     }
 }
 /**

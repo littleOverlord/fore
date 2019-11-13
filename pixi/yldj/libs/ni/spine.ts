@@ -34,7 +34,7 @@ export default class Spine {
 				spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas)
 				spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
 				spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
-				console.log(spineData);
+				// console.log(spineData);
 				Spine.spineData[k] = spineData;
 				delete data[k];
 				delete data[jk];

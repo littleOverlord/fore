@@ -26,12 +26,22 @@ export default class Frame {
 	 * @param f 由Frame.add返回的帧对象
 	 */
 	static delete(f){
-		let i = Frame.list.indexOf(f);
+		let i = Frame.findHandler(f);
 		if(i<0){
 			return console.warn(`Don't have the frameCallback `,f);
 		}
 		Frame.list.splice(i,1);
 		f.delete = true;
+	}
+	static findHandler(f: Function): number{
+		let r = -1;
+		for(let i = 0,len = Frame.list.length; i < len; i++){
+			if(Frame.list[i].frameCall == f){
+				r = i;
+				break;
+			}
+		}
+		return r;
 	}
 	/**
 	 * @description 执行帧列表

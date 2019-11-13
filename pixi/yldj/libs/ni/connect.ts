@@ -169,6 +169,7 @@ export default class Connect {
                 clearPing();
                 reopen();
                 Connect.notify.emit("close");
+                console.log("websocket closed!");
                 break;
         }
     }

@@ -72,10 +72,13 @@ class Browser{
 	 * @example
 	 */
 	read(path: string, callback: Function) {
-		if (!this.iDB) {
-			return setTimeout(function () { callback(this.db[path], path); }, 0);
+		let _this = this;
+		if (!_this.iDB) {
+			return setTimeout(function () { 
+				callback(null,_this.db[path]); 
+			}, 0);
 		}
-		var request = this.db.transaction(this.tabName, "readonly").objectStore(this.tabName).get(path);
+		var request = this.db.transaction(_this.tabName, "readonly").objectStore(_this.tabName).get(path);
 		request.onsuccess = function (e) {
 			callback(null,e.target.result);
 		};

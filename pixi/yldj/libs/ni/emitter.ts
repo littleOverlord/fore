@@ -30,7 +30,7 @@ export default class Emitter {
 		let evs = this.list[key],r = [];
 		if(!evs){
 			// console.error(`There is no handler match '${key}'`);
-			return ;
+			return r;
 		}
 		for(let i = 0, len = evs.length; i < len; i++){
 			r.push(evs[i](param));

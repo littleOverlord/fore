@@ -9,13 +9,14 @@
     },
     "children": [
         {
-            "type": "sprite",
-            "data": {
-                "url":"images/ui/black.jpg",
+            "type":"rect",
+            "data":{
+                "name":"adv_bg",
                 "width": "100%",
                 "height": "100%",
                 "left": 0,
-                "top": 0
+                "top": 0,
+                "background-color":"0x000000"
             }
         },
         {
