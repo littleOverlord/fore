@@ -27,7 +27,9 @@ export default class Music {
    * @description 播放音乐
    */
   static play(path: string,loop?: boolean){
-    Music.table[path] && Music.table[path].stop();
+    if(Music.table[path] && Music.table[path].PLAYING_STATE == Music.table[path].playbackState){
+      Music.table[path].stop();
+    }
     let m = createBufferSource(path);
     if(loop){
       Music.bgm = path;
@@ -116,7 +118,7 @@ const autioCtx = new ((window as any).AudioContext || (window as any).webkitAudi
 const decodeAudioData = (k: string, data: ArrayBuffer): void => {
   autioCtx.decodeAudioData(data, (buff)=>{
     Music.buffs[k] = buff || Fs.fs.createImg(k);
-    if(Music.bgm && !Music.table[k]){
+    if(Music.bgm && Music.bgm == k && !Music.table[k]){
       Music.play(k,true);
     }
   })
