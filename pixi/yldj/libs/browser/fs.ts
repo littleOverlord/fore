@@ -155,15 +155,12 @@ class Browser{
      * @param path 
      */
     addFont(path,data){
-		let style = document.createElement("style"),name = Util.fileName(path);
-		style.innerText = `@font-face { 
-			font-family: '${name}'; 
-			src:url(${this.createImg(path,data)}); 
-			} `;
-		document.head.appendChild(style);
-		style.onload = ()=>{
-			document.head.removeChild(style);
-		}
+		// let style = document.createElement("style"),name = Util.fileName(path);
+		// style.innerText = `@font-face { font-family: '${name}'; src:url('${this.createImg(path,data)}') format('truetype'); } `;
+		// document.head.appendChild(style);
+		// style.onload = ()=>{
+		// 	document.head.removeChild(style);
+		// }
     }
 }
 

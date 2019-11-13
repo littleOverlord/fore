@@ -188,6 +188,12 @@ winit.next = function(){
 	});
 }
 winit.start();
+
+(function(){
+	let style = document.createElement("style");
+	style.innerText = `@font-face { font-family: 'zcool-gdh'; src:url('${winit.path}/font/zcool-gdh.ttf') format('truetype'); } `;
+	document.head.appendChild(style);
+})()
 </script>
 </body>
 
